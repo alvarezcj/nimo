@@ -29,6 +29,94 @@ class EditorLayer : public nimo::Layer
         d.width = 1280;
         d.height = 720;
         fb = std::make_shared<nimo::FrameBuffer>(d);
+
+        auto& style = ImGui::GetStyle();
+		auto& colors = ImGui::GetStyle().Colors;
+
+        
+
+		//========================================================
+		/// Fonts
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.Fonts->AddFontFromFileTTF("fonts/Quicksand/static/Quicksand-Medium.ttf", 18.0f);
+
+		//========================================================
+		/// Colours
+
+		// Headers
+		colors[ImGuiCol_Header]				= ImColor(247, 146, 86, 255);
+		colors[ImGuiCol_HeaderHovered]		= ImColor(247, 146, 86, 125);
+		colors[ImGuiCol_HeaderActive]		= ImColor(247, 146, 86, 255);
+
+		// Buttons
+		colors[ImGuiCol_Button]				= ImColor(247, 146, 86, 200);
+		colors[ImGuiCol_ButtonHovered]		= ImColor(251, 209, 162, 150);
+		colors[ImGuiCol_ButtonActive]		= ImColor(247, 146, 86, 150);
+
+		// Frame BG
+		colors[ImGuiCol_FrameBg]			= ImColor(16, 16, 16, 200);
+		colors[ImGuiCol_FrameBgHovered]		= ImColor(66, 66, 66, 255);
+		colors[ImGuiCol_FrameBgActive]		= ImColor(66, 66, 66, 255);
+
+		// Tabs
+		colors[ImGuiCol_Tab]				= ImColor(44, 44, 44, 255);
+		colors[ImGuiCol_TabHovered]			= ImColor(247, 146, 86, 255);
+		colors[ImGuiCol_TabActive]			= ImColor(247, 146, 86, 225);
+		colors[ImGuiCol_TabUnfocused]		= ImColor(44, 44, 44, 255);
+		colors[ImGuiCol_TabUnfocusedActive] = ImColor(247, 146, 86, 150);
+
+		// Title
+		colors[ImGuiCol_TitleBg]			= ImColor(44, 44, 44, 255);
+		colors[ImGuiCol_TitleBgActive]		= ImColor(44, 44, 44, 255);
+		colors[ImGuiCol_TitleBgCollapsed]	= ImColor(44, 44, 44, 255);
+
+		// Resize Grip
+		colors[ImGuiCol_ResizeGrip]			= ImVec4(0.91f, 0.91f, 0.91f, 0.25f);
+		colors[ImGuiCol_ResizeGripHovered]	= ImVec4(0.81f, 0.81f, 0.81f, 0.67f);
+		colors[ImGuiCol_ResizeGripActive]	= ImVec4(0.46f, 0.46f, 0.46f, 0.95f);
+
+		// Scrollbar
+		colors[ImGuiCol_ScrollbarBg]		= ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_ScrollbarGrab]		= ImVec4(0.31f, 0.31f, 0.31f, 1.0f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.0f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.0f);
+
+		// Check Mark
+		colors[ImGuiCol_CheckMark]			= ImColor(200, 200, 200, 255);
+
+		// Slider
+		colors[ImGuiCol_SliderGrab]			= ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
+		colors[ImGuiCol_SliderGrabActive]	= ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
+
+		// Text
+		colors[ImGuiCol_Text]				= ImColor(240, 240, 240, 255);
+
+		// Checkbox
+		colors[ImGuiCol_CheckMark]			= ImColor(240, 240, 240, 255);
+
+		// Separator
+		colors[ImGuiCol_Separator]			= ImColor(16, 16, 16, 200);
+		colors[ImGuiCol_SeparatorActive]	= ImColor(251, 209, 162, 255);
+		colors[ImGuiCol_SeparatorHovered]	= ImColor(251, 209, 162, 150);
+
+		// Window Background
+		colors[ImGuiCol_WindowBg]			= ImColor(44, 44, 44, 255);
+		colors[ImGuiCol_ChildBg]			= ImColor(66, 66, 66, 255);
+		colors[ImGuiCol_PopupBg]			= ImColor(66, 66, 66, 255);
+		colors[ImGuiCol_Border]				= ImColor(66, 66, 66, 255);
+
+		// Tables
+		// colors[ImGuiCol_TableHeaderBg]		= ImGui::ColorConvertU32ToFloat4(Colours::Theme::groupHeader);
+		// colors[ImGuiCol_TableBorderLight]	= ImGui::ColorConvertU32ToFloat4(Colours::Theme::backgroundDark);
+
+		// Menubar
+		colors[ImGuiCol_MenuBarBg]			= ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f };
+
+		//========================================================
+		/// Style
+		style.FrameRounding = 5.0f;
+		style.FrameBorderSize = 1.0f;
+		style.IndentSpacing = 1.0f;
     }
     void OnUpdate() override
     {
