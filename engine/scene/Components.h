@@ -21,6 +21,16 @@ struct LabelComponent
     std::string Label;
 };
 
+struct FamilyComponent
+{
+    GUID Parent;
+    std::vector<GUID> Children;
+
+    FamilyComponent(GUID parent) : Parent(parent) {}
+    FamilyComponent() = default;
+    FamilyComponent(const FamilyComponent& other) = default;
+};
+
 struct TransformComponent
 {
     glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
