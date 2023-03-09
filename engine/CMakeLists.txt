@@ -43,13 +43,3 @@ spdlog
 add_library(nimo_engine STATIC ${SOURCES})
 target_include_directories(nimo_engine PUBLIC ${INCLUDES})
 target_link_libraries(nimo_engine PUBLIC ${LIBS})
-add_custom_command(
-    TARGET nimo_engine POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-    "${CMAKE_SOURCE_DIR}/third_party/assimp/v5.0.1/assimp-vc143-mt.dll"
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release) 
-add_custom_command(
-    TARGET nimo_engine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/res/ 
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release)
