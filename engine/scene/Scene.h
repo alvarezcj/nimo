@@ -4,6 +4,7 @@
 #include "renderer/Shader.h"
 #include <string>
 #include "assets/Asset.h"
+#include <functional>
 
 namespace nimo{
     class Scene : public Asset{
@@ -12,7 +13,7 @@ namespace nimo{
         ~Scene();
         static AssetType GetType(){ return AssetType::Scene;}
         void Update(const Shader& shader);
-        bool UpdateGui();
+        void ForEachEntity(std::function<void(Entity&)> action);
         Entity CreateEntity(const std::string& name = "");
         void DestroyEntity(Entity entity);
         void SetName(const std::string& newName) {name = newName;}
