@@ -26,24 +26,25 @@ class EditorLayer : public nimo::Layer
     nimo::FrameBuffer::Details d;
     std::shared_ptr<nimo::FrameBuffer> fb;
     void OnAttach() override{
-        d.width = 1280;
-        d.height = 720;
+        d.width = 1920;
+        d.height = 1080;
         fb = std::make_shared<nimo::FrameBuffer>(d);
 
         auto& style = ImGui::GetStyle();
 		auto& colors = ImGui::GetStyle().Colors;
 
-        
-
 		//========================================================
 		/// Fonts
         ImGuiIO& io = ImGui::GetIO(); (void)io;
-        io.Fonts->AddFontFromFileTTF("fonts/Quicksand/static/Quicksand-Medium.ttf", 18.0f);
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.Fonts->AddFontFromFileTTF("fonts/Quicksand/static/Quicksand-Medium.ttf", 20.0f);
 
 		//========================================================
 		/// Colours
 
 		// Headers
+        colors[ImGuiCol_MenuBarBg]			= ImColor(16, 16, 16, 255);
 		colors[ImGuiCol_Header]				= ImColor(247, 146, 86, 255);
 		colors[ImGuiCol_HeaderHovered]		= ImColor(247, 146, 86, 125);
 		colors[ImGuiCol_HeaderActive]		= ImColor(247, 146, 86, 255);
@@ -66,9 +67,9 @@ class EditorLayer : public nimo::Layer
 		colors[ImGuiCol_TabUnfocusedActive] = ImColor(247, 146, 86, 150);
 
 		// Title
-		colors[ImGuiCol_TitleBg]			= ImColor(44, 44, 44, 255);
-		colors[ImGuiCol_TitleBgActive]		= ImColor(44, 44, 44, 255);
-		colors[ImGuiCol_TitleBgCollapsed]	= ImColor(44, 44, 44, 255);
+		colors[ImGuiCol_TitleBg]			= ImColor(16, 16, 16, 255);
+		colors[ImGuiCol_TitleBgActive]		= ImColor(16, 16, 16, 255);
+		colors[ImGuiCol_TitleBgCollapsed]	= ImColor(16, 16, 16, 255);
 
 		// Resize Grip
 		colors[ImGuiCol_ResizeGrip]			= ImVec4(0.91f, 0.91f, 0.91f, 0.25f);
@@ -114,9 +115,16 @@ class EditorLayer : public nimo::Layer
 
 		//========================================================
 		/// Style
-		style.FrameRounding = 5.0f;
-		style.FrameBorderSize = 1.0f;
-		style.IndentSpacing = 1.0f;
+		style.FrameRounding = 10.0f;
+		style.FrameBorderSize = 0.0f;
+		style.IndentSpacing = 20.0f;
+        style.WindowPadding = ImVec2(5.f,5.f);
+        style.FramePadding = ImVec2(5.f,3.f);
+        style.ItemSpacing = ImVec2(5.f,3.f);
+        style.WindowBorderSize = 0.0f;
+        style.FrameBorderSize = 0.0f;
+        style.GrabMinSize = 10.f;
+        style.GrabRounding = 3.f;
     }
     void OnUpdate() override
     {
@@ -126,13 +134,13 @@ class EditorLayer : public nimo::Layer
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        // ImGui::ShowDemoWindow(&show_demo_window);
+        ImGui::ShowDemoWindow(NULL);
 
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -161,39 +169,11 @@ class EditorLayer : public nimo::Layer
 
         // DockSpace
         ImGuiIO& io = ImGui::GetIO();
-        static auto first_time = true;
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
-            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-            // ImGuiID dockspace_id = ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), dockspace_flags);
+            ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+            ImGui::SetCursorPos(ImVec2(0.0f, 0.0f));
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-            // ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), dockspace_flags);
-
-            if (first_time)
-            {
-                first_time = false;
-
-                ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
-                ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
-                ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->WorkSize);
-
-                // split the dockspace into 2 nodes -- DockBuilderSplitNode takes in the following args in the following order
-                //   window ID to split, direction, fraction (between 0 and 1), the final two setting let's us choose which id we want (which ever one we DON'T set as NULL, will be returned by the function)
-                // out_id_at_dir is the id of the node in the direction we specified earlier, out_id_at_opposite_dir is in the opposite direction
-                ImGuiID dock_id_stats;
-                ImGuiID dock_id_game;
-                ImGuiID dock_id_menu;
-                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.1f, &dock_id_stats, &dock_id_game);
-                ImGui::DockBuilderSplitNode(dock_id_game, ImGuiDir_Right, 0.8f, &dock_id_game, &dock_id_menu);
-                // auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
-                // auto dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 1.0f, nullptr, &dockspace_id);
-
-                // we now dock our windows into the docking node we made above
-                ImGui::DockBuilderDockWindow("Game", dock_id_game);
-                ImGui::DockBuilderDockWindow("Statistics", dock_id_stats);
-                ImGui::DockBuilderDockWindow("Scene", dock_id_menu);
-                ImGui::DockBuilderFinish(dockspace_id);
-            }
         }
         ImGui::End();
         
