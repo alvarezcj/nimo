@@ -1,0 +1,21 @@
+{
+    "shader": "15f3ff99-217e-4e1c-66b8-c5955e337131",
+    "properties": [
+        {
+            "name": "mainTexture",
+            "type": "texture",
+            "value": 0,
+            "asset": "3ce96ea3-c33d-d2cb-aebb-1d7559b8b72a"
+        },
+        {
+            "name": "tiling",
+            "type": "vector2",
+            "value": [1,1]
+        },
+        {
+            "name": "offset",
+            "type": "vector2",
+            "value": [0,0]
+        }
+    ]
+}
