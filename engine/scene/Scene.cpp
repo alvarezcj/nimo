@@ -39,6 +39,8 @@ nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
         e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.str();
     else
         e.AddComponent<LabelComponent>().Label = name;
+    e.AddComponent<FamilyComponent>();
+    m_entities[e.GetComponent<IDComponent>().Id] = id;
     return e;
 }
 void nimo::Scene::DestroyEntity(Entity entity)

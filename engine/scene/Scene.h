@@ -17,9 +17,11 @@ namespace nimo{
         Entity CreateEntity(const std::string& name = "");
         void DestroyEntity(Entity entity);
         void SetName(const std::string& newName) {name = newName;}
+        Entity GetEntity(GUID id) {return {m_entities[id], m_registry};}
     private:
         std::string name; 
         entt::registry m_registry;
+        std::unordered_map<GUID, entt::entity> m_entities;
 
         friend class SceneSerializer;
         friend struct AssetSerializer<Scene>;
