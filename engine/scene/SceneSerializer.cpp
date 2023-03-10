@@ -10,11 +10,18 @@ void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata
     nlohmann::ordered_json jentities = nlohmann::json::array();
     j["Name"] = asset->name;
     j["GUID"] = asset->id.str();
+    serializedEntities.clear();
+
     asset->m_registry.each([&](entt::entity id)
     {
         Entity e(id, asset->m_registry);
-        nlohmann::ordered_json jentity = SerializeEntity(asset, e);
-        jentities.push_back(jentity);
+        if(!e.GetComponent<FamilyComponent>().Parent.valid())
+        {
+            if (std::find(serializedEntities.begin(), serializedEntities.end(), e.ID()) == serializedEntities.end()) {
+                nlohmann::ordered_json jentity = SerializeEntity(asset, e);
+                jentities.push_back(jentity);
+            }
+        }
     });
     j["Entities"] = jentities;
 
@@ -47,7 +54,7 @@ std::shared_ptr<nimo::Scene> nimo::AssetSerializer<nimo::Scene>::Deserialize(con
     return scene;
 }
 
-nlohmann::json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const std::shared_ptr<nimo::Scene>& scene, const Entity& e)
+nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const std::shared_ptr<nimo::Scene>& scene, const Entity& e)
 {
     nlohmann::ordered_json jentity;
     if(e.HasComponent<IDComponent>())
@@ -61,7 +68,7 @@ nlohmann::json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const std::sh
     if(e.HasComponent<FamilyComponent>())
     {
         const FamilyComponent& f = e.GetComponent<FamilyComponent>();
-        nlohmann::json jfamily{
+        nlohmann::ordered_json jfamily{
             {"Parent", f.Parent.str()}
         };
         nlohmann::ordered_json jchildren = nlohmann::json::array();
@@ -110,15 +117,11 @@ nlohmann::json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const std::sh
     }
     return jentity;
 }
-bool nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::json& source)
+nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::json& source)
 {
-    auto createdEntity =  scene->CreateEntity();
+    nimo::Entity createdEntity = scene->CreateEntityWithID(GUID(std::string(source["GUID"])));
     for (auto field : source.items())
     {
-        if(field.key() == "GUID")
-        {
-            createdEntity.GetComponent<IDComponent>().Id = GUID(std::string(field.value()));
-        }
         if(field.key() == "Label")
         {
             createdEntity.GetComponent<LabelComponent>().Label = field.value();
@@ -137,6 +140,10 @@ bool nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr
         {
             FamilyComponent& f = createdEntity.AddComponent<FamilyComponent>();
             f.Parent = GUID(std::string(field.value()["Parent"]));
+            for(auto child : field.value()["Children"])
+            {
+                f.Children.push_back(DeserializeEntity(scene, child));
+            }
         }
         if(field.key() == "Camera")
         {
@@ -163,5 +170,5 @@ bool nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr
             c.material = AssetManager::Get<Material>(AssetId((std::string)field.value()["Material"]));
         }
     }
-    return true;
+    return createdEntity.GetComponent<IDComponent>().Id;
 }

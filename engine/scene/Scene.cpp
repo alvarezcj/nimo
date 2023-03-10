@@ -43,6 +43,19 @@ nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
     m_entities[e.GetComponent<IDComponent>().Id] = id;
     return e;
 }
+nimo::Entity nimo::Scene::CreateEntityWithID(GUID desiredId)
+{
+    auto id = m_registry.create();
+    auto e = Entity(id, m_registry);
+    e.AddComponent<IDComponent>().Id = desiredId;
+    if(name == "")
+        e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.str();
+    else
+        e.AddComponent<LabelComponent>().Label = name;
+    e.AddComponent<FamilyComponent>();
+    m_entities[e.GetComponent<IDComponent>().Id] = id;
+    return e;
+}
 void nimo::Scene::DestroyEntity(Entity entity)
 {
 }

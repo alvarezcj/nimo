@@ -1,12 +1,15 @@
 #pragma once 
 
 #include "entt/entt.hpp"
+#include "core/GUID.h"
 
 namespace nimo{
     class Entity{
     public:
         Entity(entt::entity handle, entt::registry& registry);
         ~Entity();
+
+		GUID ID() const;
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)

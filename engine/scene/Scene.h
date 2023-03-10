@@ -15,6 +15,7 @@ namespace nimo{
         void Update(const Shader& shader);
         void ForEachEntity(std::function<void(Entity&)> action);
         Entity CreateEntity(const std::string& name = "");
+        Entity CreateEntityWithID(GUID desiredId);
         void DestroyEntity(Entity entity);
         void SetName(const std::string& newName) {name = newName;}
         Entity GetEntity(GUID id) {return {m_entities[id], m_registry};}
