@@ -19,7 +19,7 @@ void InspectorPanel::OnRender()
         ImGui::Spacing();
         if(ent.HasComponent<nimo::TransformComponent>())
         {
-            if (ImGui::CollapsingHeader((std::string("Transform##")+entityIdString).c_str()))
+            if (ImGui::CollapsingHeader((std::string("Transform##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 std::string p = "Position##";
                 p += entityIdString;
@@ -32,10 +32,11 @@ void InspectorPanel::OnRender()
                 ImGui::DragFloat3(s.c_str(), (float*)&ent.GetComponent<nimo::TransformComponent>().Scale, 0.1f);
             }
             ImGui::Spacing();
+            ImGui::Separator();
         }
         if(ent.HasComponent<nimo::CameraComponent>())
         {
-            if (ImGui::CollapsingHeader((std::string("Camera##")+entityIdString).c_str()))
+            if (ImGui::CollapsingHeader((std::string("Camera##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 static int item_current_2 = 0;
                 ImGui::Combo((std::string("Projection##") + (std::string("Camera##")+entityIdString)).c_str(), &item_current_2, "Perspective\0Orthographic\0\0");
@@ -52,10 +53,11 @@ void InspectorPanel::OnRender()
                 ImGui::DragFloat((std::string("Clipping plane Near##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().ClippingPlanes.Near, 0.1f, 0.0f);
             }
             ImGui::Spacing();
+            ImGui::Separator();
         }
         if(ent.HasComponent<nimo::MeshRendererComponent>())
         {
-            if (ImGui::CollapsingHeader((std::string("Mesh Renderer##")+entityIdString).c_str()))
+            if (ImGui::CollapsingHeader((std::string("Mesh Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 if (ImGui::TreeNode((std::string("Material##") + (std::string("Mesh##")+entityIdString)).c_str()))
                 {
@@ -83,16 +85,38 @@ void InspectorPanel::OnRender()
                 }
             }
             ImGui::Spacing();
+            ImGui::Separator();
         }
         if(ent.HasComponent<nimo::MeshComponent>())
         {
-            if (ImGui::CollapsingHeader((std::string("Mesh##")+entityIdString).c_str()))
+            if (ImGui::CollapsingHeader((std::string("Mesh##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Text((std::string("Mesh asset:").c_str()));
+                // ImGui::Text((std::string("Mesh asset:").c_str()));
+                // ImGui::SameLine();
+                // ImGui::TextDisabled((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
+                ImGui::Text("Mesh");
                 ImGui::SameLine();
-                ImGui::TextDisabled((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
+                ImGui::InputTextWithHint(("##Asset##Mesh##"+entityIdString).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
             }
             ImGui::Spacing();
+            ImGui::Separator();
+        }
+        ImGui::Spacing();
+
+        float alignment = 0.5f;
+        const char* label = "\tAdd New Component...\t";
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        float size = ImGui::CalcTextSize(label).x + style.FramePadding.x * 2.0f;
+        float avail = ImGui::GetContentRegionAvail().x;
+
+        float off = (avail - size) * alignment;
+        if (off > 0.0f)
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+
+        if(ImGui::Button(label))
+        {
+
         }
     }
 }
