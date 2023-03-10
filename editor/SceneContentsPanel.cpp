@@ -84,13 +84,42 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
 
 void SceneContentsPanel::OnRender()
 {
+    ImRect windowRect = { ImGui::GetWindowContentRegionMin(), ImGui::GetWindowContentRegionMax() };
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
         float totalHeight = 0;
         ImVec2 rectMin;
         ImVec2 rectMax;
         bool res;
-        if(ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str()))
+        bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str());
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ENTITY_ID"))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
+                nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
+                NIMO_DEBUG("Received drag drop entity: {}", payload_n.str());
+                auto payloadEntity = scene->GetEntity(payload_n);
+                if(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent.valid())
+                {
+                    auto payloadParent = scene->GetEntity(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent);
+                    NIMO_DEBUG("Removing {} as child from {}", payloadEntity.GetComponent<nimo::LabelComponent>().Label, payloadParent.GetComponent<nimo::LabelComponent>().Label);
+                    for(int i = 0; i< payloadParent.GetComponent<nimo::FamilyComponent>().Children.size(); ++i)
+                    {
+                        if(payloadParent.GetComponent<nimo::FamilyComponent>().Children[i] == payload_n)
+                        {
+                            payloadParent.GetComponent<nimo::FamilyComponent>().Children.erase(payloadParent.GetComponent<nimo::FamilyComponent>().Children.begin() + i);
+                            break;
+                        }
+                    }
+                    NIMO_DEBUG("Entiy {} has now {} children", payloadParent.GetComponent<nimo::LabelComponent>().Label, payloadParent.GetComponent<nimo::FamilyComponent>().Children.size());
+                }
+                payloadEntity.GetComponent<nimo::FamilyComponent>().Parent = nimo::GUID();
+            }
+
+            ImGui::EndDragDropTarget();
+        }
+        if(openHeader)
         {
             rectMin = ImGui::GetItemRectMin();
             rectMax = ImGui::GetItemRectMax();
@@ -123,4 +152,5 @@ void SceneContentsPanel::OnRender()
             parent.GetComponent<nimo::FamilyComponent>().Children.push_back(childCube.GetComponent<nimo::IDComponent>().Id);
         }
     }
+
 }
