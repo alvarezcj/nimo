@@ -356,8 +356,7 @@ void EditorLayer::OnAttach(){
         nimo::Renderer::BeginFrame(fb);
         for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
         {
-            nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader")->use();
-            scene->Update(*nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader"));
+            scene->Update();
         }
         nimo::Renderer::EndFrame();
 

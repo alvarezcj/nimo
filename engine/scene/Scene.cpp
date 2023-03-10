@@ -10,24 +10,23 @@ nimo::Scene::~Scene()
 {
 
 }
-void nimo::Scene::Update(const Shader& shader)
+void nimo::Scene::Update()
 {
-    auto view1 = m_registry.view<CameraComponent, TransformComponent>();
-    view1.each([&](CameraComponent& cam, TransformComponent& t) {
-        glm::mat4 projection;
-        if(cam.Projection == CameraComponent::Projection::Perspective)
-            projection = glm::perspective(glm::radians(cam.FOV), (float)1920 / (float)1080, cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
-        else
-            projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
-        
-        shader.set("view", glm::toMat4(glm::quat(t.Rotation)) * glm::translate(glm::mat4(1.0f), {-t.Translation.x, -t.Translation.y, t.Translation.z}) );
-        shader.set("projection", projection);
-    });
-    auto view3 = m_registry.view<MeshComponent, TransformComponent, MeshRendererComponent>();
-    view3.each([&](MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
-        shader.set("transform", t.GetTransform());
+    m_registry.view<MeshComponent, TransformComponent, MeshRendererComponent>().each([&](MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
+        r.material->shader->use();
         r.material->Setup();
+        r.material->shader->set("transform", t.GetTransform());
         r.mesh->draw();
+        m_registry.view<CameraComponent, TransformComponent>().each([&](CameraComponent& cam, TransformComponent& camTransform)
+        {
+            glm::mat4 projection;
+            if(cam.Projection == CameraComponent::Projection::Perspective)
+                projection = glm::perspective(glm::radians(cam.FOV), (float)1920 / (float)1080, cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
+            else
+                projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
+            r.material->shader->set("view", glm::toMat4(glm::quat(camTransform.Rotation)) * glm::translate(glm::mat4(1.0f), {-camTransform.Translation.x, -camTransform.Translation.y, camTransform.Translation.z}) );
+            r.material->shader->set("projection", projection);
+        });
     });
 }
 nimo::Entity nimo::Scene::CreateEntity(const std::string& name)

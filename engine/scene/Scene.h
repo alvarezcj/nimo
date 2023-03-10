@@ -12,7 +12,7 @@ namespace nimo{
         Scene(const std::string& name = "NewScene");
         ~Scene();
         static AssetType GetType(){ return AssetType::Scene;}
-        void Update(const Shader& shader);
+        void Update();
         void ForEachEntity(std::function<void(Entity&)> action);
         Entity CreateEntity(const std::string& name = "");
         Entity CreateEntityWithID(GUID desiredId);
