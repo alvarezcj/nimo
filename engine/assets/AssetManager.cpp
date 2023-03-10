@@ -8,7 +8,7 @@
 #include "project/Project.h"
 
 nimo::AssetIndex nimo::AssetManager::index = nimo::AssetIndex();
-std::unordered_map<nimo::AssetId, std::shared_ptr<nimo::Asset>> nimo::AssetManager::m_loadedAssets = {};
+std::unordered_map<std::type_index, std::unordered_map<nimo::AssetId, std::shared_ptr<nimo::Asset>>> nimo::AssetManager::m_loadedAssets = {};
 
 void nimo::AssetManager::Initialize()
 {

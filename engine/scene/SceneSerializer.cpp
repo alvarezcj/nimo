@@ -138,7 +138,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         }
         if(field.key() == "Family")
         {
-            FamilyComponent& f = createdEntity.AddComponent<FamilyComponent>();
+            FamilyComponent& f = createdEntity.GetComponent<FamilyComponent>();
             f.Parent = GUID(std::string(field.value()["Parent"]));
             for(auto child : field.value()["Children"])
             {

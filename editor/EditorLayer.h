@@ -40,8 +40,7 @@ class EditorLayer : public nimo::Layer
     GameViewPanel* gameViewPanel;
     InspectorPanel* inspectorPanel;
     SceneContentsPanel* sceneContentsPanel;
-    std::map<std::string,std::pair<std::filesystem::path, std::shared_ptr<nimo::Scene>>> loadedScenes;
-    std::string lastModifiedScene;
+    nimo::GUID lastModifiedScene;
 
     void OnAttach() override;
     void OnUpdate() override;

@@ -192,7 +192,6 @@ void EditorLayer::OnAttach(){
                             {
                                 scene->id = nimo::GUID::Create();
                             }
-                            loadedScenes[sceneName] = std::make_pair(scenePath, scene);
                             free(outPath);
                         }
                     }
@@ -204,10 +203,9 @@ void EditorLayer::OnAttach(){
                 ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
                 if (ImGui::MenuItem("Save"))
                 {
-                    if(!lastModifiedScene.empty())
+                    if(lastModifiedScene.valid())
                     {
-                        auto info = loadedScenes[lastModifiedScene];
-                        nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>(info.first.string(), info.second);
+                        nimo::AssetManager::Serialize<nimo::Scene>(lastModifiedScene);
                     }
                 }
                 ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
@@ -284,7 +282,6 @@ void EditorLayer::OnAttach(){
                             }
                             nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("Scenes/NewScene.nscene", createdScene);
                             nimo::AssetManager::WriteIndex();
-                            loadedScenes["NewScene"] = std::make_pair(projectFolderPath/"Assets"/"Scenes"/"NewScene.nscene", createdScene);
 
                             nimo::Project::GetActiveProject()->GetSettings().startScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id.str();
                             nimo::ProjectSerializer projectSer(project);
@@ -310,8 +307,8 @@ void EditorLayer::OnAttach(){
                         nimo::Project::SetActiveProject(project);
                         nimo::AssetId startingSceneId = nimo::AssetId(nimo::Project::GetActiveProject()->GetSettings().startScene);
                         NIMO_DEBUG(nimo::AssetManager::GetMetadata(startingSceneId).filepath.string());
-                        loadedScenes[nimo::AssetManager::GetMetadata(startingSceneId).filepath.filename().string()] = std::make_pair(nimo::AssetManager::GetMetadata(startingSceneId).filepath, nimo::AssetManager::Get<nimo::Scene>(startingSceneId));                        ;
-                        lastModifiedScene = nimo::AssetManager::GetMetadata(startingSceneId).filepath.filename().string();
+                        nimo::AssetManager::Get<nimo::Scene>(startingSceneId);
+                        lastModifiedScene = startingSceneId;
                         free(outPath);
                     }
                 }
@@ -357,10 +354,10 @@ void EditorLayer::OnAttach(){
         ImGui::Render();
 
         nimo::Renderer::BeginFrame(fb);
-        for(auto [name, scene] : loadedScenes)
+        for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
         {
             nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader")->use();
-            scene.second->Update(*nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader"));
+            scene->Update(*nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader"));
         }
         nimo::Renderer::EndFrame();
 

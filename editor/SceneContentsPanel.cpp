@@ -13,7 +13,7 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
 
     std::string entityName =  ent.GetComponent<nimo::LabelComponent>().Label;
     std::string entityIdString =  ent.GetComponent<nimo::IDComponent>().Id.str();
-    bool open;
+    bool open = false;
 
     // Paint as tree or leaf
     if(ent.GetComponent<nimo::FamilyComponent>().Children.size() != 0) // Has children
@@ -84,21 +84,21 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
 
 void SceneContentsPanel::OnRender()
 {
-    for(auto [name, scene] : m_editor->loadedScenes)
+    for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
         float totalHeight = 0;
         ImVec2 rectMin;
         ImVec2 rectMax;
         bool res;
-        if(ImGui::CollapsingHeader((name + "##" + scene.second->id.str()).c_str()))
+        if(ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str()))
         {
             rectMin = ImGui::GetItemRectMin();
             rectMax = ImGui::GetItemRectMax();
             totalHeight += ImGui::GetItemRectSize().y;
-            scene.second->ForEachEntity([&](nimo::Entity& ent)
+            scene->ForEachEntity([&](nimo::Entity& ent)
             {
                 if(!ent.GetComponent<nimo::FamilyComponent>().Parent.valid())
-                    this->PaintEntity(scene.second, ent);
+                    this->PaintEntity(scene, ent);
             });
         }
         else{
@@ -108,12 +108,12 @@ void SceneContentsPanel::OnRender()
         ImGui::Separator();
         if(res)
         {
-            m_editor->lastModifiedScene = name;
+            m_editor->lastModifiedScene = scene->id;
         }
         if(ImGui::Button("Add cube entity..."))
         {
-            nimo::Entity parent = scene.second->CreateEntity();
-            nimo::Entity childCube = scene.second->CreateEntity();
+            nimo::Entity parent = scene->CreateEntity();
+            nimo::Entity childCube = scene->CreateEntity();
             childCube.GetComponent<nimo::FamilyComponent>().Parent = parent.GetComponent<nimo::IDComponent>().Id;
             childCube.AddComponent<nimo::TransformComponent>().Translation = {1.0f, 1.0f, -3.0f};
             childCube.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::MeshSource>("Objects/cube/cube.obj");

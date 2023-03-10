@@ -7,9 +7,9 @@
 void InspectorPanel::OnRender()
 {
     if(!selectedItem.valid()) return;
-    for(auto [name, scene] : m_editor->loadedScenes)
+    for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
-        auto ent = scene.second->GetEntity(selectedItem);
+        auto ent = scene->GetEntity(selectedItem);
         auto entityIdString = ent.GetComponent<nimo::IDComponent>().Id.str();
         ImGui::Image((ImTextureID)m_editor->entityIcon->GetInternalId(), ImVec2(48, 48));
         ImGui::SameLine();
