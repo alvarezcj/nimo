@@ -25,17 +25,20 @@ class LogPanel;
 class StatisticsPanel;
 class GameViewPanel;
 class SceneContentsPanel;
+class InspectorPanel;
 
 class EditorLayer : public nimo::Layer
 {
     friend class GameViewPanel;
     friend class SceneContentsPanel;
+    friend class InspectorPanel;
 
     nimo::FrameBuffer::Details d;
     std::shared_ptr<nimo::FrameBuffer> fb;
     LogPanel* logPanel;
     StatisticsPanel* statisticsPanel;
     GameViewPanel* gameViewPanel;
+    InspectorPanel* inspectorPanel;
     SceneContentsPanel* sceneContentsPanel;
     std::map<std::string,std::pair<std::filesystem::path, std::shared_ptr<nimo::Scene>>> loadedScenes;
     std::string lastModifiedScene;

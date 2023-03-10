@@ -4,6 +4,7 @@
 #include "StatisticsPanel.h"
 #include "GameViewPanel.h"
 #include "SceneContentsPanel.h"
+#include "InspectorPanel.h"
 
 void EditorLayer::OnAttach(){
         d.width = 1920;
@@ -13,6 +14,7 @@ void EditorLayer::OnAttach(){
         statisticsPanel = new StatisticsPanel();
         gameViewPanel = new GameViewPanel(this);
         sceneContentsPanel = new SceneContentsPanel(this);
+        inspectorPanel = new InspectorPanel(this);
 
         auto& style = ImGui::GetStyle();
 		auto& colors = ImGui::GetStyle().Colors;
@@ -104,8 +106,8 @@ void EditorLayer::OnAttach(){
 		style.IndentSpacing = 20.0f;
         style.WindowPadding = ImVec2(5.f,5.f);
         style.FramePadding = ImVec2(5.f,3.f);
-        style.ItemSpacing = ImVec2(5.f,3.f);
-        style.WindowBorderSize = 0.0f;
+        style.ItemSpacing = ImVec2(15.f,4.f);
+        style.WindowBorderSize = 1.0f;
         style.FrameBorderSize = 0.0f;
         style.GrabMinSize = 10.f;
         style.GrabRounding = 3.f;
@@ -347,8 +349,11 @@ void EditorLayer::OnAttach(){
 
         ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
         sceneContentsPanel->Render();
-        ImGui::Render();
 
+        ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
+        inspectorPanel->Render();
+
+        ImGui::Render();
 
         nimo::Renderer::BeginFrame(fb);
         for(auto [name, scene] : loadedScenes)
