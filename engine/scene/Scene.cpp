@@ -12,10 +12,10 @@ nimo::Scene::~Scene()
 }
 void nimo::Scene::Update()
 {
-    m_registry.view<MeshComponent, TransformComponent, MeshRendererComponent>().each([&](MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
+    m_registry.view<IDComponent, MeshComponent, TransformComponent, MeshRendererComponent>().each([&](IDComponent& id, MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
         r.material->shader->use();
         r.material->Setup();
-        r.material->shader->set("transform", t.GetTransform());
+        r.material->shader->set("transform", GetWorldSpaceTransformMatrix(GetEntity(id.Id)));
         r.mesh->draw();
         m_registry.view<CameraComponent, TransformComponent>().each([&](CameraComponent& cam, TransformComponent& camTransform)
         {
@@ -52,6 +52,7 @@ nimo::Entity nimo::Scene::CreateEntityWithID(GUID desiredId)
     else
         e.AddComponent<LabelComponent>().Label = name;
     e.AddComponent<FamilyComponent>();
+    e.AddComponent<TransformComponent>();
     m_entities[e.GetComponent<IDComponent>().Id] = id;
     return e;
 }
@@ -67,3 +68,18 @@ void nimo::Scene::ForEachEntity(std::function<void(Entity&)> action)
         action(ent);
     });
 }
+
+glm::mat4 nimo::Scene::GetWorldSpaceTransformMatrix(Entity entity)
+{
+    glm::mat4 transform(1.0f);
+
+    if (entity.GetComponent<FamilyComponent>().Parent.valid())
+    {
+        Entity parent = GetEntity(entity.GetComponent<FamilyComponent>().Parent);
+        if (parent.GetComponent<IDComponent>().Id.valid())
+            transform = GetWorldSpaceTransformMatrix(parent);
+    }
+
+    return transform * entity.GetComponent<TransformComponent>().GetTransform();
+}
+

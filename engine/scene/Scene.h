@@ -20,6 +20,7 @@ namespace nimo{
         void SetName(const std::string& newName) {name = newName;}
         const std::string& GetName() {return name;}
         Entity GetEntity(GUID id) {return {m_entities[id], m_registry};}
+        glm::mat4 GetWorldSpaceTransformMatrix(Entity entity);
     private:
         std::string name; 
         entt::registry m_registry;

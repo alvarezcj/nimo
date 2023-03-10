@@ -90,7 +90,7 @@ void InspectorPanel::OnRender()
             {
                 ImGui::Text((std::string("Mesh asset:").c_str()));
                 ImGui::SameLine();
-                ImGui::Text((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
+                ImGui::TextDisabled((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
             }
             ImGui::Spacing();
         }

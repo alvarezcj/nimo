@@ -131,7 +131,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             auto Translation = glm::vec3((float)field.value()["Translation"][0], (float)field.value()["Translation"][1], (float)field.value()["Translation"][2]);
             auto Rotation = glm::vec3((float)field.value()["Rotation"][0], (float)field.value()["Rotation"][1], (float)field.value()["Rotation"][2]);
             auto Scale = glm::vec3((float)field.value()["Scale"][0], (float)field.value()["Scale"][1], (float)field.value()["Scale"][2]);
-            TransformComponent& t = createdEntity.AddComponent<TransformComponent>();
+            TransformComponent& t = createdEntity.GetComponent<TransformComponent>();
             t.Translation = Translation;
             t.Rotation = Rotation;
             t.Scale = Scale;
