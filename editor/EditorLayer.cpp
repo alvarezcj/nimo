@@ -9,6 +9,7 @@
 void EditorLayer::OnAttach(){
         d.width = 1920;
         d.height = 1080;
+        entityIcon = std::make_shared<nimo::Texture>("menuGrid.png");
         fb = std::make_shared<nimo::FrameBuffer>(d);
         logPanel = new LogPanel();
         statisticsPanel = new StatisticsPanel();
@@ -31,14 +32,14 @@ void EditorLayer::OnAttach(){
 
 		// Headers
         colors[ImGuiCol_MenuBarBg]			= ImColor(16, 16, 16, 255);
-		colors[ImGuiCol_Header]				= ImColor(247, 146, 86, 255);
-		colors[ImGuiCol_HeaderHovered]		= ImColor(247, 146, 86, 125);
-		colors[ImGuiCol_HeaderActive]		= ImColor(247, 146, 86, 255);
+		colors[ImGuiCol_Header]				= ImColor(188, 108, 37, 255);
+		colors[ImGuiCol_HeaderHovered]		= ImColor(188, 108, 37, 125);
+		colors[ImGuiCol_HeaderActive]		= ImColor(188, 108, 37, 255);
 
 		// Buttons
-		colors[ImGuiCol_Button]				= ImColor(247, 146, 86, 200);
+		colors[ImGuiCol_Button]				= ImColor(188, 108, 37, 200);
 		colors[ImGuiCol_ButtonHovered]		= ImColor(251, 209, 162, 150);
-		colors[ImGuiCol_ButtonActive]		= ImColor(247, 146, 86, 150);
+		colors[ImGuiCol_ButtonActive]		= ImColor(188, 108, 37, 150);
 
 		// Frame BG
 		colors[ImGuiCol_FrameBg]			= ImColor(16, 16, 16, 200);
@@ -47,10 +48,10 @@ void EditorLayer::OnAttach(){
 
 		// Tabs
 		colors[ImGuiCol_Tab]				= ImColor(44, 44, 44, 255);
-		colors[ImGuiCol_TabHovered]			= ImColor(247, 146, 86, 255);
-		colors[ImGuiCol_TabActive]			= ImColor(247, 146, 86, 225);
+		colors[ImGuiCol_TabHovered]			= ImColor(188, 108, 37, 255);
+		colors[ImGuiCol_TabActive]			= ImColor(188, 108, 37, 225);
 		colors[ImGuiCol_TabUnfocused]		= ImColor(44, 44, 44, 255);
-		colors[ImGuiCol_TabUnfocusedActive] = ImColor(247, 146, 86, 150);
+		colors[ImGuiCol_TabUnfocusedActive] = ImColor(188, 108, 37, 150);
 
 		// Title
 		colors[ImGuiCol_TitleBg]			= ImColor(16, 16, 16, 255);
@@ -106,7 +107,7 @@ void EditorLayer::OnAttach(){
 		style.IndentSpacing = 20.0f;
         style.WindowPadding = ImVec2(5.f,5.f);
         style.FramePadding = ImVec2(5.f,3.f);
-        style.ItemSpacing = ImVec2(15.f,4.f);
+        style.ItemSpacing = ImVec2(5.f,4.f);
         style.WindowBorderSize = 1.0f;
         style.FrameBorderSize = 0.0f;
         style.GrabMinSize = 10.f;

@@ -45,4 +45,5 @@ class EditorLayer : public nimo::Layer
 
     void OnAttach() override;
     void OnUpdate() override;
+    std::shared_ptr<nimo::Texture> entityIcon;
 };

@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "EditorLayer.h"
 #include "core/Log.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 void InspectorPanel::OnRender()
 {
@@ -10,6 +11,12 @@ void InspectorPanel::OnRender()
     {
         auto ent = scene.second->GetEntity(selectedItem);
         auto entityIdString = ent.GetComponent<nimo::IDComponent>().Id.str();
+        ImGui::Image((ImTextureID)m_editor->entityIcon->GetInternalId(), ImVec2(48, 48));
+        ImGui::SameLine();
+        ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
+        ImGui::InputText(("##Label##" + entityIdString).c_str(), &ent.GetComponent<nimo::LabelComponent>().Label);
+        ImGui::TextDisabled(entityIdString.c_str());
+        ImGui::Spacing();
         if(ent.HasComponent<nimo::TransformComponent>())
         {
             if (ImGui::CollapsingHeader((std::string("Transform##")+entityIdString).c_str()))

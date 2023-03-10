@@ -11,6 +11,7 @@ public:
     Texture(const std::string& path);
     ~Texture();
     void bind(unsigned int slot);
+    unsigned int GetInternalId() {return m_id;}
 
     static AssetType GetType(){ return AssetType::Texture;}
 

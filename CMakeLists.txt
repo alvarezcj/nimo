@@ -35,6 +35,7 @@ ${CMAKE_SOURCE_DIR}/third_party/imgui/imgui-docking/imgui_widgets.cpp
 ${CMAKE_SOURCE_DIR}/third_party/imgui/imgui-docking/imgui_demo.cpp
 ${CMAKE_SOURCE_DIR}/third_party/imgui/imgui-docking/backends/imgui_impl_glfw.cpp
 ${CMAKE_SOURCE_DIR}/third_party/imgui/imgui-docking/backends/imgui_impl_opengl3.cpp
+${CMAKE_SOURCE_DIR}/third_party/imgui/imgui-docking/misc/cpp/imgui_stdlib.cpp
 )
 set(ImGUIIncludes
 ${CMAKE_SOURCE_DIR}/third_party/imgui/imgui-docking
