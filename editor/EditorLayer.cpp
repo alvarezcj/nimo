@@ -326,13 +326,13 @@ void EditorLayer::OnAttach(){
                 }
                 ImGui::EndMenu(); 
             }
-            if (ImGui::BeginMenu("Window"))
+            if (ImGui::BeginMenu("View"))
             {
-                ImGui::MenuItem("Scene", NULL, &logPanel->open);
-                ImGui::MenuItem("Game", NULL, &logPanel->open);
-                ImGui::MenuItem("Statistics", NULL, &logPanel->open);
-                ImGui::MenuItem("Inspector", NULL, &logPanel->open);
+                ImGui::MenuItem("Scene", NULL, &sceneContentsPanel->open);
+                ImGui::MenuItem("Game", NULL, &gameViewPanel->open);
+                ImGui::MenuItem("Inspector", NULL, &inspectorPanel->open);
                 ImGui::MenuItem("Log", NULL, &logPanel->open);
+                ImGui::MenuItem("Statistics", NULL, &statisticsPanel->open);
                 ImGui::EndMenu(); 
             }
         }
