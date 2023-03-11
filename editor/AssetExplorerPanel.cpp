@@ -16,18 +16,19 @@ void AssetExplorerPanel::OnRender()
         ImGui::PopStyleVar();
     }
 }
-void AssetExplorerPanel::UpdateDirectoryInAssetManager(const std::filesystem::path& path)
-{
-    // for (const auto& entry : std::filesystem::directory_iterator(path))
-    // {
-
-    // }
-}
 
 void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
 {
     ImGuiTreeNodeFlags node_flags = base_flags;
+    if(selectedPath == path)
+        node_flags |= ImGuiTreeNodeFlags_Selected;
     bool open = ImGui::TreeNodeEx(("##" + path.filename().string()).c_str(), node_flags);
+    // Check if selected
+    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+    {
+        selectedPath = path;
+        NIMO_DEBUG("Selected asset: {}", path.string());
+    }
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
     {
         ImGui::SetDragDropPayload("NIMO_ASSET_FOLDER", path.string().c_str(), path.string().size() + 1);
@@ -89,8 +90,18 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                 PaintDirectory(entry.path());
             }
             else {
-                node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
-                ImGui::TreeNodeEx(("##" + entry.path().filename().string()).c_str(), node_flags);
+                ImGuiTreeNodeFlags leaf_flags = base_flags;
+                leaf_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
+                if(selectedPath == entry.path())
+                    leaf_flags |= ImGuiTreeNodeFlags_Selected;
+                ImGui::TreeNodeEx(("##" + entry.path().filename().string()).c_str(), leaf_flags);
+                // Check if selected
+                if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+                {
+                    selectedPath = entry.path();
+                    NIMO_DEBUG("Selected asset: {}", entry.path().string());
+                }
+                
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
                 {
                     ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
