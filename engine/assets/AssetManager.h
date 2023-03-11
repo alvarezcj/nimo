@@ -104,12 +104,18 @@ public:
 		return res;
 	}
 
-	static AssetMetadata GetMetadata(AssetId id);
+	static const AssetMetadata& GetMetadata(const std::filesystem::path& path);
+	static const AssetMetadata& GetMetadata(AssetId id);
+	static const AssetMetadata& GetMetadata(const std::shared_ptr<Asset>& asset) { return GetMetadata(asset->id); }
 
 	static void LoadAssetIndex(const std::string& filename);
 	static void WriteIndex();
+	static std::filesystem::path GetRelativePath(const std::filesystem::path& filepath);
+	static void UpdatePath(AssetId id, const std::filesystem::path& newPath);
 
 private:
+	static AssetMetadata& GetMetadataRef(AssetId handle);
+
 	static AssetIndex index;
 	static std::unordered_map<std::type_index, std::unordered_map<AssetId, std::shared_ptr<Asset>>> m_loadedAssets;
 };

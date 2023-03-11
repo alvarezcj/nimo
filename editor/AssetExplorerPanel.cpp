@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "project/Project.h"
 #include "core/Log.h"
+#include "core/FileHandling.h"
 #include <functional>
 
 const static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_FramePadding;
@@ -14,6 +15,13 @@ void AssetExplorerPanel::OnRender()
             PaintDirectory(path);
         ImGui::PopStyleVar();
     }
+}
+void AssetExplorerPanel::UpdateDirectoryInAssetManager(const std::filesystem::path& path)
+{
+    // for (const auto& entry : std::filesystem::directory_iterator(path))
+    // {
+
+    // }
 }
 
 void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
@@ -32,11 +40,38 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
         {
             std::filesystem::path payloadPath = std::string((char*)payload->Data);
             NIMO_DEBUG("Received drag drop folder: {}", payloadPath.string());
+            std::vector<std::pair<std::filesystem::path ,nimo::AssetId>> toUpdate;
+            for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(payloadPath))
+            {
+                auto info = nimo::AssetManager::GetMetadata(dir_entry.path());
+                if(info.id.valid()) // Found in asset manager
+                {
+                    toUpdate.push_back(std::make_pair(dir_entry.path().lexically_relative(payloadPath), info.id));
+                }
+            }
+            if(nimo::FileHandling::Move(payloadPath, path / payloadPath.filename()))
+            {
+                for (auto const& toUpdatePair : toUpdate)
+                {
+                    nimo::AssetManager::UpdatePath(toUpdatePair.second, path / payloadPath.filename()/toUpdatePair.first);
+                    auto info = nimo::AssetManager::GetMetadata(toUpdatePair.second);
+                    NIMO_INFO("Updated filepath in registry {}", info.filepath.string());
+                }
+            }
         }
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
         {
             std::filesystem::path payloadPath = std::string((char*)payload->Data);
-            NIMO_DEBUG("Received drag drop asset file: {}", payloadPath.string());
+            if(nimo::FileHandling::Move(payloadPath, path / payloadPath.filename()))
+            {
+                auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                if(info.id.valid()) // Found in asset manager
+                {
+                    nimo::AssetManager::UpdatePath(info.id, path / payloadPath.filename());
+                    info = nimo::AssetManager::GetMetadata(info.id);
+                    NIMO_INFO("Updated filepath in registry {}", info.filepath.string());
+                }
+            }
         }
         ImGui::EndDragDropTarget();
     }

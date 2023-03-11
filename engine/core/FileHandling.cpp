@@ -15,6 +15,15 @@ bool nimo::FileHandling::Copy(const std::filesystem::path& from, const std::file
     return true;
 }
 
+bool nimo::FileHandling::Move(const std::filesystem::path& from, const std::filesystem::path& to)
+{
+    if (nimo::FileHandling::Exists(to))
+        return false;
+
+    std::filesystem::rename(from, to);
+    return true;
+}
+
 bool nimo::FileHandling::CreateDiretory(const std::filesystem::path& folderpath)
 {
     NIMO_DEBUG("Creating directory {}", folderpath.string());

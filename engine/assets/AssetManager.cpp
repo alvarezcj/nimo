@@ -57,7 +57,51 @@ void nimo::AssetManager::WriteIndex()
     fout << j.dump(4);
 }
 
-nimo::AssetMetadata nimo::AssetManager::GetMetadata(nimo::AssetId id)
+const nimo::AssetMetadata& nimo::AssetManager::GetMetadata(nimo::AssetId id)
 {
     return index[id];
 }
+
+const nimo::AssetMetadata& nimo::AssetManager::GetMetadata(const std::filesystem::path& path)
+{
+    const auto relativePath = GetRelativePath(path);
+
+    for (auto& [id, metadata] : index)
+    {
+        if (metadata.filepath == relativePath)
+            return metadata;
+    }
+
+    return {};
+}
+
+std::filesystem::path nimo::AssetManager::GetRelativePath(const std::filesystem::path& filepath)
+{
+    std::filesystem::path relativePath = filepath.lexically_normal();
+    std::string temp = filepath.string();
+    if (temp.find(Project::GetAssetsFolderPath().string()) != std::string::npos)
+    {
+        relativePath = std::filesystem::relative(filepath, Project::GetAssetsFolderPath());
+        if (relativePath.empty())
+        {
+            relativePath = filepath.lexically_normal();
+        }
+    }
+    NIMO_DEBUG("{} relative path is: {}", filepath.string(), relativePath.string());
+    return relativePath;
+}
+
+void nimo::AssetManager::UpdatePath(AssetId id, const std::filesystem::path& newPath)
+{
+    AssetMetadata& metadata = GetMetadataRef(id);
+    if (!metadata.id.valid())
+        return;
+    metadata.filepath = GetRelativePath(newPath);
+    WriteIndex();
+}
+
+nimo::AssetMetadata& nimo::AssetManager::GetMetadataRef(AssetId id)
+{
+    return index[id];
+}
+
