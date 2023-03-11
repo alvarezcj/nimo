@@ -26,6 +26,25 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
         ImGui::TreeNodeEx((entityName + "##" + scene->id.str()).c_str(), node_flags);
     }
 
+    // Popup right click
+    bool mustDestroy = false;
+    if (ImGui::BeginPopupContextItem())
+    {
+        if (ImGui::Selectable("Create Empty")){
+            scene->CreateEntityWithParent(ent);
+        }
+        if (ImGui::Selectable("Delete")){
+            mustDestroy = true;
+        }
+        ImGui::EndPopup();
+    }
+    if(mustDestroy)
+    {
+        scene->DestroyEntity(ent);
+        m_editor->inspectorPanel->ResetViewItem();
+        return;
+    }
+
     // Check if selected
     if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
     {
@@ -92,6 +111,13 @@ void SceneContentsPanel::OnRender()
         ImVec2 rectMax;
         bool res;
         bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str());
+        if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+        {
+            if (ImGui::Selectable("Create Empty")){
+                scene->CreateEntity();
+            }
+            ImGui::EndPopup();
+        }
         if (ImGui::BeginDragDropTarget())
         {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ENTITY_ID"))

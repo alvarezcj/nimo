@@ -4,12 +4,15 @@
 #include "core/GUID.h"
 
 namespace nimo{
+	class Scene;
     class Entity{
     public:
         Entity(entt::entity handle, entt::registry& registry);
         ~Entity();
 
 		GUID ID() const;
+		GUID Parent() const;
+		const std::vector<GUID>& Children() const;
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
@@ -62,5 +65,7 @@ namespace nimo{
     private:
         entt::entity m_handle = entt::null;
         entt::registry& m_registry;
+
+		friend class Scene;
     };
 };

@@ -16,3 +16,11 @@ nimo::GUID nimo::Entity::ID() const
 {
     return GetComponent<IDComponent>().Id;
 }
+nimo::GUID nimo::Entity::Parent() const
+{
+    return GetComponent<FamilyComponent>().Parent;
+}
+const std::vector<nimo::GUID>& nimo::Entity::Children() const
+{
+    return GetComponent<FamilyComponent>().Children;
+}
