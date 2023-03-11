@@ -5,6 +5,7 @@
 #include "GameViewPanel.h"
 #include "SceneContentsPanel.h"
 #include "InspectorPanel.h"
+#include "AssetExplorerPanel.h"
 
 void EditorLayer::OnAttach(){
         d.width = 1920;
@@ -16,6 +17,7 @@ void EditorLayer::OnAttach(){
         gameViewPanel = new GameViewPanel(this);
         sceneContentsPanel = new SceneContentsPanel(this);
         inspectorPanel = new InspectorPanel(this);
+        assetExplorerPanel = new AssetExplorerPanel(this);
 
         auto& style = ImGui::GetStyle();
 		auto& colors = ImGui::GetStyle().Colors;
@@ -350,6 +352,9 @@ void EditorLayer::OnAttach(){
 
         ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
         inspectorPanel->Render();
+
+        ImGui::SetNextWindowSize(ImVec2(1000, 200), ImGuiCond_FirstUseEver);
+        assetExplorerPanel->Render();
 
         ImGui::Render();
 

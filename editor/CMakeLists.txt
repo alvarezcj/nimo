@@ -7,6 +7,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/EditorPanel.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/GameViewPanel.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/SceneContentsPanel.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/InspectorPanel.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/AssetExplorerPanel.cpp 
 )
 set(LIBS
 nimo_engine

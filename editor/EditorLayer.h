@@ -26,12 +26,14 @@ class StatisticsPanel;
 class GameViewPanel;
 class SceneContentsPanel;
 class InspectorPanel;
+class AssetExplorerPanel;
 
 class EditorLayer : public nimo::Layer
 {
     friend class GameViewPanel;
     friend class SceneContentsPanel;
     friend class InspectorPanel;
+    friend class AssetExplorerPanel;
 
     nimo::FrameBuffer::Details d;
     std::shared_ptr<nimo::FrameBuffer> fb;
@@ -40,6 +42,7 @@ class EditorLayer : public nimo::Layer
     GameViewPanel* gameViewPanel;
     InspectorPanel* inspectorPanel;
     SceneContentsPanel* sceneContentsPanel;
+    AssetExplorerPanel* assetExplorerPanel;
     nimo::GUID lastModifiedScene;
 
     void OnAttach() override;
