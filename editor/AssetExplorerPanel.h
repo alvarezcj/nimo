@@ -13,11 +13,21 @@ struct AssetExplorerPanel : public EditorPanel
         , EditorPanel("AssetExplorer")
         , folderIcon(std::make_shared<nimo::Texture>("icon_folder.png"))
         , fileIcon(std::make_shared<nimo::Texture>("icon_file.png"))
-    {}
+    {
+        AssetExplorerPanel::mapExtensionIcon[".nshader"] = std::make_shared<nimo::Texture>("icon_polaroid.png");
+        AssetExplorerPanel::mapExtensionIcon[".nmat"] = std::make_shared<nimo::Texture>("icon_paintroll.png");
+        AssetExplorerPanel::mapExtensionIcon[".nscene"] = std::make_shared<nimo::Texture>("icon_castle.png");
+        AssetExplorerPanel::mapExtensionIcon[".txt"] = std::make_shared<nimo::Texture>("icon_file_alt.png");
+        AssetExplorerPanel::mapExtensionIcon[".png"] = std::make_shared<nimo::Texture>("icon_camera.png");
+        AssetExplorerPanel::mapExtensionIcon[".jpg"] = std::make_shared<nimo::Texture>("icon_camera.png");
+        AssetExplorerPanel::mapExtensionIcon[".obj"] = std::make_shared<nimo::Texture>("icon_cube.png");
+        AssetExplorerPanel::mapExtensionIcon[".fbx"] = std::make_shared<nimo::Texture>("icon_cube.png");
+    }
     void PaintDirectory(const std::filesystem::path& path);
 private:
     void OnRender();
     EditorLayer* m_editor;
     std::shared_ptr<nimo::Texture> folderIcon;
     std::shared_ptr<nimo::Texture> fileIcon;
+    inline static std::unordered_map<std::string, std::shared_ptr<nimo::Texture>> mapExtensionIcon = {};
 };
