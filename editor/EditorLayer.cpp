@@ -95,6 +95,8 @@ void EditorLayer::OnAttach(){
 		colors[ImGuiCol_PopupBg]			= ImColor(66, 66, 66, 255);
 		colors[ImGuiCol_Border]				= ImColor(66, 66, 66, 255);
 
+        colors[ImGuiCol_DragDropTarget] = ImColor(200,200,200, 255);
+
 		// Tables
 		// colors[ImGuiCol_TableHeaderBg]		= ImGui::ColorConvertU32ToFloat4(Colours::Theme::groupHeader);
 		// colors[ImGuiCol_TableBorderLight]	= ImGui::ColorConvertU32ToFloat4(Colours::Theme::backgroundDark);

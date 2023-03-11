@@ -20,10 +20,31 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
 {
     ImGuiTreeNodeFlags node_flags = base_flags;
     bool open = ImGui::TreeNodeEx(("##" + path.filename().string()).c_str(), node_flags);
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+    {
+        ImGui::SetDragDropPayload("NIMO_ASSET_FOLDER", path.string().c_str(), path.string().size() + 1);
+        ImGui::Text(path.filename().string().c_str());
+        ImGui::EndDragDropSource();
+    }
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FOLDER"))
+        {
+            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+            NIMO_DEBUG("Received drag drop folder: {}", payloadPath.string());
+        }
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+        {
+            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+            NIMO_DEBUG("Received drag drop asset file: {}", payloadPath.string());
+        }
+        ImGui::EndDragDropTarget();
+    }
     ImGui::SameLine();
     ImGui::Image((ImTextureID)folderIcon->GetInternalId(), ImVec2(28,28), ImVec2(0, 1), ImVec2(1, 0));
     ImGui::SameLine();
     ImGui::Text(path.filename().string().c_str());
+
     if (open)
     {
         for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -35,6 +56,12 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
             else {
                 node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
                 ImGui::TreeNodeEx(("##" + entry.path().filename().string()).c_str(), node_flags);
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+                {
+                    ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
+                    ImGui::Text(entry.path().filename().string().c_str());
+                    ImGui::EndDragDropSource();
+                }
                 ImGui::SameLine();
                 if(entry.path().has_extension())
                 {
