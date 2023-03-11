@@ -10,7 +10,7 @@ struct AssetExplorerPanel : public EditorPanel
 {
     AssetExplorerPanel(EditorLayer* editor) 
         : m_editor(editor)
-        , EditorPanel("AssetExplorer")
+        , EditorPanel("Asset Explorer")
         , folderIcon(std::make_shared<nimo::Texture>("icon_folder.png"))
         , fileIcon(std::make_shared<nimo::Texture>("icon_file.png"))
     {

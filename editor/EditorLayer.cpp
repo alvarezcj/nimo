@@ -125,7 +125,7 @@ void EditorLayer::OnAttach(){
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(NULL);
 
-        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_NoWindowMenuButton;
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
