@@ -116,7 +116,19 @@ void InspectorPanel::OnRender()
 
         if(ImGui::Button(label))
         {
-
+            ImGui::OpenPopup("add_component_popup");
+        }
+        if (ImGui::BeginPopup("add_component_popup"))
+        {
+            ImGui::CollapsingHeader("\tComponents...", ImGuiTreeNodeFlags_Leaf);
+            ImGui::Separator();
+            if (ImGui::Selectable("Mesh Renderer")){
+                ent.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::MeshSource>("Objects/cube/cube.obj");
+                ent.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/test.nmat");
+                ent.GetComponent<nimo::MeshRendererComponent>().mesh = std::make_shared<nimo::Mesh>(ent.GetComponent<nimo::MeshComponent>().source);
+            }
+            if (ImGui::Selectable("Camera")){}
+            ImGui::EndPopup();
         }
     }
 }
