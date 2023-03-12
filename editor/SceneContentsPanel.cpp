@@ -165,18 +165,6 @@ void SceneContentsPanel::OnRender()
         {
             m_editor->lastModifiedScene = scene->id;
         }
-        if(ImGui::Button("Add cube entity..."))
-        {
-            nimo::Entity parent = scene->CreateEntity();
-            nimo::Entity childCube = scene->CreateEntity();
-            childCube.GetComponent<nimo::FamilyComponent>().Parent = parent.GetComponent<nimo::IDComponent>().Id;
-            childCube.GetComponent<nimo::TransformComponent>().Translation = {1.0f, 1.0f, -3.0f};
-            childCube.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::MeshSource>("Objects/cube/cube.obj");
-            childCube.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/test.nmat");
-            childCube.GetComponent<nimo::MeshRendererComponent>().mesh = std::make_shared<nimo::Mesh>(childCube.GetComponent<nimo::MeshComponent>().source);
-
-            parent.GetComponent<nimo::FamilyComponent>().Children.push_back(childCube.GetComponent<nimo::IDComponent>().Id);
-        }
     }
 
 }
