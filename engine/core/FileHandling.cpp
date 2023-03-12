@@ -34,3 +34,7 @@ bool nimo::FileHandling::Exists(const std::filesystem::path& filepath)
 {
     return std::filesystem::exists(filepath);
 }
+bool nimo::FileHandling::IsDirectory(const std::filesystem::path& filepath)
+{
+    return std::filesystem::is_directory(filepath);
+}
