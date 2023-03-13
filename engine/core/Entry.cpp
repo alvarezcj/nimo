@@ -8,5 +8,4 @@ int main(int argc, char** argv)
 	app->Run();
 	delete app;
     return 0;
-    nimo::Log::Cleanup();
 }

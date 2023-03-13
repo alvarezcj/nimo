@@ -30,6 +30,17 @@ class AssetExplorerPanel;
 
 class EditorLayer : public nimo::Layer
 {
+public:
+    ~EditorLayer()
+    {
+        delete logPanel;
+        delete statisticsPanel;
+        delete gameViewPanel;
+        delete inspectorPanel;
+        delete sceneContentsPanel;
+        delete assetExplorerPanel;
+    }
+private:
     friend class GameViewPanel;
     friend class SceneContentsPanel;
     friend class InspectorPanel;
@@ -44,6 +55,8 @@ class EditorLayer : public nimo::Layer
     SceneContentsPanel* sceneContentsPanel;
     AssetExplorerPanel* assetExplorerPanel;
     nimo::GUID lastModifiedScene;
+
+
 
     void OnAttach() override;
     void OnUpdate(float deltaTime) override;

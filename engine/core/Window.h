@@ -26,7 +26,7 @@ namespace nimo{
 		std::pair<float, float> GetWindowPos() const;
 
         void* GetNativeHandle() const;
-
+ 
         void SetVSync(bool enabled);
 		bool IsVSync() const;
 		void SetResizable(bool resizable) const;

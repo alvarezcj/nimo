@@ -5,10 +5,14 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "core/Log.h"
+#include "core/EventManager.h"
+#include "core/WindowEvents.h"
 
 struct nimo::Window::impl{
     WindowDescription description;
     GLFWwindow* handle;
+    int width;
+    int height;
 };
 
 nimo::Window::Window(const WindowDescription& description)
@@ -22,17 +26,125 @@ nimo::Window::Window(const WindowDescription& description)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_DECORATED, description.decorated);
+    
+    if(description.fullscreen)
+    {
+        GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
 
-    pimpl->handle = glfwCreateWindow(description.width, description.height, description.title.c_str(), NULL, NULL);
+        glfwWindowHint(GLFW_DECORATED, false);
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+        pimpl->handle = glfwCreateWindow(mode->width, mode->height, description.title.c_str(), primaryMonitor, nullptr);
+    }
+    else
+    {
+        pimpl->handle = glfwCreateWindow(description.width, description.height, description.title.c_str(), NULL, NULL);
+    }
     if (!pimpl->handle)
     {
         NIMO_CRITICAL("Window or OpenGL context creation failed");
         glfwTerminate();
     }
     glfwMakeContextCurrent(pimpl->handle);
+    glfwMakeContextCurrent(pimpl->handle);
+    glfwSetWindowUserPointer(pimpl->handle, reinterpret_cast<void*>(this));
+    
+    glfwSetWindowSizeCallback(pimpl->handle, [](GLFWwindow* window, int width, int height)
+    {
+        auto data = ((Window*)glfwGetWindowUserPointer(window));
+        EventManager::Publish(WindowResizeEvent(width,height));
+    });
+    glfwSetWindowCloseCallback(pimpl->handle, [](GLFWwindow* window)
+    {
+        auto data = ((Window*)glfwGetWindowUserPointer(window));
+        EventManager::Publish(WindowCloseEvent());
+    });
+    glfwSetWindowIconifyCallback(pimpl->handle, [](GLFWwindow* window, int iconified)
+    {
+        EventManager::Publish(WindowMinimizedEvent());
+    });
+
+    glfwSetKeyCallback(pimpl->handle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        switch (action)
+        {
+        case GLFW_PRESS:
+        {
+            EventManager::Publish(KeyPressedEvent(key));
+            break;
+        }
+        case GLFW_RELEASE:
+        {
+            EventManager::Publish(KeyReleasedEvent(key));
+            break;
+        }
+        case GLFW_REPEAT:
+        {
+            EventManager::Publish(KeyPressedEvent(key));
+            break;
+        }
+        }
+    });
+
+    // glfwSetCharCallback(pimpl->handle, [](GLFWwindow* window, uint32_t codepoint)
+    //     {
+    //         auto data = ((Window*)glfwGetWindowUserPointer(window));
+    //         NIMO_DEBUG("glfwSetCharCallback");
+    //     });
+
+    glfwSetMouseButtonCallback(pimpl->handle, [](GLFWwindow* window, int button, int action, int mods)
+    {
+        switch (action)
+        {
+        case GLFW_PRESS:
+        {
+            EventManager::Publish(MouseButtonPressedEvent(button));
+            break;
+        }
+        case GLFW_RELEASE:
+        {
+            EventManager::Publish(MouseButtonReleasedEvent(button));
+            break;
+        }
+        }
+    });
+
+    glfwSetScrollCallback(pimpl->handle, [](GLFWwindow* window, double xOffset, double yOffset)
+    {
+        auto data = ((Window*)glfwGetWindowUserPointer(window));
+        EventManager::Publish(MouseScrollEvent(xOffset, yOffset));
+    });
+    glfwSetCursorPosCallback(pimpl->handle, [](GLFWwindow* window, double x, double y)
+    {
+        auto data = ((Window*)glfwGetWindowUserPointer(window));
+        EventManager::Publish(MousePositionEvent(x, y));
+    });
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         NIMO_CRITICAL("Failed to initialize OpenGL context");
     }
+
+    // Update window size to actual size
+    {
+        int width, height;
+        glfwGetWindowSize(pimpl->handle, &width, &height);
+        pimpl->width = width;
+        pimpl->height = height;
+    }
+
+    // // Set icon
+    // {
+    //     GLFWimage icon;
+    //     int channels;
+    //     icon.pixels = stbi_load("Resources/Editor/H_logo_square.png", &icon.width, &icon.height, &channels, 4);
+    //     glfwSetWindowIcon(m_Window, 1, &icon);
+    //     stbi_image_free(icon.pixels);
+    // }
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
