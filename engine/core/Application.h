@@ -3,7 +3,7 @@
 #include "Window.h"
 #include "Layer.h"
 #include <memory>
-#include "WindowEvents.h"
+#include "events/WindowEvents.h"
 
 namespace nimo
 {

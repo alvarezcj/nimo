@@ -2,7 +2,7 @@
 
 #include "Log.h"
 #include "glfw/glfw3.h"
-#include "core/EventManager.h"
+#include "events/EventManager.h"
 
 nimo::Application* nimo::Application::instance = nullptr;
 

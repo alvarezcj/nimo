@@ -5,8 +5,10 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "core/Log.h"
-#include "core/EventManager.h"
-#include "core/WindowEvents.h"
+#include "events/EventManager.h"
+#include "events/WindowEvents.h"
+#include "events/KeyEvents.h"
+#include "events/MouseEvents.h"
 
 struct nimo::Window::impl{
     WindowDescription description;
