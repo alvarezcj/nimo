@@ -13,6 +13,7 @@ struct nimo::Window::impl{
     GLFWwindow* handle;
     int width;
     int height;
+    std::string title;
 };
 
 nimo::Window::Window(const WindowDescription& description)
@@ -165,7 +166,6 @@ nimo::Window::Window(const WindowDescription& description)
 
 
     // configure global opengl state
-    // -----------------------------
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -193,4 +193,38 @@ void nimo::Window::SwapBuffers()
 void* nimo::Window::GetNativeHandle() const
 {
     return pimpl->handle;
+}
+
+void nimo::Window::VSync(bool enabled)
+{
+    glfwSwapInterval(enabled);
+    pimpl->description.vsync;
+}
+bool nimo::Window::VSync() const
+{
+    return pimpl->description.vsync;
+}
+void nimo::Window::SetResizable(bool resizable) const
+{
+    glfwSetWindowAttrib(pimpl->handle, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+}
+void nimo::Window::Maximize()
+{
+    glfwMaximizeWindow(pimpl->handle);
+}
+void nimo::Window::CenterWindow()
+{
+    const GLFWvidmode* videmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int x = (videmode->width / 2) - (pimpl->width / 2);
+    int y = (videmode->height / 2) - (pimpl->height / 2);
+    glfwSetWindowPos(pimpl->handle, x, y);
+}
+const std::string& nimo::Window::GetTitle() const
+{
+    return pimpl->title;
+}
+void nimo::Window::SetTitle(const std::string& title)
+{
+    pimpl->title = title;
+    glfwSetWindowTitle(pimpl->handle, pimpl->title.c_str());
 }

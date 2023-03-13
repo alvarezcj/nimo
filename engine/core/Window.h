@@ -27,8 +27,8 @@ namespace nimo{
 
         void* GetNativeHandle() const;
  
-        void SetVSync(bool enabled);
-		bool IsVSync() const;
+        void VSync(bool enabled);
+		bool VSync() const;
 		void SetResizable(bool resizable) const;
 		void Maximize();
 		void CenterWindow();
