@@ -27,6 +27,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/scene/SceneSerializer.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/project/Project.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/project/ProjectSerializer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scene/Entity.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/input/Input.cpp 
 )
 set(LIBS
 glad
