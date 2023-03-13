@@ -15,6 +15,8 @@ namespace nimo
         void Run();
         void Close();
 
+        static inline Application& Instance(){ return *instance;}
+
         virtual void OnStart(){}
         virtual void OnUpdate(float deltaTime){}
         virtual void OnClose(){}
@@ -33,5 +35,7 @@ namespace nimo
         float m_frameTime;
         float m_lastFrameTime;
         bool m_appRunning;
+
+        static Application* instance;
     };
 }

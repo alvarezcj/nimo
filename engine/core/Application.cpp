@@ -4,9 +4,13 @@
 #include "glfw/glfw3.h"
 #include "core/EventManager.h"
 
+nimo::Application* nimo::Application::instance = nullptr;
+
 nimo::Application::Application()
     : m_appRunning(true)
 {
+    instance = this;
+    
     NIMO_INFO("Created nimo::Application");
     EventManager::Subscribe(this, &Application::OnWindowClose);
     EventManager::Subscribe(this, &Application::OnWindowResize);

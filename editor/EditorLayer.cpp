@@ -8,6 +8,8 @@
 #include "AssetExplorerPanel.h"
 #include "misc/cpp/imgui_stdlib.h"
 
+#include "core/Application.h"
+
 void EditorLayer::OnAttach()
 {
     d.width = 1920;
@@ -247,7 +249,7 @@ void EditorLayer::OnAttach()
                 ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
                 if (ImGui::MenuItem("Exit"))
                 {
-                    
+                    nimo::Application::Instance().Close();
                 }
                 ImGui::EndMenu(); 
             }
