@@ -1,6 +1,7 @@
 #include "Application.h"
 
 #include "Log.h"
+#include "glfw/glfw3.h"
 
 nimo::Application::Application()
 {
@@ -14,9 +15,13 @@ void nimo::Application::Run()
     while(!w->ShouldClose())
     {
         w->ProcessEvents();
+        OnUpdate(m_frameTime);
         for(auto l : m_layers)
-            l->OnUpdate();
+            l->OnUpdate(m_frameTime);
         w->SwapBuffers();
+        float time = Time();
+        m_frameTime = time - m_lastFrameTime;
+        m_lastFrameTime = time;
     }
     OnClose();
 }
@@ -39,4 +44,9 @@ void nimo::Application::RemoveLayer(Layer* layer)
         m_layers.erase(it);
     }
     layer->OnDetach();
+}
+
+float nimo::Application::Time()
+{
+    return (float)glfwGetTime();
 }

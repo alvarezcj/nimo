@@ -119,7 +119,7 @@ void EditorLayer::OnAttach()
     style.GrabMinSize = 10.f;
     style.GrabRounding = 3.f;
 }
-    void EditorLayer::OnUpdate() 
+    void EditorLayer::OnUpdate(float deltaTime) 
     {
     
         ImGui_ImplOpenGL3_NewFrame();
