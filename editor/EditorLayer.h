@@ -27,6 +27,7 @@ class GameViewPanel;
 class SceneContentsPanel;
 class InspectorPanel;
 class AssetExplorerPanel;
+class SceneViewPanel;
 
 class EditorLayer : public nimo::Layer
 {
@@ -39,18 +40,21 @@ public:
         delete inspectorPanel;
         delete sceneContentsPanel;
         delete assetExplorerPanel;
+        delete sceneViewPanel;
     }
 private:
     friend class GameViewPanel;
     friend class SceneContentsPanel;
     friend class InspectorPanel;
     friend class AssetExplorerPanel;
+    friend class SceneViewPanel;
 
     nimo::FrameBuffer::Details d;
     std::shared_ptr<nimo::FrameBuffer> fb;
     LogPanel* logPanel;
     StatisticsPanel* statisticsPanel;
     GameViewPanel* gameViewPanel;
+    SceneViewPanel* sceneViewPanel;
     InspectorPanel* inspectorPanel;
     SceneContentsPanel* sceneContentsPanel;
     AssetExplorerPanel* assetExplorerPanel;

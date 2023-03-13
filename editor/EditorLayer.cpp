@@ -3,6 +3,7 @@
 #include "LogPanel.h"
 #include "StatisticsPanel.h"
 #include "GameViewPanel.h"
+#include "SceneViewPanel.h"
 #include "SceneContentsPanel.h"
 #include "InspectorPanel.h"
 #include "AssetExplorerPanel.h"
@@ -19,6 +20,7 @@ void EditorLayer::OnAttach()
     logPanel = new LogPanel();
     statisticsPanel = new StatisticsPanel();
     gameViewPanel = new GameViewPanel(this);
+    sceneViewPanel = new SceneViewPanel(this);
     sceneContentsPanel = new SceneContentsPanel(this);
     inspectorPanel = new InspectorPanel(this);
     assetExplorerPanel = new AssetExplorerPanel(this);
@@ -311,6 +313,8 @@ void EditorLayer::OnAttach()
         
         ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
         gameViewPanel->Render();
+        ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+        sceneViewPanel->Render();
 
         ImGui::SetNextWindowSize(ImVec2(600, 100), ImGuiCond_FirstUseEver);
         statisticsPanel->Render();
