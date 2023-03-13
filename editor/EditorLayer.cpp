@@ -255,11 +255,30 @@ void EditorLayer::OnAttach()
                 }
                 ImGui::EndMenu(); 
             }
+            if (ImGui::BeginMenu("Assets"))
+            {
+                if (ImGui::BeginMenu("Create"))
+                {
+                    if(ImGui::MenuItem("Folder")){}
+                    ImGui::Separator();
+                    if(ImGui::MenuItem("C# Script")){}
+                    if(ImGui::MenuItem("Shader")){}
+                    if(ImGui::MenuItem("Material")){}
+                    ImGui::Separator();
+                    if(ImGui::MenuItem("Scene")){}
+                    ImGui::EndMenu(); 
+                }
+                if(ImGui::MenuItem("Show in Explorer")){}
+                if(ImGui::MenuItem("Import New Asset...")){}
+                ImGui::EndMenu(); 
+            }
             if (ImGui::BeginMenu("View"))
             {
                 ImGui::MenuItem("Scene", NULL, &sceneContentsPanel->open);
                 ImGui::MenuItem("Game", NULL, &gameViewPanel->open);
+                ImGui::MenuItem("Scene View", NULL, &sceneViewPanel->open);
                 ImGui::MenuItem("Inspector", NULL, &inspectorPanel->open);
+                ImGui::MenuItem("Asset Explorer", NULL, &assetExplorerPanel->open);
                 ImGui::MenuItem("Log", NULL, &logPanel->open);
                 ImGui::MenuItem("Statistics", NULL, &statisticsPanel->open);
                 ImGui::EndMenu(); 
