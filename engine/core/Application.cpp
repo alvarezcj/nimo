@@ -6,8 +6,9 @@
 
 nimo::Application* nimo::Application::instance = nullptr;
 
-nimo::Application::Application()
+nimo::Application::Application(const ApplicationDescription& description)
     : m_appRunning(true)
+    , m_appDescription(description)
 {
     instance = this;
     
@@ -15,13 +16,16 @@ nimo::Application::Application()
     EventManager::Subscribe(this, &Application::OnWindowClose);
     EventManager::Subscribe(this, &Application::OnWindowResize);
     WindowDescription windowDesc;
-    windowDesc.title = "Nimo - Default Application";
-    windowDesc.width = 1920;
-    windowDesc.height = 1080;
-    windowDesc.fullscreen = false;
-    windowDesc.decorated = true;
-    windowDesc.vsync = true;
+    windowDesc.title = description.title;
+    windowDesc.width = description.windowWidth;
+    windowDesc.height = description.windowHeight;
+    windowDesc.fullscreen = description.fullscreen;
+    windowDesc.decorated = description.windowHeight;
+    windowDesc.vsync = description.vsync;
     m_window =  std::make_unique<Window>(windowDesc);
+
+    if(description.startMaximized)
+        m_window->Maximize();
 }
 void nimo::Application::Run()
 {

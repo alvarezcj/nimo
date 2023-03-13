@@ -6,8 +6,8 @@
 class MyApp : public nimo::Application
 {
 public:
-    MyApp()
-        : Application()
+    MyApp(const nimo::ApplicationDescription& desc)
+        : Application(desc)
     {
         NIMO_DEBUG( "My app constructor");
         editorLayer = new EditorLayer();
@@ -24,5 +24,7 @@ public:
 
 nimo::Application* CreateApplication()
 {
-    return new MyApp();
+    nimo::ApplicationDescription appDesc;
+    appDesc.title = "Nimo Editor";
+    return new MyApp(appDesc);
 }
