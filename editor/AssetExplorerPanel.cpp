@@ -26,7 +26,7 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
         node_flags |= ImGuiTreeNodeFlags_Selected;
     bool open = ImGui::TreeNodeEx(("##" + path.filename().string()).c_str(), node_flags);
     // Check if selected
-    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
     {
         selectedPath = path;
         NIMO_DEBUG("Selected asset: {}", path.string());
@@ -97,8 +97,21 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                 if(selectedPath == entry.path())
                     leaf_flags |= ImGuiTreeNodeFlags_Selected;
                 ImGui::TreeNodeEx(("##" + entry.path().filename().string()).c_str(), leaf_flags);
+                
+                // Drag/drop source
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+                {
+                    ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
+                    auto info = nimo::AssetManager::GetMetadata(entry.path());
+                    if(info.id.valid()) // Found in asset manager
+                    {
+                        ImGui::SetDragDropPayload((std::string("NIMO_ASSET_")+nimo::AssetTypeToString(info.type)).c_str(), &info.id, sizeof(nimo::AssetId));
+                    }
+                    ImGui::Text(entry.path().filename().string().c_str());
+                    ImGui::EndDragDropSource();
+                }
                 // Check if selected
-                if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+                if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
                 {
                     selectedPath = entry.path();
                     auto info = nimo::AssetManager::GetMetadata(entry.path());
@@ -107,13 +120,6 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                         m_editor->inspectorPanel->SetViewItem(info.id);
                     }
                     NIMO_DEBUG("Selected asset: {}", entry.path().string());
-                }
-                
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
-                {
-                    ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
-                    ImGui::Text(entry.path().filename().string().c_str());
-                    ImGui::EndDragDropSource();
                 }
                 ImGui::SameLine();
                 if(entry.path().has_extension())

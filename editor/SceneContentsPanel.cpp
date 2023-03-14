@@ -46,7 +46,7 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
     }
 
     // Check if selected
-    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
     {
         selectedEntity = ent.GetComponent<nimo::IDComponent>().Id;
         m_editor->inspectorPanel->SetViewItem(selectedEntity);

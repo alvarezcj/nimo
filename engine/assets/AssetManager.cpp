@@ -87,7 +87,6 @@ std::filesystem::path nimo::AssetManager::GetRelativePath(const std::filesystem:
             relativePath = filepath.lexically_normal();
         }
     }
-    NIMO_DEBUG("{} relative path is: {}", filepath.string(), relativePath.string());
     return relativePath;
 }
 

@@ -84,30 +84,42 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Mesh Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                if (ImGui::TreeNode((std::string("Material##") + (std::string("Mesh##")+entityIdString)).c_str()))
+                ImGui::InputTextWithHint(("##Asset##MeshRenderer##Material##"+entityIdString).c_str(), "Drag Material asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshRendererComponent>().material->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                if (ImGui::BeginDragDropTarget())
                 {
-                    auto mat = ent.GetComponent<nimo::MeshRendererComponent>().material;
-                    for(auto p: mat->properties)
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Material"))
                     {
-                        switch (p->type)
-                        {
-                        case nimo::MaterialPropertyType::Vector2:
-                            {
-                                ImGui::DragFloat2((p->name + "##" + (std::string("Material##")+ (std::string("Mesh Renderer##")+entityIdString))).c_str(), (float*)p->GetDataPtr(), 0.1f);
-                            }
-                            break;
-                        case nimo::MaterialPropertyType::Texture:
-                            {
-                                ImGui::InputInt((p->name + "##" + (std::string("Material##")+ (std::string("Mesh Renderer##")+entityIdString))).c_str(), (int*)p->GetDataPtr());
-                            }
-                            break;
-                        
-                        default:
-                            break;
-                        }
+                        IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
+                        nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
+                        NIMO_DEBUG("Received drag drop material: {}", payload_n.str());
+                        ent.GetComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>(payload_n);
                     }
-                    ImGui::TreePop();
+                    ImGui::EndDragDropTarget();
                 }
+                // if (ImGui::TreeNode((std::string("Material##") + (std::string("Mesh##")+entityIdString)).c_str()))
+                // {
+                //     auto mat = ent.GetComponent<nimo::MeshRendererComponent>().material;
+                //     for(auto p: mat->properties)
+                //     {
+                //         switch (p->type)
+                //         {
+                //         case nimo::MaterialPropertyType::Vector2:
+                //             {
+                //                 ImGui::DragFloat2((p->name + "##" + (std::string("Material##")+ (std::string("Mesh Renderer##")+entityIdString))).c_str(), (float*)p->GetDataPtr(), 0.1f);
+                //             }
+                //             break;
+                //         case nimo::MaterialPropertyType::Texture:
+                //             {
+                //                 ImGui::InputInt((p->name + "##" + (std::string("Material##")+ (std::string("Mesh Renderer##")+entityIdString))).c_str(), (int*)p->GetDataPtr());
+                //             }
+                //             break;
+                        
+                //         default:
+                //             break;
+                //         }
+                //     }
+                //     ImGui::TreePop();
+                // }
             }
             ImGui::Spacing();
             ImGui::Separator();
