@@ -130,6 +130,16 @@ void InspectorPanel::OnRender()
             break;
         case nimo::AssetType::Texture:
             // Show image, width, height,...
+            {
+                std::shared_ptr<nimo::Texture> textureAsset = nimo::AssetManager::Get<nimo::Texture>(metadata.id);
+                ImGui::Text("Size: %dx%d", textureAsset->Width(), textureAsset->Height());
+                ImGui::Spacing();
+                ImGui::Text("Preview");
+                float offset = 20.0f;
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset/2.0f);
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset/2.0f);
+                ImGui::Image((ImTextureID)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
+            }
             break;
         default:
             break;
