@@ -39,17 +39,27 @@ void nimo::AssetSerializer<nimo::Material>::Serialize(const AssetMetadata& metad
     {
         switch(p->type)
         {
-            case MaterialPropertyType::Vector2:
+            case ShaderUniformDataType::Float2:
             {
                 auto pv2 = static_cast<MaterialProperty<glm::vec2>*>(p);
                 jprops.push_back({
                     {"name", pv2->name},
                     {"type", "vector2"},
-                    {"value", {((glm::vec2*)pv2->GetDataPtr())->x, ((glm::vec2*)pv2->GetDataPtr())->x}}
+                    {"value", {((glm::vec2*)pv2->GetDataPtr())->x, ((glm::vec2*)pv2->GetDataPtr())->y}}
                 });
             }
             break;
-            case MaterialPropertyType::Texture:
+            case ShaderUniformDataType::Float4:
+            {
+                auto pv2 = static_cast<MaterialProperty<glm::vec4>*>(p);
+                jprops.push_back({
+                    {"name", pv2->name},
+                    {"type", "vector4"},
+                    {"value", {((glm::vec4*)pv2->GetDataPtr())->x, ((glm::vec4*)pv2->GetDataPtr())->y, ((glm::vec4*)pv2->GetDataPtr())->z, ((glm::vec4*)pv2->GetDataPtr())->w}}
+                });
+            }
+            break;
+            case ShaderUniformDataType::Sampler2D:
             {
                 auto pt = static_cast<MaterialPropertyTexture*>(p);
                 jprops.push_back({

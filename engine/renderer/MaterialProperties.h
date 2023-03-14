@@ -4,14 +4,10 @@
 
 namespace nimo
 {
-    enum class MaterialPropertyType : unsigned int{
-        Texture,
-        Vector2
-    };
     class IMaterialProperty{
     public:
         std::string name;
-        MaterialPropertyType type;
+        ShaderUniformDataType type;
         virtual void Setup(Shader* shader){}
         virtual void* GetDataPtr() = 0;
     };
@@ -32,10 +28,12 @@ namespace nimo
     };
     class MaterialPropertyTexture : public IMaterialProperty{
     public:
-        MaterialPropertyTexture() {type = MaterialPropertyType::Texture;}
+        MaterialPropertyTexture() {type = ShaderUniformDataType::Sampler2D;}
         void Setup(Shader* shader) override {
-            shader->set(name, value);
-            t->bind(value);
+            if (t) {
+                shader->set(name, value);
+                t->bind(value);
+            }
         }
         void* GetDataPtr() override {
             return (void*)&value;

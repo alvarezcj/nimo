@@ -13,19 +13,120 @@ void InspectorPanel::OnRender()
         ImGui::TextDisabled(nimo::AssetTypeToString(metadata.type));
         ImGui::TextDisabled(metadata.filepath.string().c_str());
         ImGui::TextDisabled(metadata.id.str().c_str());
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
 
         //Show asset widgets based on type
         switch (metadata.type)
         {
         case nimo::AssetType::Material:
+            // Show associated shader and properties
+            {
+                std::shared_ptr<nimo::Material> materialAsset = nimo::AssetManager::Get<nimo::Material>(metadata.id);
+
+                auto shaders = nimo::AssetManager::GetAllExisting<nimo::Shader>();
+                static nimo::AssetMetadata selectedShader;
+                ImGui::Spacing();
+                ImGui::Text("Shader");
+                ImGui::SameLine();
+                if(materialAsset->shader)
+                    selectedShader = nimo::AssetManager::GetMetadata(materialAsset->shader->id);
+                static bool shaderChanged = false;
+                if (ImGui::BeginCombo("##Inspector##Asset##Material", selectedShader.filepath.string().c_str(), ImGuiComboFlags_None))
+                {
+                    for (int n = 0; n < shaders.size(); n++)
+                    {
+                        if (ImGui::Selectable(shaders[n].filepath.string().c_str()))
+                        {
+                            selectedShader = shaders[n];
+                            shaderChanged = true;
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                if(shaderChanged)
+                {
+                    shaderChanged = false;
+                    nimo::AssetMetadata selectedShaderInfo = nimo::AssetManager::GetMetadata(selectedShader.id);
+                    if(selectedShaderInfo.id.valid())
+                    {
+                        materialAsset->ClearProperties();
+                        for(auto uniform : nimo::AssetManager::Get<nimo::Shader>(selectedShaderInfo.id)->GetUniforms())
+                        {
+                            if(uniform.name == "transform" || uniform.name == "view" || uniform.name == "projection") continue;
+                            NIMO_DEBUG("Adding {} material {} property", metadata.filepath.string(), uniform.name);
+                            materialAsset->AddProperty(uniform.name, uniform.type);
+                        }
+                        NIMO_DEBUG("Serializing {}", metadata.filepath.string());
+                        materialAsset->shader = nimo::AssetManager::Get<nimo::Shader>(selectedShaderInfo.id);
+                        //nimo::AssetManager::Serialize<nimo::Material>(materialAsset->id);
+                    }
+                }
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                ImGui::Text("Properties");
+                ImGui::Spacing();
+                for(auto p: materialAsset->properties)
+                {
+                    switch (p->type)
+                    {
+                    case nimo::ShaderUniformDataType::Float2:
+                        {
+                            ImGui::DragFloat2((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
+                        }
+                        break;
+                    case nimo::ShaderUniformDataType::Float4:
+                        {
+                            ImGui::DragFloat4((p->name + "##Inspector##Asset##Material2##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
+                        }
+                        break;
+                    case nimo::ShaderUniformDataType::Sampler2D:
+                        {
+                            ImGui::InputInt((p->name + "##Inspector##Asset##Material3##TextureSlot##" +materialAsset->id.str()).c_str(), (int*)p->GetDataPtr());
+
+                            static std::string filepath;
+                            if (((nimo::MaterialPropertyTexture*)p)->GetTexture())
+                                ImGui::InputTextWithHint((p->name + "##Inspector##Asset##Material4##TextureAsset##" + materialAsset->id.str()).c_str(), "Drag Texture asset", &nimo::AssetManager::GetMetadata(((nimo::MaterialPropertyTexture*)p)->GetTexture()->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                            else
+                                ImGui::InputTextWithHint((p->name + "##Inspector##Asset##Material4##TextureAsset##" + materialAsset->id.str()).c_str(), "Drag Texture asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+
+                            if (ImGui::BeginDragDropTarget())
+                            {
+                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Texture"))
+                                {
+                                    IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
+                                    nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
+                                    NIMO_DEBUG("Received drag drop texture: {}", payload_n.str());
+                                    ((nimo::MaterialPropertyTexture*)p)->SetTexture(nimo::AssetManager::Get<nimo::Texture>(payload_n));
+                                }
+                                ImGui::EndDragDropTarget();
+                            }
+                        }
+                        break;
+                    
+                    default:
+                        break;
+                    }
+                }
+                if(ImGui::Button("Save Material"))
+                {
+                    nimo::AssetManager::Serialize<nimo::Material>(materialAsset->id);
+                }
+            }
             break;
         case nimo::AssetType::Mesh:
+            // Show vertices, submeshes, indices,...
             break;
         case nimo::AssetType::Shader:
+            // Show source code for fragment and vertex. Allow for modification
             break;
         case nimo::AssetType::Scene:
+            // Show nothing
             break;
         case nimo::AssetType::Texture:
+            // Show image, width, height,...
             break;
         default:
             break;
@@ -84,7 +185,15 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Mesh Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::InputTextWithHint(("##Asset##MeshRenderer##Material##"+entityIdString).c_str(), "Drag Material asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshRendererComponent>().material->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                ImGui::Text("Material");
+                ImGui::SameLine();
+                auto material = ent.GetComponent<nimo::MeshRendererComponent>().material;
+                std::string filepath;
+                if (material)
+                    ImGui::InputTextWithHint(("##Asset##Material##" + entityIdString).c_str(), "Drag Material asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshRendererComponent>().material->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                else
+                    ImGui::InputTextWithHint(("##Asset##Material##" + entityIdString).c_str(), "Drag Material asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+
                 if (ImGui::BeginDragDropTarget())
                 {
                     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Material"))
@@ -96,30 +205,6 @@ void InspectorPanel::OnRender()
                     }
                     ImGui::EndDragDropTarget();
                 }
-                // if (ImGui::TreeNode((std::string("Material##") + (std::string("Mesh##")+entityIdString)).c_str()))
-                // {
-                //     auto mat = ent.GetComponent<nimo::MeshRendererComponent>().material;
-                //     for(auto p: mat->properties)
-                //     {
-                //         switch (p->type)
-                //         {
-                //         case nimo::MaterialPropertyType::Vector2:
-                //             {
-                //                 ImGui::DragFloat2((p->name + "##" + (std::string("Material##")+ (std::string("Mesh Renderer##")+entityIdString))).c_str(), (float*)p->GetDataPtr(), 0.1f);
-                //             }
-                //             break;
-                //         case nimo::MaterialPropertyType::Texture:
-                //             {
-                //                 ImGui::InputInt((p->name + "##" + (std::string("Material##")+ (std::string("Mesh Renderer##")+entityIdString))).c_str(), (int*)p->GetDataPtr());
-                //             }
-                //             break;
-                        
-                //         default:
-                //             break;
-                //         }
-                //     }
-                //     ImGui::TreePop();
-                // }
             }
             ImGui::Spacing();
             ImGui::Separator();
@@ -133,7 +218,23 @@ void InspectorPanel::OnRender()
                 // ImGui::TextDisabled((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
                 ImGui::Text("Mesh");
                 ImGui::SameLine();
-                ImGui::InputTextWithHint(("##Asset##Mesh##"+entityIdString).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                auto mesh = ent.GetComponent<nimo::MeshComponent>().source;
+                std::string filepath;
+                if (mesh)
+                    ImGui::InputTextWithHint(("##Asset##Mesh##"+entityIdString).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                else
+                    ImGui::InputTextWithHint(("##Asset##Mesh##" + entityIdString).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Mesh"))
+                    {
+                        IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
+                        nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
+                        NIMO_DEBUG("Received drag drop material: {}", payload_n.str());
+                        ent.GetComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>(payload_n);
+                    }
+                    ImGui::EndDragDropTarget();
+                }
             }
             ImGui::Spacing();
             ImGui::Separator();
@@ -159,9 +260,11 @@ void InspectorPanel::OnRender()
         {
             ImGui::CollapsingHeader("\tComponents...", ImGuiTreeNodeFlags_Leaf);
             ImGui::Separator();
+            if (ImGui::Selectable("Mesh")){
+                ent.AddComponent<nimo::MeshComponent>();
+            }
             if (ImGui::Selectable("Mesh Renderer")){
-                ent.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("Objects/cube/cube.obj");
-                ent.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/test.nmat");
+                ent.AddComponent<nimo::MeshRendererComponent>();
             }
             if (ImGui::Selectable("Camera")){}
             ImGui::EndPopup();

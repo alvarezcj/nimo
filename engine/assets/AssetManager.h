@@ -68,6 +68,7 @@ public:
 	template <typename T>
 	static std::shared_ptr<T> Get(AssetId id)
 	{
+		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
 		auto it = m_loadedAssets[typeid(T)].find(id);
 		if(it != m_loadedAssets[typeid(T)].end())
 		{
@@ -86,6 +87,7 @@ public:
 	template<typename T>
 	static std::shared_ptr<T> Get(const std::string& filepath)
 	{
+		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
 		if(index.get(std::filesystem::path(filepath)).id.valid())
 			return Get<T>(index.get(std::filesystem::path(filepath)).id);
 		else
@@ -95,11 +97,25 @@ public:
 	template<typename T>
 	static std::vector<std::shared_ptr<T>> GetAllLoaded()
 	{
+		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
 		std::vector<std::shared_ptr<T>> res;
 		for(auto [id, asset] : m_loadedAssets[typeid(T)])
 		{
 			if(asset)
 				res.push_back(std::static_pointer_cast<T, Asset>(asset));
+		}
+		return res;
+	}
+
+	template<typename T>
+	static std::vector<AssetMetadata> GetAllExisting()
+	{
+		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
+		std::vector<AssetMetadata> res;
+		for(auto [id, metadata] : index)
+		{
+			if(metadata.type == T::StaticType())
+				res.push_back(metadata);
 		}
 		return res;
 	}

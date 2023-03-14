@@ -46,6 +46,8 @@ public:
     void set(const std::string &name, const glm::mat2 &mat) const;
     void set(const std::string &name, const glm::mat3 &mat) const;
     void set(const std::string &name, const glm::mat4 &mat) const;
+    
+    inline const std::vector<ShaderUniform>& GetUniforms() { return m_uniforms;}
 
 private:
     unsigned int ID;

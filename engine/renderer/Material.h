@@ -29,15 +29,23 @@ namespace nimo{
                 {
                     auto p = new MaterialProperty<glm::vec2>();
                     p->name = o["name"];
-                    p->type = MaterialPropertyType::Vector2;
+                    p->type = ShaderUniformDataType::Float2;
                     p->SetValue({o["value"][0], o["value"][1]});
+                    properties.push_back(p);
+                }
+                if(o["type"] == "vector4")
+                {
+                    auto p = new MaterialProperty<glm::vec4>();
+                    p->name = o["name"];
+                    p->type = ShaderUniformDataType::Float4;
+                    p->SetValue({o["value"][0],o["value"][1],o["value"][2], o["value"][3]});
                     properties.push_back(p);
                 }
                 if(o["type"] == "texture")
                 {
                     auto p = new MaterialPropertyTexture();
                     p->name = o["name"];
-                    p->type = MaterialPropertyType::Texture;
+                    p->type = ShaderUniformDataType::Sampler2D;
                     p->SetValue(o["value"]);
                     p->SetTexture(AssetManager::Get<Texture>(AssetId(std::string(o["asset"]))));
                     properties.push_back(p);
@@ -54,6 +62,53 @@ namespace nimo{
         void Setup(){
             for(auto p : properties)
                 p->Setup(shader.get());
+        }
+        bool HasProperty(const std::string& name, ShaderUniformDataType type)
+        {
+            for(auto p : properties)
+                if(name == p->name && type == p->type)
+                    return true;
+            return false;
+        }
+        void ClearProperties()
+        {
+            for(auto p : properties)
+                delete p;
+            properties.clear();
+        }
+
+        void AddProperty(const std::string& name, ShaderUniformDataType type)
+        {
+            switch (type)
+            {
+            case ShaderUniformDataType::Float2 :
+                {
+                    auto p = new MaterialProperty<glm::vec2>();
+                    p->name = name;
+                    p->type = type;
+                    properties.push_back(p);
+                }
+                break;
+            case ShaderUniformDataType::Float4 :
+                {
+                    auto p = new MaterialProperty<glm::vec4>();
+                    p->name = name;
+                    p->type = type;
+                    properties.push_back(p);
+                }
+                break;
+            case ShaderUniformDataType::Sampler2D:
+                {
+                    auto p = new MaterialPropertyTexture();
+                    p->name = name;
+                    p->type = type;
+                    properties.push_back(p);
+                }
+                break;
+            
+            default:
+                break;
+            }
         }
         std::shared_ptr<Shader> shader;
         std::vector<IMaterialProperty*> properties;

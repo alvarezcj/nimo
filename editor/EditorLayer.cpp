@@ -401,7 +401,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         {
             auto prop = new nimo::MaterialPropertyTexture();
             prop->name = "mainTexture";
-            prop->type = nimo::MaterialPropertyType::Texture;
+            prop->type = nimo::ShaderUniformDataType::Sampler2D;
             prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube.png"));
             prop->SetValue(0);
             props.push_back(prop);
@@ -409,14 +409,14 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         {
             auto prop = new nimo::MaterialProperty<glm::vec2>();
             prop->name = "tiling";
-            prop->type = nimo::MaterialPropertyType::Vector2;
+            prop->type = nimo::ShaderUniformDataType::Float2;
             prop->SetValue({1.0f, 1.0f});
             props.push_back(prop);
         }
         {
             auto prop = new nimo::MaterialProperty<glm::vec2>();
             prop->name = "offset";
-            prop->type = nimo::MaterialPropertyType::Vector2;
+            prop->type = nimo::ShaderUniformDataType::Float2;
             prop->SetValue({0.0f, 0.0f});
             props.push_back(prop);
         }
