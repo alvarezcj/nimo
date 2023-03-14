@@ -4,6 +4,8 @@
 #include "core/Log.h"
 #include "core/FileHandling.h"
 #include <functional>
+#include "InspectorPanel.h"
+#include "EditorLayer.h"
 
 const static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_FramePadding;
 void AssetExplorerPanel::OnRender()
@@ -99,6 +101,11 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                 if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
                 {
                     selectedPath = entry.path();
+                    auto info = nimo::AssetManager::GetMetadata(entry.path());
+                    if(info.id.valid()) // Found in asset manager
+                    {
+                        m_editor->inspectorPanel->SetViewItem(info.id);
+                    }
                     NIMO_DEBUG("Selected asset: {}", entry.path().string());
                 }
                 

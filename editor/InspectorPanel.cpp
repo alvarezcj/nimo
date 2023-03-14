@@ -7,6 +7,31 @@
 void InspectorPanel::OnRender()
 {
     if(!selectedItem.valid()) return;
+    auto metadata = nimo::AssetManager::GetMetadata(selectedItem);
+    if(metadata.id.valid())
+    {
+        ImGui::TextDisabled(nimo::AssetTypeToString(metadata.type));
+        ImGui::TextDisabled(metadata.filepath.string().c_str());
+        ImGui::TextDisabled(metadata.id.str().c_str());
+
+        //Show asset widgets based on type
+        switch (metadata.type)
+        {
+        case nimo::AssetType::Material:
+            break;
+        case nimo::AssetType::Mesh:
+            break;
+        case nimo::AssetType::Shader:
+            break;
+        case nimo::AssetType::Scene:
+            break;
+        case nimo::AssetType::Texture:
+            break;
+        default:
+            break;
+        }
+        return;
+    }
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
         auto ent = scene->GetEntity(selectedItem);
