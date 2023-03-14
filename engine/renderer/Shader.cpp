@@ -45,6 +45,87 @@ nimo::Shader::Shader(const std::string& filename)
         // delete the shaders as they're linked into our program now and no longer necessery
         glDeleteShader(vertex);
         glDeleteShader(fragment);
+
+        GLint count;
+
+        GLint size; // size of the variable
+        GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+        const GLsizei bufSize = 256; // maximum name length
+        GLchar name[bufSize]; // variable name in GLSL
+        GLsizei length; // name length
+
+        glGetProgramiv(ID, GL_ACTIVE_ATTRIBUTES, &count);
+        NIMO_DEBUG("Active Attributes: {}", count);
+
+        for (int i = 0; i < count; i++)
+        {
+            glGetActiveAttrib(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+            NIMO_DEBUG("Attribute #{} Type: 0x{:0x} Name: {}", i, type, name);
+        }
+
+        glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
+        NIMO_DEBUG("Active Uniforms: {}", count);
+
+        for (int i = 0; i < count; i++)
+        {
+            glGetActiveUniform(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+            NIMO_DEBUG("Uniform #{} Type: 0x{:0x} Name: {} Size: {}", i, type, name, size);
+            switch (type)
+            {
+            case GL_FLOAT:
+                m_uniforms.push_back({name, ShaderUniformDataType::Float});
+                break;
+            case GL_FLOAT_VEC2:
+                m_uniforms.push_back({name, ShaderUniformDataType::Float2});
+                break;
+            case GL_FLOAT_VEC3:
+                m_uniforms.push_back({name, ShaderUniformDataType::Float3});
+                break;
+            case GL_FLOAT_VEC4:
+                m_uniforms.push_back({name, ShaderUniformDataType::Float4});
+                break;
+            case GL_INT:
+                m_uniforms.push_back({name, ShaderUniformDataType::Int});
+                break;
+            case GL_INT_VEC2:
+                m_uniforms.push_back({name, ShaderUniformDataType::Int2});
+                break;
+            case GL_INT_VEC3:
+                m_uniforms.push_back({name, ShaderUniformDataType::Int3});
+                break;
+            case GL_INT_VEC4:
+                m_uniforms.push_back({name, ShaderUniformDataType::Int4});
+                break;
+            case GL_BOOL:
+                m_uniforms.push_back({name, ShaderUniformDataType::Bool});
+                break;
+            case GL_FLOAT_MAT2:
+                m_uniforms.push_back({name, ShaderUniformDataType::Mat2});
+                break;
+            case GL_FLOAT_MAT3:
+                m_uniforms.push_back({name, ShaderUniformDataType::Mat3});
+                break;
+            case GL_FLOAT_MAT4:
+                m_uniforms.push_back({name, ShaderUniformDataType::Mat4});
+                break;
+            case GL_SAMPLER_1D:
+                m_uniforms.push_back({name, ShaderUniformDataType::Sampler1D});
+                break;
+            case GL_SAMPLER_2D:
+                m_uniforms.push_back({name, ShaderUniformDataType::Sampler2D});
+                break;
+            case GL_SAMPLER_3D:
+                m_uniforms.push_back({name, ShaderUniformDataType::Sampler3D});
+                break;
+            case GL_SAMPLER_CUBE:
+                m_uniforms.push_back({name, ShaderUniformDataType::SamplerCube});
+                break;
+            default:
+                NIMO_ERROR("Unsupported uniform type: 0x{:0x} for ",type, name);
+                break;
+            }
+        }
     }
     catch (std::ifstream::failure& e)
     {

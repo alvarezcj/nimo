@@ -4,6 +4,29 @@
 #include "assets/Asset.h"
 
 namespace nimo{
+enum class ShaderUniformDataType : unsigned int{
+// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glGetActiveUniform.xhtml
+    Float,
+    Float2,
+    Float3,
+    Float4,
+    Int,
+    Int2,
+    Int3,
+    Int4,
+    Bool,
+    Mat2,
+    Mat3,
+    Mat4,
+    Sampler1D,
+    Sampler2D,
+    Sampler3D,
+    SamplerCube,
+};
+struct ShaderUniform{
+    std::string name;
+    ShaderUniformDataType type;
+};
 class Shader : public Asset{
 public:
     Shader(const std::string& filename);
@@ -26,5 +49,6 @@ public:
 private:
     unsigned int ID;
     void checkCompileErrors(unsigned int shader, const std::string& type);
+    std::vector<ShaderUniform> m_uniforms;
 };
 };
