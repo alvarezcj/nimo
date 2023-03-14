@@ -15,6 +15,8 @@ namespace nimo
     public:
         MeshSource(const std::string& file);
         ~MeshSource();
+        AssetType Type() const { return AssetType::Mesh; }
+        static AssetType StaticType(){return AssetType::Mesh;}
 
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;

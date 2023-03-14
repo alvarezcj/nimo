@@ -11,7 +11,8 @@ namespace nimo{
     public:
         Scene(const std::string& name = "NewScene");
         ~Scene();
-        static AssetType GetType(){ return AssetType::Scene;}
+        AssetType Type() const { return AssetType::Scene; }
+        static AssetType StaticType(){return AssetType::Scene;}
         void Update();
         void ForEachEntity(std::function<void(Entity&)> action);
         Entity CreateEntity(const std::string& name = "");

@@ -31,7 +31,8 @@ class Shader : public Asset{
 public:
     Shader(const std::string& filename);
     ~Shader();
-    static AssetType GetType(){ return AssetType::Shader;}
+    AssetType Type() const { return AssetType::Shader; }
+    static AssetType StaticType(){return AssetType::Shader;}
     void use();
     void set(const std::string &name, bool value) const;
     void set(const std::string &name, int value) const;

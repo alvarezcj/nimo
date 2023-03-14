@@ -13,7 +13,8 @@ public:
     void bind(unsigned int slot);
     unsigned int GetInternalId() {return m_id;}
 
-    static AssetType GetType(){ return AssetType::Texture;}
+    AssetType Type() const { return AssetType::Texture; }
+    static AssetType StaticType(){return AssetType::Texture;}
 
 private:
     unsigned int m_id;

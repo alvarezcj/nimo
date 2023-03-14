@@ -23,7 +23,7 @@ public:
 		if(!metadata.id.valid()){
 			metadata.id = GUID::Create();
 			metadata.filepath = filename;
-			metadata.type = T::GetType();
+			metadata.type = T::StaticType();
 			index[metadata.id] = metadata;
 		}
 		AssetSerializer<T> assetSerializer;
@@ -44,7 +44,7 @@ public:
 		if(!metadata.id.valid()){
 			metadata.id = GUID::Create();
 			metadata.filepath = filename;
-			metadata.type = T::GetType();
+			metadata.type = T::StaticType();
 			index[metadata.id] = metadata;
 		}
 		AssetSerializer<T> assetSerializer;

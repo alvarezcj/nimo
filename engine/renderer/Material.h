@@ -49,7 +49,8 @@ namespace nimo{
             for(auto p : properties)
                 delete p;
         }
-        static AssetType GetType(){return AssetType::Material;}
+        AssetType Type() const { return AssetType::Material; }
+        static AssetType StaticType(){return AssetType::Material;}
         void Setup(){
             for(auto p : properties)
                 p->Setup(shader.get());

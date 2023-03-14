@@ -10,7 +10,8 @@ class Asset
 public:
     virtual ~Asset(){}
     AssetId id;
-
+    static AssetType StaticType() { return AssetType::None; }
+    virtual AssetType Type() const { return AssetType::None; }
     virtual bool operator==(const Asset& other) const
     {
         return id == other.id;
