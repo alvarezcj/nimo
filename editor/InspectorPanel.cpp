@@ -48,6 +48,21 @@ void InspectorPanel::OnRender()
                     }
                     ImGui::EndCombo();
                 }
+                ImGui::SameLine();
+                float alignment = 1.0f;
+                const char* label = "\tApply\t";
+                ImGuiStyle& style = ImGui::GetStyle();
+
+                float size = ImGui::CalcTextSize(label).x + style.FramePadding.x * 2.0f;
+                float avail = ImGui::GetContentRegionAvail().x;
+
+                float off = (avail - size) * alignment;
+                if (off > 0.0f)
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+                if(ImGui::Button(label))
+                {
+                    nimo::AssetManager::Serialize<nimo::Material>(materialAsset->id);
+                }
                 if(shaderChanged)
                 {
                     shaderChanged = false;
@@ -113,10 +128,6 @@ void InspectorPanel::OnRender()
                         break;
                     }
                 }
-                if(ImGui::Button("Save Material"))
-                {
-                    nimo::AssetManager::Serialize<nimo::Material>(materialAsset->id);
-                }
             }
             break;
         case nimo::AssetType::Mesh:
@@ -125,10 +136,42 @@ void InspectorPanel::OnRender()
                 std::shared_ptr<nimo::Mesh> meshAsset = nimo::AssetManager::Get<nimo::Mesh>(metadata.id);
                 ImGui::Text("Vertices: %d", meshAsset->vertices.size());
                 ImGui::Text("Indices: %d", meshAsset->indices.size());
+                ImGui::Separator();
             }
             break;
         case nimo::AssetType::Shader:
             // Show source code for fragment and vertex. Allow for modification
+            {
+                std::shared_ptr<nimo::Shader> shaderAsset = nimo::AssetManager::Get<nimo::Shader>(metadata.id);
+                ImGui::Text("Vertex Shader Code");
+                ImGui::SameLine();
+                float alignment = 1.0f;
+                const char* label = "\tApply\t";
+                ImGuiStyle& style = ImGui::GetStyle();
+
+                float size = ImGui::CalcTextSize(label).x + style.FramePadding.x * 2.0f;
+                float avail = ImGui::GetContentRegionAvail().x;
+
+                float off = (avail - size) * alignment;
+                if (off > 0.0f)
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+                if(ImGui::Button(label))
+                {
+                    nimo::AssetManager::Serialize<nimo::Shader>(shaderAsset->id);
+                    shaderAsset->Recompile();
+                }
+                ImGui::Spacing();
+                ImGui::InputTextMultiline("##Shader##VertexCode", shaderAsset->GetVertexCodePtr(), ImVec2(ImGui::GetContentRegionAvailWidth(), 500.f), ImGuiInputTextFlags_AllowTabInput);
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                ImGui::Text("Fragment Shader Code");
+                ImGui::Spacing();
+                ImGui::InputTextMultiline("##Shader##FragmentCode", shaderAsset->GetFragmentCodePtr(), ImVec2(ImGui::GetContentRegionAvailWidth(), 500.f), ImGuiInputTextFlags_AllowTabInput);
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+            }
             break;
         case nimo::AssetType::Scene:
             // Show nothing

@@ -57,10 +57,8 @@ public:
 	static void Serialize(AssetId id)
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
-		std::filesystem::path p;
-		if(nimo::Project::GetActiveProject())
-			p = nimo::Project::GetActiveProject()->GetSettings().assetDirectory;
 		AssetMetadata metadata = index.get(id);
+		NIMO_INFO("Serializing {} {}", AssetTypeToString(metadata.type), metadata.filepath.string());
 		AssetSerializer<T> assetSerializer;
 		assetSerializer.Serialize(metadata, std::static_pointer_cast<T, Asset>(m_loadedAssets[typeid(T)][id]));
 	}

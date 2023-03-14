@@ -48,10 +48,19 @@ public:
     void set(const std::string &name, const glm::mat4 &mat) const;
     
     inline const std::vector<ShaderUniform>& GetUniforms() { return m_uniforms;}
+    inline std::string& GetVertexCode(){ return m_vertexCode;}
+    inline std::string& GetFragmentCode(){ return m_fragmentCode;}
+    inline std::string* GetVertexCodePtr(){ return &m_vertexCode;}
+    inline std::string* GetFragmentCodePtr(){ return &m_fragmentCode;}
+    void Recompile(){Compile(m_vertexCode, m_fragmentCode);}
 
 private:
     unsigned int ID;
-    void checkCompileErrors(unsigned int shader, const std::string& type);
+    bool CheckCompileErrors(unsigned int shader, const std::string& type);
+    bool Compile(const std::string& vertexCode, const std::string& fragmentCode);
     std::vector<ShaderUniform> m_uniforms;
+    std::string m_vertexCode;
+    std::string m_fragmentCode;
+    bool m_usable = false;
 };
 };

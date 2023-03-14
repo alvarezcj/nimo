@@ -20,7 +20,20 @@ std::shared_ptr<nimo::Texture> nimo::AssetSerializer<nimo::Texture>::Deserialize
 }
 
 //Shader
-void nimo::AssetSerializer<nimo::Shader>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Shader>& asset){}
+void nimo::AssetSerializer<nimo::Shader>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Shader>& asset)
+{
+    std::filesystem::path p = ".";
+    if(nimo::Project::GetActiveProject())
+        p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
+    std::ofstream ofs(p/metadata.filepath);
+
+    ofs << "@VERTEX";
+    ofs << asset->GetVertexCode();
+    ofs << "@VERTEXEND";
+    ofs << "@FRAGMENT";
+    ofs << asset->GetFragmentCode();
+    ofs << "@FRAGMENTEND";
+}
 std::shared_ptr<nimo::Shader> nimo::AssetSerializer<nimo::Shader>::Deserialize(const nimo::AssetMetadata& metadata)
 {     
     std::filesystem::path p = ".";
