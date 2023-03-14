@@ -4,7 +4,7 @@
 #include "renderer/Texture.h"
 #include "renderer/Shader.h"
 #include "renderer/Material.h"
-#include "assets/MeshSource.h"
+#include "renderer/Mesh.h"
 #include "project/Project.h"
 
 #include <fstream>
@@ -77,12 +77,12 @@ std::shared_ptr<nimo::Material> nimo::AssetSerializer<nimo::Material>::Deseriali
     return std::make_shared<Material>((p/metadata.filepath).string());
 }
 
-//MeshSource
-void nimo::AssetSerializer<nimo::MeshSource>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::MeshSource>& asset){}
-std::shared_ptr<nimo::MeshSource> nimo::AssetSerializer<nimo::MeshSource>::Deserialize(const nimo::AssetMetadata& metadata)
+//Mesh
+void nimo::AssetSerializer<nimo::Mesh>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Mesh>& asset){}
+std::shared_ptr<nimo::Mesh> nimo::AssetSerializer<nimo::Mesh>::Deserialize(const nimo::AssetMetadata& metadata)
 {
     std::filesystem::path p = ".";
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
-    return std::make_shared<MeshSource>((p/metadata.filepath).string());
+    return std::make_shared<Mesh>((p/metadata.filepath).string());
 }

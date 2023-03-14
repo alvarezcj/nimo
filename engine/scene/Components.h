@@ -6,7 +6,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/quaternion.hpp"
 
-#include "assets/MeshSource.h"
 #include "renderer/Mesh.h"
 #include "renderer/Material.h"
 #include "core/GUID.h"
@@ -73,11 +72,10 @@ struct LightComponent{
 };
 
 struct MeshComponent{
-    std::shared_ptr<MeshSource> source;
+    std::shared_ptr<Mesh> source;
 };
 
 struct MeshRendererComponent{
     std::shared_ptr<Material> material;
-    std::shared_ptr<Mesh> mesh;
 };
 };

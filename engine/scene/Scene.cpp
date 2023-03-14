@@ -13,7 +13,7 @@ nimo::Scene::~Scene()
 void nimo::Scene::Update()
 {
     m_registry.view<IDComponent, MeshComponent, TransformComponent, MeshRendererComponent>().each([&](IDComponent& id, MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
-        if(!r.material || !r.material->shader || !r.mesh) return;
+        if(!r.material || !r.material->shader || !m.source) return;
         r.material->shader->use();
         r.material->Setup();
         r.material->shader->set("transform", GetWorldSpaceTransformMatrix(GetEntity(id.Id)));
@@ -27,7 +27,7 @@ void nimo::Scene::Update()
             r.material->shader->set("view", glm::toMat4(glm::quat(camTransform.Rotation)) * glm::translate(glm::mat4(1.0f), {-camTransform.Translation.x, -camTransform.Translation.y, camTransform.Translation.z}) );
             r.material->shader->set("projection", projection);
         });
-        r.mesh->draw();
+        m.source->draw();
     });
 }
 nimo::Entity nimo::Scene::CreateEntity(const std::string& name)

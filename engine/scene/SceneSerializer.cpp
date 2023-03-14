@@ -47,10 +47,10 @@ std::shared_ptr<nimo::Scene> nimo::AssetSerializer<nimo::Scene>::Deserialize(con
     {
         DeserializeEntity(scene, entity);
     }
-    auto view1 = scene->m_registry.view<MeshComponent, MeshRendererComponent>();
-    view1.each([&](MeshComponent& mesh, MeshRendererComponent& meshRenderer) {
-        meshRenderer.mesh = std::make_shared<Mesh>(mesh.source);
-    });
+    // auto view1 = scene->m_registry.view<MeshComponent, MeshRendererComponent>();
+    // view1.each([&](MeshComponent& mesh, MeshRendererComponent& meshRenderer) {
+    //     meshRenderer.mesh = std::make_shared<Mesh>(mesh.source);
+    // });
     return scene;
 }
 
@@ -162,7 +162,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         if(field.key() == "Mesh")
         {
             MeshComponent& c = createdEntity.AddComponent<MeshComponent>();
-            c.source = AssetManager::Get<MeshSource>(AssetId((std::string)field.value()["Source"]));
+            c.source = AssetManager::Get<Mesh>(AssetId((std::string)field.value()["Source"]));
         }
         if(field.key() == "MeshRenderer")
         {

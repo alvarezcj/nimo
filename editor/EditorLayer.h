@@ -8,7 +8,6 @@
 #include "renderer/IndexBuffer.h"
 #include "renderer/FrameBuffer.h"
 #include "renderer/Mesh.h"
-#include "assets/MeshSource.h"
 #include "assets/AssetManager.h"
 #include "scene/Scene.h"
 #include "scene/SceneSerializer.h"

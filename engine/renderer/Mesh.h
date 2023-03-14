@@ -2,18 +2,26 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "assets/MeshSource.h"
 #include <memory>
+#include "assets/Asset.h"
+#include "glm/glm.hpp"
 
 namespace nimo{
-    class Mesh{
+    struct Vertex{
+        glm::vec3 position;
+        glm::vec2 uv;
+    };
+    class Mesh : public Asset{
     public:
-        Mesh(std::shared_ptr<MeshSource> source);
+        Mesh(const std::string& file);
         ~Mesh();
+        AssetType Type() const { return AssetType::Mesh; }
+        static AssetType StaticType(){return AssetType::Mesh;}
         void draw();
-        std::shared_ptr<MeshSource> m_source;
-        VertexArray m_vao;
-        VertexBuffer m_vbo;
-        IndexBuffer m_ibo;
+        VertexArray* m_vao;
+        VertexBuffer* m_vbo;
+        IndexBuffer* m_ibo;
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
     };
 };

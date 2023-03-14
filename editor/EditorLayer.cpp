@@ -393,7 +393,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::FileHandling::Copy("materials", projectFolderPath/"Assets"/"Materials");
         nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/unlit_color.nshader");
         nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/unlit_texture.nshader");
-        nimo::AssetManager::CreateNewAsset<nimo::MeshSource>("Objects/cube/cube.obj");
+        nimo::AssetManager::CreateNewAsset<nimo::Mesh>("Objects/cube/cube.obj");
         nimo::AssetManager::CreateNewAsset<nimo::Texture>("Objects/cube/cube.png");
 
         auto unlitShader = nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader");
@@ -432,9 +432,8 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         {
             nimo::Entity ent_cube1 = createdScene->CreateEntity("Cube");
             ent_cube1.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, 0.0f};
-            ent_cube1.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::MeshSource>("Objects/cube/cube.obj");
+            ent_cube1.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("Objects/cube/cube.obj");
             ent_cube1.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/test.nmat");
-            ent_cube1.GetComponent<nimo::MeshRendererComponent>().mesh = std::make_shared<nimo::Mesh>(ent_cube1.GetComponent<nimo::MeshComponent>().source);
         }
         nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("Scenes/NewScene.nscene", createdScene);
         nimo::AssetManager::WriteIndex();

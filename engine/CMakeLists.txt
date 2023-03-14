@@ -11,7 +11,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/core/FileHandling.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetIndex.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetManager.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetSerializer.cpp 
-${CMAKE_CURRENT_SOURCE_DIR}/assets/MeshSource.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/ImageSource.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Renderer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Context.cpp 
