@@ -110,7 +110,7 @@ void SceneContentsPanel::OnRender()
         ImVec2 rectMin;
         ImVec2 rectMax;
         bool res;
-        bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str());
+        bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str(), ImGuiTreeNodeFlags_DefaultOpen);
         if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
         {
             if (ImGui::Selectable("Create Empty")){
