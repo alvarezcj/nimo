@@ -10,9 +10,12 @@ void InspectorPanel::OnRender()
     auto metadata = nimo::AssetManager::GetMetadata(selectedItem);
     if(metadata.id.valid())
     {
-        ImGui::TextDisabled(nimo::AssetTypeToString(metadata.type));
-        ImGui::TextDisabled(metadata.filepath.string().c_str());
+        ImGui::Image((ImTextureID)m_editor->assetIcons[metadata.type]->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::SameLine();
+        ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
+        ImGui::Text((metadata.filepath.string()).c_str());
         ImGui::TextDisabled(metadata.id.str().c_str());
+
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();

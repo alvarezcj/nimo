@@ -31,6 +31,14 @@ class SceneViewPanel;
 class EditorLayer : public nimo::Layer
 {
 public:
+    EditorLayer(){
+        assetIcons[nimo::AssetType::None] = std::make_shared<nimo::Texture>("icon_file.png");
+        assetIcons[nimo::AssetType::Texture] = std::make_shared<nimo::Texture>("icon_camera.png");
+        assetIcons[nimo::AssetType::Mesh] = std::make_shared<nimo::Texture>("icon_cube.png");
+        assetIcons[nimo::AssetType::Shader] = std::make_shared<nimo::Texture>("icon_polaroid.png");
+        assetIcons[nimo::AssetType::Material] = std::make_shared<nimo::Texture>("icon_paintroll.png");
+        assetIcons[nimo::AssetType::Scene] = std::make_shared<nimo::Texture>("icon_castle.png");
+    }
     ~EditorLayer()
     {
         delete logPanel;
@@ -59,7 +67,7 @@ private:
     AssetExplorerPanel* assetExplorerPanel;
     nimo::GUID lastModifiedScene;
 
-
+    std::map<nimo::AssetType, std::shared_ptr<nimo::Texture>> assetIcons;
 
     void OnAttach() override;
     void OnUpdate(float deltaTime) override;
