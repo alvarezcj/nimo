@@ -7,12 +7,11 @@
 #include "json.hpp"
 
 namespace nimo {
-
     template<> struct AssetSerializer<Scene>{
         void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset);
         std::shared_ptr<nimo::Scene> Deserialize(const nimo::AssetMetadata& metadata);
 		nlohmann::ordered_json SerializeEntity(const std::shared_ptr<nimo::Scene>& scene, const Entity& entity);
-		nimo::GUID DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::json& source);
+		nimo::GUID DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source);
     private:
         std::vector<GUID> serializedEntities;
     };

@@ -7,7 +7,7 @@
 void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset)
 {
     nlohmann::ordered_json j;
-    nlohmann::ordered_json jentities = nlohmann::json::array();
+    nlohmann::ordered_json jentities = nlohmann::ordered_json::array();
     j["Name"] = asset->name;
     j["GUID"] = asset->id.str();
     serializedEntities.clear();
@@ -47,10 +47,6 @@ std::shared_ptr<nimo::Scene> nimo::AssetSerializer<nimo::Scene>::Deserialize(con
     {
         DeserializeEntity(scene, entity);
     }
-    // auto view1 = scene->m_registry.view<MeshComponent, MeshRendererComponent>();
-    // view1.each([&](MeshComponent& mesh, MeshRendererComponent& meshRenderer) {
-    //     meshRenderer.mesh = std::make_shared<Mesh>(mesh.source);
-    // });
     return scene;
 }
 
@@ -71,7 +67,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         nlohmann::ordered_json jfamily{
             {"Parent", f.Parent.str()}
         };
-        nlohmann::ordered_json jchildren = nlohmann::json::array();
+        nlohmann::ordered_json jchildren = nlohmann::ordered_json::array();
         for(auto child : f.Children)
         {
             jchildren.push_back(SerializeEntity(scene, scene->GetEntity(child)));
@@ -117,7 +113,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     }
     return jentity;
 }
-nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::json& source)
+nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source)
 {
     nimo::Entity createdEntity = scene->CreateEntityWithID(GUID(std::string(source["GUID"])));
     for (auto field : source.items())
