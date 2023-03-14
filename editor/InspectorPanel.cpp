@@ -121,6 +121,11 @@ void InspectorPanel::OnRender()
             break;
         case nimo::AssetType::Mesh:
             // Show vertices, submeshes, indices,...
+            {
+                std::shared_ptr<nimo::Mesh> meshAsset = nimo::AssetManager::Get<nimo::Mesh>(metadata.id);
+                ImGui::Text("Vertices: %d", meshAsset->vertices.size());
+                ImGui::Text("Indices: %d", meshAsset->indices.size());
+            }
             break;
         case nimo::AssetType::Shader:
             // Show source code for fragment and vertex. Allow for modification
