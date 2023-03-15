@@ -263,7 +263,12 @@ void EditorLayer::OnAttach()
                     ImGui::Separator();
                     if(ImGui::MenuItem("C# Script")){}
                     if(ImGui::MenuItem("Shader")){}
-                    if(ImGui::MenuItem("Material")){}
+                    if(ImGui::MenuItem("Material"))
+                    {
+                        std::shared_ptr<nimo::Material> newMaterial = std::make_shared<nimo::Material>(nimo::AssetManager::Get<nimo::Shader>(nimo::AssetManager::GetAllExisting<nimo::Shader>()[0].id), std::vector<nimo::IMaterialProperty*>());
+                        nimo::AssetManager::CreateAssetFromMemory<nimo::Material>("NewMaterial.nmat", newMaterial);
+                        nimo::AssetManager::WriteIndex();
+                    }
                     ImGui::Separator();
                     if(ImGui::MenuItem("Scene")){}
                     ImGui::EndMenu(); 

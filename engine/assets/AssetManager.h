@@ -37,9 +37,6 @@ public:
 	static void CreateAssetFromMemory(const std::string& filename, const std::shared_ptr<T>& asset)
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
-		std::filesystem::path p;
-		if(nimo::Project::GetActiveProject())
-			p = nimo::Project::GetActiveProject()->GetSettings().assetDirectory;
 		AssetMetadata metadata = index.get(filename);
 		if(!metadata.id.valid()){
 			metadata.id = GUID::Create();
