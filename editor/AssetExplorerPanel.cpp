@@ -102,11 +102,11 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
                 {
                     ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
-                    auto info = nimo::AssetManager::GetMetadata(entry.path());
-                    if(info.id.valid()) // Found in asset manager
-                    {
-                        ImGui::SetDragDropPayload((std::string("NIMO_ASSET_")+nimo::AssetTypeToString(info.type)).c_str(), &info.id, sizeof(nimo::AssetId));
-                    }
+                    // auto info = nimo::AssetManager::GetMetadata(entry.path());
+                    // if(info.id.valid()) // Found in asset manager
+                    // {
+                    //     ImGui::SetDragDropPayload((std::string("NIMO_ASSET_")+nimo::AssetTypeToString(info.type)).c_str(), &info.id, sizeof(nimo::AssetId));
+                    // }
                     ImGui::Text(entry.path().filename().string().c_str());
                     ImGui::EndDragDropSource();
                 }

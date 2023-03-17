@@ -15,7 +15,7 @@ void EditorLayer::OnAttach()
 {
     d.width = 1920;
     d.height = 1080;
-    entityIcon = std::make_shared<nimo::Texture>("menuGrid.png");
+    entityIcon = std::make_shared<nimo::Texture>("icon_dimension.png");
     fb = std::make_shared<nimo::FrameBuffer>(d);
     logPanel = new LogPanel();
     statisticsPanel = new StatisticsPanel();
@@ -129,7 +129,7 @@ void EditorLayer::OnAttach()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        // ImGui::ShowDemoWindow(NULL);
+        ImGui::ShowDemoWindow(NULL);
 
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_NoWindowMenuButton;
 

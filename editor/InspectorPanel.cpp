@@ -112,12 +112,14 @@ void InspectorPanel::OnRender()
 
                             if (ImGui::BeginDragDropTarget())
                             {
-                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Texture"))
+                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
                                 {
-                                    IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
-                                    nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
-                                    NIMO_DEBUG("Received drag drop texture: {}", payload_n.str());
-                                    ((nimo::MaterialPropertyTexture*)p)->SetTexture(nimo::AssetManager::Get<nimo::Texture>(payload_n));
+                                    std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                                    auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                                    if(info.id.valid() && info.type == nimo::AssetType::Texture) // Found in asset manager
+                                    {
+                                        ((nimo::MaterialPropertyTexture*)p)->SetTexture(nimo::AssetManager::Get<nimo::Texture>(info.id));
+                                    }
                                 }
                                 ImGui::EndDragDropTarget();
                             }
@@ -257,12 +259,14 @@ void InspectorPanel::OnRender()
 
                 if (ImGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Material"))
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
                     {
-                        IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
-                        nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
-                        NIMO_DEBUG("Received drag drop material: {}", payload_n.str());
-                        ent.GetComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>(payload_n);
+                        std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                        auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                        if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                        {
+                            ent.GetComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>(info.id);
+                        }
                     }
                     ImGui::EndDragDropTarget();
                 }
@@ -287,12 +291,14 @@ void InspectorPanel::OnRender()
                     ImGui::InputTextWithHint(("##Asset##Mesh##" + entityIdString).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
                 if (ImGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_Mesh"))
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
                     {
-                        IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
-                        nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
-                        NIMO_DEBUG("Received drag drop material: {}", payload_n.str());
-                        ent.GetComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>(payload_n);
+                        std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                        auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                        if(info.id.valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
+                        {
+                            ent.GetComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>(info.id);
+                        }
                     }
                     ImGui::EndDragDropTarget();
                 }
