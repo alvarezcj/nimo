@@ -10,17 +10,14 @@ void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata
     nlohmann::ordered_json jentities = nlohmann::ordered_json::array();
     j["Name"] = asset->name;
     j["GUID"] = asset->id.str();
-    serializedEntities.clear();
 
     asset->m_registry.each([&](entt::entity id)
     {
         Entity e(id, asset->m_registry);
         if(!e.GetComponent<FamilyComponent>().Parent.valid())
         {
-            if (std::find(serializedEntities.begin(), serializedEntities.end(), e.ID()) == serializedEntities.end()) {
-                nlohmann::ordered_json jentity = SerializeEntity(asset, e);
-                jentities.push_back(jentity);
-            }
+            nlohmann::ordered_json jentity = SerializeEntity(asset, e);
+            jentities.push_back(jentity);
         }
     });
     j["Entities"] = jentities;
