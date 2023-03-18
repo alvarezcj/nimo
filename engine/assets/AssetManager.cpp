@@ -35,7 +35,8 @@ void nimo::AssetManager::LoadAssetIndex(const std::string& filename)
             metadata.filepath = std::string(o["filepath"]);
             metadata.type = AssetTypeFromString(std::string(o["type"]));
             NIMO_DEBUG("\t- {}", o.dump());
-            index[metadata.id] = metadata;
+            if(metadata.id.valid() && FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/metadata.filepath))
+                index[metadata.id] = metadata;
         }
     }
     else{
@@ -50,9 +51,9 @@ void nimo::AssetManager::WriteIndex()
     int i = 0;
     for(auto a : index)
     {
-        if(!a.second.id.valid())
+        if(!a.second.id.valid() || !FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/a.second.filepath))
             continue;
-        assetsjson[i] = {{"guid",a.second.id.str()}, {"filepath",a.second.filepath.c_str()}, {"type", AssetTypeToString(a.second.type)}};
+        assetsjson[i] = {{"guid",a.second.id.str()}, {"filepath",a.second.filepath.lexically_normal().string()}, {"type", AssetTypeToString(a.second.type)}};
         i++;
     }
     j["assets"] = assetsjson;
@@ -132,7 +133,7 @@ nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
 
     if(!filepath.has_extension())
         return info.id;
-        
+
     AssetType type = AssetFileExtensions::GetTypeFromExtension(path.extension().string());
     NIMO_INFO("Importing asset {} as {}", path.string(), AssetTypeToString(type));
     if (type == AssetType::None)
