@@ -9,6 +9,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/SceneViewPanel.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/SceneContentsPanel.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/InspectorPanel.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/AssetExplorerPanel.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/UIHelpers.cpp 
 )
 set(LIBS
 nimo_engine

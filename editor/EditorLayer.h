@@ -19,6 +19,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "nfd.h"
+#include "UIHelpers.h"
 
 class LogPanel;
 class StatisticsPanel;
@@ -31,7 +32,7 @@ class SceneViewPanel;
 class EditorLayer : public nimo::Layer
 {
 public:
-    EditorLayer(){
+    EditorLayer(): newNameModal("New Name"){
         assetIcons[nimo::AssetType::None] = std::make_shared<nimo::Texture>("icon_file.png");
         assetIcons[nimo::AssetType::Texture] = std::make_shared<nimo::Texture>("icon_camera.png");
         assetIcons[nimo::AssetType::Mesh] = std::make_shared<nimo::Texture>("icon_cube.png");
@@ -66,6 +67,7 @@ private:
     SceneContentsPanel* sceneContentsPanel;
     AssetExplorerPanel* assetExplorerPanel;
     nimo::GUID lastModifiedScene;
+    ChangeNameModalWindow newNameModal;
 
     std::map<nimo::AssetType, std::shared_ptr<nimo::Texture>> assetIcons;
 

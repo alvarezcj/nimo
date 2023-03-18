@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Components.h"
+#include "renderer/Shader.h"
 
 nimo::Scene::Scene(const std::string& name)
     : name(name)

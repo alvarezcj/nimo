@@ -23,6 +23,14 @@ bool nimo::FileHandling::Move(const std::filesystem::path& from, const std::file
     std::filesystem::rename(from, to);
     return true;
 }
+bool nimo::FileHandling::Remove(const std::filesystem::path& target)
+{
+		if (!FileHandling::Exists(target))
+			return false;
+        if (std::filesystem::is_directory(target))
+			return std::filesystem::remove_all(target) > 0;
+		return std::filesystem::remove(target);
+}
 
 bool nimo::FileHandling::CreateDiretory(const std::filesystem::path& folderpath)
 {

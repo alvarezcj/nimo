@@ -8,6 +8,7 @@
 #include "InspectorPanel.h"
 #include "AssetExplorerPanel.h"
 #include "misc/cpp/imgui_stdlib.h"
+#include "UIHelpers.h"
 
 #include "core/Application.h"
 
@@ -255,27 +256,13 @@ void EditorLayer::OnAttach()
                 }
                 ImGui::EndMenu(); 
             }
-            if (ImGui::BeginMenu("Assets"))
+            if(nimo::Project::GetActiveProject())
             {
-                if (ImGui::BeginMenu("Create"))
+                if (ImGui::BeginMenu("Assets"))
                 {
-                    if(ImGui::MenuItem("Folder")){}
-                    ImGui::Separator();
-                    if(ImGui::MenuItem("C# Script")){}
-                    if(ImGui::MenuItem("Shader")){}
-                    if(ImGui::MenuItem("Material"))
-                    {
-                        std::shared_ptr<nimo::Material> newMaterial = std::make_shared<nimo::Material>(nimo::AssetManager::Get<nimo::Shader>(nimo::AssetManager::GetAllExisting<nimo::Shader>()[0].id), std::vector<nimo::IMaterialProperty*>());
-                        nimo::AssetManager::CreateAssetFromMemory<nimo::Material>("NewMaterial.nmat", newMaterial);
-                        nimo::AssetManager::WriteIndex();
-                    }
-                    ImGui::Separator();
-                    if(ImGui::MenuItem("Scene")){}
+                    ShowAssetsMenu(nimo::Project::GetActiveProject()->GetAssetsFolderPath(), newNameModal);
                     ImGui::EndMenu(); 
                 }
-                if(ImGui::MenuItem("Show in Explorer")){}
-                if(ImGui::MenuItem("Import New Asset...")){}
-                ImGui::EndMenu(); 
             }
             if (ImGui::BeginMenu("View"))
             {
@@ -293,6 +280,8 @@ void EditorLayer::OnAttach()
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
         }
         ImGui::EndMainMenuBar();
+
+        newNameModal.Show();
 
         if(showCreateNewProjectModal)
             ImGui::OpenPopup("Create New Project");

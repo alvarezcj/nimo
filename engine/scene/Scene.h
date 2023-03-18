@@ -1,7 +1,6 @@
 #pragma once
 #include "Entity.h"
 #include "Components.h"
-#include "renderer/Shader.h"
 #include <string>
 #include "assets/Asset.h"
 #include <functional>

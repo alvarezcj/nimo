@@ -123,6 +123,8 @@ public:
 	static void WriteIndex();
 	static std::filesystem::path GetRelativePath(const std::filesystem::path& filepath);
 	static void UpdatePath(AssetId id, const std::filesystem::path& newPath);
+	static void Unregister(AssetId id);
+	static AssetId Import(const std::filesystem::path& filepath);
 
 private:
 	static AssetMetadata& GetMetadataRef(AssetId handle);

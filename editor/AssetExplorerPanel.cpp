@@ -6,6 +6,7 @@
 #include <functional>
 #include "InspectorPanel.h"
 #include "EditorLayer.h"
+#include "UIHelpers.h"
 
 const static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_FramePadding;
 void AssetExplorerPanel::OnRender()
@@ -25,6 +26,11 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
     if(selectedPath == path)
         node_flags |= ImGuiTreeNodeFlags_Selected;
     bool open = ImGui::TreeNodeEx(("##" + path.filename().string()).c_str(), node_flags);
+    if (ImGui::BeginPopupContextItem())
+    {
+        ShowAssetsMenu(path, m_editor->newNameModal);
+        ImGui::EndPopup();
+    }
     // Check if selected
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
     {
@@ -83,60 +89,63 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
     ImGui::SameLine();
     ImGui::Text(path.filename().string().c_str());
 
+
     if (open)
     {
-        for (const auto& entry : std::filesystem::directory_iterator(path))
+        if (nimo::FileHandling::Exists(path))
         {
-            if (entry.is_directory())
+            for (const auto& entry : std::filesystem::directory_iterator(path))
             {
-                PaintDirectory(entry.path());
-            }
-            else {
-                ImGuiTreeNodeFlags leaf_flags = base_flags;
-                leaf_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
-                if(selectedPath == entry.path())
-                    leaf_flags |= ImGuiTreeNodeFlags_Selected;
-                ImGui::TreeNodeEx(("##" + entry.path().filename().string()).c_str(), leaf_flags);
-                
-                // Drag/drop source
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+                if (entry.is_directory())
                 {
-                    ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
-                    // auto info = nimo::AssetManager::GetMetadata(entry.path());
-                    // if(info.id.valid()) // Found in asset manager
-                    // {
-                    //     ImGui::SetDragDropPayload((std::string("NIMO_ASSET_")+nimo::AssetTypeToString(info.type)).c_str(), &info.id, sizeof(nimo::AssetId));
-                    // }
+                    PaintDirectory(entry.path());
+                }
+                else {
+                    ImGuiTreeNodeFlags leaf_flags = base_flags;
+                    leaf_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
+                    if (selectedPath == entry.path())
+                        leaf_flags |= ImGuiTreeNodeFlags_Selected;
+                    ImGui::TreeNodeEx(("##" + entry.path().filename().string()).c_str(), leaf_flags);
+                    if (ImGui::BeginPopupContextItem())
+                    {
+                        ShowAssetsMenu(entry.path(), m_editor->newNameModal);
+                        ImGui::EndPopup();
+                    }
+                    // Drag/drop source
+                    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+                    {
+                        ImGui::SetDragDropPayload("NIMO_ASSET_FILE", entry.path().string().c_str(), entry.path().string().size() + 1);
+                        ImGui::Text(entry.path().filename().string().c_str());
+                        ImGui::EndDragDropSource();
+                    }
+                    // Check if selected
+                    if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
+                    {
+                        selectedPath = entry.path();
+                        auto info = nimo::AssetManager::GetMetadata(entry.path());
+                        if (info.id.valid()) // Found in asset manager
+                        {
+                            m_editor->inspectorPanel->SetViewItem(info.id);
+                        }
+                        NIMO_DEBUG("Selected asset: {}", entry.path().string());
+                    }
+                    ImGui::SameLine();
+                    if (entry.path().has_extension())
+                    {
+                        auto it = AssetExplorerPanel::mapExtensionIcon.find(entry.path().extension().string());
+                        if (it != AssetExplorerPanel::mapExtensionIcon.end())
+                        {
+                            ImGui::Image((ImTextureID)it->second->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
+                        }
+                        else {
+                            ImGui::Image((ImTextureID)fileIcon->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
+                        }
+                    }
+                    else
+                        ImGui::Image((ImTextureID)fileIcon->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
+                    ImGui::SameLine();
                     ImGui::Text(entry.path().filename().string().c_str());
-                    ImGui::EndDragDropSource();
                 }
-                // Check if selected
-                if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
-                {
-                    selectedPath = entry.path();
-                    auto info = nimo::AssetManager::GetMetadata(entry.path());
-                    if(info.id.valid()) // Found in asset manager
-                    {
-                        m_editor->inspectorPanel->SetViewItem(info.id);
-                    }
-                    NIMO_DEBUG("Selected asset: {}", entry.path().string());
-                }
-                ImGui::SameLine();
-                if(entry.path().has_extension())
-                {
-                    auto it = AssetExplorerPanel::mapExtensionIcon.find(entry.path().extension().string());
-                    if(it != AssetExplorerPanel::mapExtensionIcon.end())
-                    {
-                        ImGui::Image((ImTextureID)it->second->GetInternalId(), ImVec2(28,28), ImVec2(0, 1), ImVec2(1, 0));
-                    }
-                    else{
-                        ImGui::Image((ImTextureID)fileIcon->GetInternalId(), ImVec2(28,28), ImVec2(0, 1), ImVec2(1, 0));
-                    }
-                }
-                else
-                    ImGui::Image((ImTextureID)fileIcon->GetInternalId(), ImVec2(28,28), ImVec2(0, 1), ImVec2(1, 0));
-                ImGui::SameLine();
-                ImGui::Text(entry.path().filename().string().c_str());
             }
         }
         ImGui::TreePop();

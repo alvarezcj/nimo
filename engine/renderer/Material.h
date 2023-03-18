@@ -1,8 +1,8 @@
 #pragma once
 
-#include "assets/Asset.h"
 #include "json.hpp"
 #include <fstream>
+#include "assets/Asset.h"
 #include "assets/AssetManager.h"
 #include "Shader.h"
 #include "MaterialProperties.h"
