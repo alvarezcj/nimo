@@ -4,6 +4,7 @@
 #include <string>
 #include "assets/Asset.h"
 #include <functional>
+#include "renderer/FrameBuffer.h"
 
 namespace nimo{
     class Scene : public Asset{
@@ -12,7 +13,7 @@ namespace nimo{
         ~Scene();
         AssetType Type() const { return AssetType::Scene; }
         static AssetType StaticType(){return AssetType::Scene;}
-        void Update();
+        void Update(std::shared_ptr<FrameBuffer> target);
         void ForEachEntity(std::function<void(Entity&)> action);
         Entity CreateEntity(const std::string& name = "");
         Entity CreateEntityWithID(GUID desiredId);
@@ -26,6 +27,7 @@ namespace nimo{
         std::string name; 
         entt::registry m_registry;
         std::unordered_map<GUID, entt::entity> m_entities;
+        std::shared_ptr<FrameBuffer> gBuffer;
 
         friend class SceneSerializer;
         friend struct AssetSerializer<Scene>;

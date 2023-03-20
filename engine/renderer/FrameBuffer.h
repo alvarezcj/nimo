@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace nimo{
 class FrameBuffer{
@@ -11,25 +12,31 @@ public:
 		Additive,
 		Zero_SrcColor
     };
+    struct ColorAttachment{
+        int internalFormat;
+        int format;
+        int type;
+    };
     struct Details{
-		uint32_t width = 0;
-		uint32_t height = 0;
-		glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-		float depthClearValue = 1.0f;
-		bool clearColorOnBind = true;
-		bool clearDepthOnBind = true;
+        uint32_t width = 0;
+        uint32_t height = 0;
+        glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+        float depthClearValue = 1.0f;
+        bool clearColorOnBind = true;
+        bool clearDepthOnBind = true;
         BlendMode blendMode = BlendMode::SrcAlphaOneMinusSrcAlpha;
+        std::vector<ColorAttachment> colorAttachments;
     };
     FrameBuffer(const Details& details);
     ~FrameBuffer();
     void bind();
     static void unbind();
-    void BindColorTexture(unsigned int slot);
-    unsigned int GetColorAttachmentId() {return m_textureAttachment;}
+    void BindColorTexture(int id, unsigned int slot);
+    unsigned int GetColorAttachmentId(int id) {return m_textureAttachments[id];}
 
-private:
     unsigned int m_id;
-    unsigned int m_textureAttachment;
+private:
+    std::vector<unsigned int> m_textureAttachments;
     unsigned int m_renderBuffer;
     Details m_details;
 };

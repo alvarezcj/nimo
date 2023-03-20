@@ -7,7 +7,7 @@ std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::exte
     //Material
     {".nmat", AssetType::Material},
     //Shader
-    {".nmat", AssetType::Shader},
+    {".nshader", AssetType::Shader},
     //Texture
     { ".png", AssetType::Texture },
     { ".jpg", AssetType::Texture },

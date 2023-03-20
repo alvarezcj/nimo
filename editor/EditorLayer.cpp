@@ -17,6 +17,7 @@ void EditorLayer::OnAttach()
     d.width = 1920;
     d.height = 1080;
     entityIcon = std::make_shared<nimo::Texture>("icon_dimension.png");
+    d.colorAttachments.push_back({GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE});
     fb = std::make_shared<nimo::FrameBuffer>(d);
     logPanel = new LogPanel();
     statisticsPanel = new StatisticsPanel();
@@ -349,7 +350,7 @@ void EditorLayer::OnAttach()
         nimo::Renderer::BeginFrame(fb);
         for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
         {
-            scene->Update();
+            scene->Update(fb);
         }
         nimo::Renderer::EndFrame();
 

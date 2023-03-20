@@ -4,6 +4,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"      
 #include "assimp/postprocess.h"
+#include "core/Log.h"
 
 nimo::Mesh::Mesh(const std::string& file)
 {
@@ -35,6 +36,13 @@ nimo::Mesh::Mesh(const std::string& file)
             {
                 Vertex vertex;
                 vertex.position = {scene->mMeshes[i]->mVertices[j].x,scene->mMeshes[i]->mVertices[j].y,scene->mMeshes[i]->mVertices[j].z};
+                if (scene->mMeshes[i]->HasNormals())
+                    vertex.normal = {scene->mMeshes[i]->mNormals[j].x,scene->mMeshes[i]->mNormals[j].y,scene->mMeshes[i]->mNormals[j].z};
+                else
+                {
+                    NIMO_ERROR("Model has no normals");
+                    vertex.normal = glm::vec3(0.0f, 0.0f, 0.0f);
+                }
                 // texture coordinates
                 if (scene->mMeshes[i]->mTextureCoords[0]) // does the mesh contain texture coordinates?
                 {
@@ -92,6 +100,7 @@ nimo::Mesh::Mesh(const std::string& file)
     m_vbo = new VertexBuffer(
         {
             {"position", ShaderDataType::Float3},
+            {"normal", ShaderDataType::Float3},
             {"uv", ShaderDataType::Float2}
         },
         vertices.data(), sizeof(Vertex) * vertices.size()
