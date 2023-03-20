@@ -410,10 +410,10 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         }
         {
             auto prop = new nimo::MaterialPropertyTexture();
-            prop->name = "texture_diffuse1";
+            prop->name = "texture_specular1";
             prop->type = nimo::ShaderUniformDataType::Sampler2D;
             prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube.png"));
-            prop->SetValue(0);
+            prop->SetValue(1);
             props.push_back(prop);
         }
         std::shared_ptr<nimo::Material> material = std::make_shared<nimo::Material>(unlitShader, props);
