@@ -1,7 +1,8 @@
 @VERTEX
 #version 330 core
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoords;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
 
 out vec2 TexCoords;
 
@@ -10,9 +11,7 @@ void main()
     TexCoords = aTexCoords;
     gl_Position = vec4(aPos, 1.0);
 }
-@VERTEXEND
-
-@FRAGMENT
+@VERTEXEND@FRAGMENT
 #version 330 core
 out vec4 FragColor;
 
@@ -29,10 +28,13 @@ struct Light {
     float Linear;
     float Quadratic;
     float Radius;
+
+    bool Active;
 };
 const int NR_LIGHTS = 32;
 uniform Light lights[NR_LIGHTS];
 uniform vec3 viewPos;
+uniform int currentLights;
 
 void main()
 {             
@@ -47,6 +49,7 @@ void main()
     vec3 viewDir  = normalize(viewPos - FragPos);
     for(int i = 0; i < NR_LIGHTS; ++i)
     {
+        if(!lights[i].Active) continue;
         // calculate distance between light source and current fragment
         float distance = length(lights[i].Position - FragPos);
         if(distance < lights[i].Radius)

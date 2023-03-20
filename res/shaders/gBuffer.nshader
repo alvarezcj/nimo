@@ -23,9 +23,7 @@ void main()
 
     gl_Position = projection * view * worldPos;
 }
-@VERTEXEND
-
-@FRAGMENT
+@VERTEXEND@FRAGMENT
 #version 330 core
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;

@@ -61,14 +61,8 @@ struct CameraComponent{
     }ClippingPlanes;
 };
 
-struct LightComponent{
+struct PointLightComponent{
     glm::vec3 Color{1.0f, 1.0f, 1.0f};
-    enum class Type : unsigned int{
-        Directional,
-        Point,
-        Spot
-    } Type;
-    float Intensity = 1.0f;
 };
 
 struct MeshComponent{

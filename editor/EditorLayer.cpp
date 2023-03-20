@@ -242,6 +242,8 @@ void EditorLayer::OnAttach()
                         NIMO_DEBUG(nimo::AssetManager::GetMetadata(startingSceneId).filepath.string());
                         nimo::AssetManager::Get<nimo::Scene>(startingSceneId);
                         lastModifiedScene = startingSceneId;
+                        renderer = std::make_shared<nimo::SceneRenderer>();
+
                         free(outPath);
                     }
                 }
@@ -350,7 +352,9 @@ void EditorLayer::OnAttach()
         nimo::Renderer::BeginFrame(fb);
         for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
         {
-            scene->Update(fb);
+            renderer->SetScene(scene);
+            renderer->Render(fb);
+            // scene->Update();
         }
         nimo::Renderer::EndFrame();
 
@@ -437,6 +441,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::ProjectSerializer projectSer(project);
         projectSer.Serialize((projectFolderPath/settings.name).replace_extension(".nproj"));
         NIMO_DEBUG("Serialized Project {}", settings.name);
+        renderer = std::make_shared<nimo::SceneRenderer>();
     }
     else{
         NIMO_ERROR("Error Creating directory {}", projectFolderPath.string());

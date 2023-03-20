@@ -15,6 +15,7 @@ namespace nimo{
     class Mesh : public Asset{
     public:
         Mesh(const std::string& file);
+        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
         ~Mesh();
         AssetType Type() const { return AssetType::Mesh; }
         static AssetType StaticType(){return AssetType::Mesh;}
@@ -22,7 +23,7 @@ namespace nimo{
         VertexArray* m_vao;
         VertexBuffer* m_vbo;
         IndexBuffer* m_ibo;
-        std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
+        std::vector<Vertex> m_vertices;
+        std::vector<unsigned int> m_indices;
     };
 };

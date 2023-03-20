@@ -21,6 +21,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/renderer/VertexBuffer.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/FrameBuffer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Texture.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Mesh.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/renderer/SceneRenderer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scene/Scene.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scene/SceneSerializer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/project/Project.cpp 

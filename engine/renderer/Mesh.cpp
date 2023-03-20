@@ -55,14 +55,14 @@ nimo::Mesh::Mesh(const std::string& file)
                 else
                     vertex.uv = glm::vec2(0.0f, 0.0f);
                 // std::cout << "Vertex num " << i << "[" << vertex.position.x << ", "<< vertex.position.y << ", "<< vertex.position.z << "]["<< vertex.uv.x << ", "<< vertex.uv.y << "]"<< std::endl;
-                vertices.push_back(vertex);
+                m_vertices.push_back(vertex);
             }
             for(int j = 0; j< scene->mMeshes[i]->mNumFaces; ++j)
             {
                 aiFace face = scene->mMeshes[i]->mFaces[j];
                 // retrieve all indices of the face and store them in the indices vector
                 for (unsigned int k = 0; k < face.mNumIndices; k++)
-                    indices.push_back(face.mIndices[k]);
+                    m_indices.push_back(face.mIndices[k]);
             }
         }
         // std::cout << "\t NumTextures: " << scene->mNumTextures << std::endl;
@@ -103,9 +103,28 @@ nimo::Mesh::Mesh(const std::string& file)
             {"normal", ShaderDataType::Float3},
             {"uv", ShaderDataType::Float2}
         },
-        vertices.data(), sizeof(Vertex) * vertices.size()
+        m_vertices.data(), sizeof(Vertex) * m_vertices.size()
     );
-    m_ibo = new IndexBuffer(indices.data(), indices.size());
+    m_ibo = new IndexBuffer(m_indices.data(), m_indices.size());
+    m_vao->bind();
+    m_ibo->bind();
+    m_vbo->bind();
+    m_vbo->applyLayout();
+}
+nimo::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
+    : m_vertices(vertices)
+    , m_indices(indices)
+{
+    m_vao = new VertexArray();
+    m_vbo = new VertexBuffer(
+        {
+            {"position", ShaderDataType::Float3},
+            {"normal", ShaderDataType::Float3},
+            {"uv", ShaderDataType::Float2}
+        },
+        m_vertices.data(), sizeof(Vertex) * m_vertices.size()
+    );
+    m_ibo = new IndexBuffer(m_indices.data(), m_indices.size());
     m_vao->bind();
     m_ibo->bind();
     m_vbo->bind();

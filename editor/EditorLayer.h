@@ -8,6 +8,7 @@
 #include "renderer/IndexBuffer.h"
 #include "renderer/FrameBuffer.h"
 #include "renderer/Mesh.h"
+#include "renderer/SceneRenderer.h"
 #include "assets/AssetManager.h"
 #include "scene/Scene.h"
 #include "scene/SceneSerializer.h"
@@ -59,6 +60,8 @@ private:
 
     nimo::FrameBuffer::Details d;
     std::shared_ptr<nimo::FrameBuffer> fb;
+    std::shared_ptr<nimo::SceneRenderer> renderer;
+
     LogPanel* logPanel;
     StatisticsPanel* statisticsPanel;
     GameViewPanel* gameViewPanel;

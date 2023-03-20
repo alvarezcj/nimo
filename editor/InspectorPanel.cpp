@@ -136,8 +136,8 @@ void InspectorPanel::OnRender()
             // Show vertices, submeshes, indices,...
             {
                 std::shared_ptr<nimo::Mesh> meshAsset = nimo::AssetManager::Get<nimo::Mesh>(metadata.id);
-                ImGui::Text("Vertices: %d", meshAsset->vertices.size());
-                ImGui::Text("Indices: %d", meshAsset->indices.size());
+                ImGui::Text("Vertices: %d", meshAsset->m_vertices.size());
+                ImGui::Text("Indices: %d", meshAsset->m_indices.size());
                 ImGui::Separator();
             }
             break;
@@ -306,6 +306,15 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::PointLightComponent>())
+        {
+            if (ImGui::CollapsingHeader((std::string("Point Light##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::ColorEdit3(("Color##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Color, ImGuiColorEditFlags_Float);
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         ImGui::Spacing();
 
         float alignment = 0.5f;
@@ -332,6 +341,9 @@ void InspectorPanel::OnRender()
             }
             if (ImGui::Selectable("Mesh Renderer")){
                 ent.AddComponent<nimo::MeshRendererComponent>();
+            }
+            if (ImGui::Selectable("Point Light")){
+                ent.AddComponent<nimo::PointLightComponent>();
             }
             if (ImGui::Selectable("Camera")){}
             ImGui::EndPopup();
