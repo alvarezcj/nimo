@@ -392,31 +392,28 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::FileHandling::Copy("materials", projectFolderPath/"Assets"/"Materials");
         nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/unlit_color.nshader");
         nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/unlit_texture.nshader");
+        nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/gBuffer.nshader");
+        nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/deferred_shading.nshader");
         nimo::AssetManager::CreateNewAsset<nimo::Mesh>("Objects/cube/cube.obj");
         nimo::AssetManager::CreateNewAsset<nimo::Texture>("Objects/cube/cube.png");
+        nimo::AssetManager::CreateNewAsset<nimo::Texture>("Objects/cube/cube_ks.png");
 
-        auto unlitShader = nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_texture.nshader");
+        auto unlitShader = nimo::AssetManager::Get<nimo::Shader>("Shaders/gBuffer.nshader");
         std::vector<nimo::IMaterialProperty*> props;
         {
             auto prop = new nimo::MaterialPropertyTexture();
-            prop->name = "mainTexture";
+            prop->name = "texture_diffuse1";
             prop->type = nimo::ShaderUniformDataType::Sampler2D;
             prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube.png"));
             prop->SetValue(0);
             props.push_back(prop);
         }
         {
-            auto prop = new nimo::MaterialProperty<glm::vec2>();
-            prop->name = "tiling";
-            prop->type = nimo::ShaderUniformDataType::Float2;
-            prop->SetValue({1.0f, 1.0f});
-            props.push_back(prop);
-        }
-        {
-            auto prop = new nimo::MaterialProperty<glm::vec2>();
-            prop->name = "offset";
-            prop->type = nimo::ShaderUniformDataType::Float2;
-            prop->SetValue({0.0f, 0.0f});
+            auto prop = new nimo::MaterialPropertyTexture();
+            prop->name = "texture_diffuse1";
+            prop->type = nimo::ShaderUniformDataType::Sampler2D;
+            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube.png"));
+            prop->SetValue(0);
             props.push_back(prop);
         }
         std::shared_ptr<nimo::Material> material = std::make_shared<nimo::Material>(unlitShader, props);
