@@ -82,6 +82,13 @@ nimo::Entity nimo::Scene::CreateEntityWithParent(Entity parent, const std::strin
 
 void nimo::Scene::DestroyEntity(Entity entity)
 {
+    if(entity.Parent().valid())
+    {
+        auto parent = GetEntity(entity.Parent());
+        parent.GetComponent<FamilyComponent>().Children.erase(
+            std::remove(parent.GetComponent<FamilyComponent>().Children.begin(), parent.GetComponent<FamilyComponent>().Children.end(), entity.ID()),
+             parent.GetComponent<FamilyComponent>().Children.end());
+    }
     m_entities.erase(entity.ID());
     for(auto child : entity.Children())
     {

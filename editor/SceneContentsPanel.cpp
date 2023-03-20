@@ -40,6 +40,7 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
     }
     if(mustDestroy)
     {
+        if(open) ImGui::TreePop();
         scene->DestroyEntity(ent);
         m_editor->inspectorPanel->ResetViewItem();
         return;
