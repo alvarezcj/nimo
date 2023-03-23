@@ -112,7 +112,8 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         PointLightComponent l = e.GetComponent<PointLightComponent>();
         nlohmann::ordered_json jpointlight{
-            {"Color",{l.Color.r,l.Color.g,l.Color.b}}
+            {"Color",{l.Color.r,l.Color.g,l.Color.b}},
+            {"Intensity",l.Intensity}
         };
         jentity["PointLight"] = jpointlight;
     }
@@ -174,6 +175,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         {
             PointLightComponent& l = createdEntity.AddComponent<PointLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
+            l.Intensity = (float)field.value()["Intensity"];
         }
     }
     return createdEntity.GetComponent<IDComponent>().Id;

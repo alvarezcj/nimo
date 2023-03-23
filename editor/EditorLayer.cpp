@@ -412,7 +412,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             auto prop = new nimo::MaterialPropertyTexture();
             prop->name = "texture_specular1";
             prop->type = nimo::ShaderUniformDataType::Sampler2D;
-            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube.png"));
+            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube_ks.png"));
             prop->SetValue(1);
             props.push_back(prop);
         }

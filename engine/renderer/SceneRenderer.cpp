@@ -39,6 +39,15 @@ void nimo::SceneRenderer::SetScene(std::shared_ptr<Scene> scene)
 }
 void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
 {
+    Entity camera(*m_scene->m_registry.view<CameraComponent>().begin(), m_scene->m_registry);
+    auto camTransform = camera.GetComponent<TransformComponent>();
+    auto cam = camera.GetComponent<CameraComponent>();
+    glm::mat4 projection;
+    if(cam.Projection == CameraComponent::Projection::Perspective)
+        projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)1920 , (float)1080, cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
+    else
+        projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
+    glm::mat4 viewMatrix = glm::toMat4(glm::quat(camTransform.Rotation)) * glm::translate(glm::mat4(1.0f), {-camTransform.Translation.x, -camTransform.Translation.y, -camTransform.Translation.z});
     // Render scene into gbuffer
     m_gBuffer->bind();
     m_scene->m_registry.view<IDComponent, MeshComponent, TransformComponent, MeshRendererComponent>().each([&](IDComponent& id, MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
@@ -46,16 +55,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         r.material->shader->use();
         r.material->Setup();
         r.material->shader->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
-        m_scene->m_registry.view<CameraComponent, TransformComponent>().each([&](CameraComponent& cam, TransformComponent& camTransform)
-        {
-            glm::mat4 projection;
-            if(cam.Projection == CameraComponent::Projection::Perspective)
-                projection = glm::perspective(glm::radians(cam.FOV), (float)1920 / (float)1080, cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
-            else
-                projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
-            r.material->shader->set("view", glm::toMat4(glm::quat(camTransform.Rotation)) * glm::translate(glm::mat4(1.0f), {-camTransform.Translation.x, -camTransform.Translation.y, camTransform.Translation.z}) );
-            r.material->shader->set("projection", projection);
-        });
+        r.material->shader->set("view", viewMatrix);
+        r.material->shader->set("projection", projection);
         m.source->draw();
     });
     target->bind();
@@ -72,6 +73,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     {
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Position", lightTransform.Translation);
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Color", light.Color);
+        m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Intensity", light.Intensity);
         static const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
         static const float linear = 0.7f;
         static const float quadratic = 1.8f;
@@ -88,14 +90,6 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     {
         m_shaderLightingPass->set("lights[" + std::to_string(i) + "].Active", false);
     }
-    m_scene->m_registry.view<CameraComponent, TransformComponent>().each([&](CameraComponent& cam, TransformComponent& camTransform)
-    {
-        glm::mat4 projection;
-        if(cam.Projection == CameraComponent::Projection::Perspective)
-            projection = glm::perspective(glm::radians(cam.FOV), (float)1920 / (float)1080, cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
-        else
-            projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
-        m_shaderLightingPass->set("viewPos", glm::vec3(-camTransform.Translation.x, -camTransform.Translation.y, camTransform.Translation.z));
-    });
+    m_shaderLightingPass->set("viewPos", glm::vec3(-camTransform.Translation.x, -camTransform.Translation.y, camTransform.Translation.z));
     m_quadMesh->draw();
 }
