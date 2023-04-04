@@ -12,6 +12,8 @@ std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::exte
     { ".png", AssetType::Texture },
     { ".jpg", AssetType::Texture },
     { ".jpeg", AssetType::Texture },
+    // Environment 
+    { ".hdr", AssetType::EnvironmentMap},
     //Mesh
     {".obj", AssetType::Mesh},
     {".fbx", AssetType::Mesh},

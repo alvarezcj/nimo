@@ -1,12 +1,8 @@
 #include "Texture.h"
 
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
-#include "stb_image.h"
 #include <glad/glad.h>
 #include "core/Log.h"
-    
+#include "stb_image.h"
     
 nimo::Texture::Texture(unsigned int width, unsigned int height, void* data)
     : m_width(width)

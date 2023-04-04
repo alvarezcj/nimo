@@ -12,6 +12,7 @@ namespace nimo
         Shader,
         Material,
         Scene,
+        EnvironmentMap,
 	};
 
     inline AssetType AssetTypeFromString(const std::string& str){
@@ -21,6 +22,7 @@ namespace nimo
         if (str == "Shader")			return AssetType::Shader;
         if (str == "Material")			return AssetType::Material;
         if (str == "Scene")			return AssetType::Scene;
+        if (str == "EnvironmentMap")			return AssetType::EnvironmentMap;
         return AssetType::None;
     }
 
@@ -34,6 +36,7 @@ namespace nimo
             case AssetType::Shader:		return "Shader"; break;
             case AssetType::Material:		return "Material"; break;
             case AssetType::Scene:		return "Scene"; break;
+            case AssetType::EnvironmentMap:		return "EnvironmentMap"; break;
             default:  break;
         }
         return "None";

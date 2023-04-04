@@ -31,4 +31,9 @@ namespace nimo
         void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Mesh>& asset);
         std::shared_ptr<nimo::Mesh> Deserialize(const nimo::AssetMetadata& metadata);
     };
+    class EnvironmentMap;
+    template<> struct AssetSerializer<EnvironmentMap>{
+        void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::EnvironmentMap>& asset);
+        std::shared_ptr<nimo::EnvironmentMap> Deserialize(const nimo::AssetMetadata& metadata);
+    };
 } // namespace nimo

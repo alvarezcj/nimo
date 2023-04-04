@@ -191,6 +191,13 @@ void InspectorPanel::OnRender()
                 ImGui::Image((ImTextureID)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
             }
             break;
+        case nimo::AssetType::EnvironmentMap:
+            // Show nothing
+            {
+                std::shared_ptr<nimo::EnvironmentMap> textureAsset = nimo::AssetManager::Get<nimo::EnvironmentMap>(metadata.id);
+                ImGui::Text("Size: %dx%d", textureAsset->Width(), textureAsset->Height());
+            }
+            break;
         default:
             break;
         }

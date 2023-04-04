@@ -1,8 +1,10 @@
+#pragma once
 #include "core/Log.h"
 #include "core/Layer.h"
 #include "core/FileHandling.h"
 #include "renderer/Renderer.h"
 #include "renderer/Shader.h"
+#include "renderer/EnvironmentMap.h"
 #include "renderer/VertexArray.h"
 #include "renderer/VertexBuffer.h"
 #include "renderer/IndexBuffer.h"
@@ -40,6 +42,7 @@ public:
         assetIcons[nimo::AssetType::Shader] = std::make_shared<nimo::Texture>("icon_polaroid.png");
         assetIcons[nimo::AssetType::Material] = std::make_shared<nimo::Texture>("icon_paintroll.png");
         assetIcons[nimo::AssetType::Scene] = std::make_shared<nimo::Texture>("icon_castle.png");
+        assetIcons[nimo::AssetType::EnvironmentMap] = std::make_shared<nimo::Texture>("icon_picture.png");
     }
     ~EditorLayer()
     {

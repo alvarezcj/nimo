@@ -12,6 +12,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetIndex.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetManager.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetSerializer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetFileExtensions.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/renderer/stb_image.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Renderer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Context.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Shader.cpp 
@@ -20,6 +21,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/renderer/VertexArray.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/VertexBuffer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/FrameBuffer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Texture.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/renderer/EnvironmentMap.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Mesh.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/SceneRenderer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scene/Scene.cpp 

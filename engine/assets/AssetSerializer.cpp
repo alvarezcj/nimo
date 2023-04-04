@@ -1,6 +1,7 @@
 #include "AssetSerializer.h"
 
 #include "core/Log.h"
+#include "renderer/EnvironmentMap.h"
 #include "renderer/Texture.h"
 #include "renderer/Shader.h"
 #include "renderer/Material.h"
@@ -17,6 +18,16 @@ std::shared_ptr<nimo::Texture> nimo::AssetSerializer<nimo::Texture>::Deserialize
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
     return std::make_shared<Texture>((p/metadata.filepath).string());
+}
+
+//EnvironmentMap
+void nimo::AssetSerializer<nimo::EnvironmentMap>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::EnvironmentMap>& asset){}
+std::shared_ptr<nimo::EnvironmentMap> nimo::AssetSerializer<nimo::EnvironmentMap>::Deserialize(const nimo::AssetMetadata& metadata)
+{ 
+    std::filesystem::path p = ".";
+    if(nimo::Project::GetActiveProject())
+        p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
+    return std::make_shared<EnvironmentMap>((p/metadata.filepath).string());
 }
 
 //Shader
