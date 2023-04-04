@@ -13,7 +13,9 @@ public:
 private:
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<FrameBuffer> m_gBuffer;
+    std::shared_ptr<FrameBuffer> m_hdrColorBuffer;
     std::shared_ptr<Shader> m_shaderLightingPass;
+    std::shared_ptr<Shader> m_hdrToneMappingPass;
     std::shared_ptr<Mesh> m_quadMesh;
 };  
 } // namespace nimo

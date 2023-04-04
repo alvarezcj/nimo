@@ -9,20 +9,30 @@ nimo::SceneRenderer::SceneRenderer()
     gBufferDetails.height = 1080;
     gBufferDetails.clearColorOnBind = true;
     gBufferDetails.clearDepthOnBind = true;
-    gBufferDetails.colorAttachments.push_back({GL_RGBA32F, GL_RGBA, GL_FLOAT});
-    gBufferDetails.colorAttachments.push_back({GL_RGBA32F, GL_RGBA, GL_FLOAT});
-    gBufferDetails.colorAttachments.push_back({GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE});
+    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
+    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
+    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
     m_gBuffer = std::make_shared<FrameBuffer>(gBufferDetails);
+    // HDR color buffer
+    FrameBuffer::Details hdrColorBufferDetails;
+    hdrColorBufferDetails.width = 1920;
+    hdrColorBufferDetails.height = 1080;
+    hdrColorBufferDetails.clearColorOnBind = true;
+    hdrColorBufferDetails.clearDepthOnBind = true;
+    hdrColorBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGB, GL_FLOAT});
+    m_hdrColorBuffer = std::make_shared<FrameBuffer>(hdrColorBufferDetails);
 
     //Lighting shader
     m_shaderLightingPass = nimo::AssetManager::Get<Shader>("Shaders/deferred_shading.nshader");
+    //Tone mapping shader
+    m_hdrToneMappingPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_tone_mapping.nshader");
 
     // Full screen Quad mesh
     std::vector<Vertex> vertices ={
-        {{1.0f,  1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
-        {{1.0f,  -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-        {{-1.0f,  -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-        {{-1.0f,  1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}}
+        {{1.0f,  1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}},
+        {{1.0f,  -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}},
+        {{-1.0f,  -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}},
+        {{-1.0f,  1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}}
     };
     std::vector<unsigned int> indices ={
         0,1,3,
@@ -54,12 +64,15 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         if(!r.material || !r.material->shader || !m.source) return;
         r.material->shader->use();
         r.material->Setup();
+        r.material->shader->set("viewPos", camera.GetComponent<TransformComponent>().Translation);
         r.material->shader->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
         r.material->shader->set("view", viewMatrix);
         r.material->shader->set("projection", projection);
         m.source->draw();
     });
-    target->bind();
+
+    // Lighting pass
+    m_hdrColorBuffer->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_shaderLightingPass->use();
     m_shaderLightingPass->set("gPosition", 0);
@@ -91,5 +104,12 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         m_shaderLightingPass->set("lights[" + std::to_string(i) + "].Active", false);
     }
     m_shaderLightingPass->set("viewPos", glm::vec3(-camTransform.Translation.x, -camTransform.Translation.y, camTransform.Translation.z));
+    m_quadMesh->draw();
+
+    // HDR tone mapping pass
+    target->bind();
+    m_hdrToneMappingPass->use();
+    m_shaderLightingPass->set("hdrBuffer", 0);
+    m_hdrColorBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
 }

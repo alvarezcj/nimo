@@ -13,7 +13,7 @@ nimo::Mesh::Mesh(const std::string& file)
     // And have it read the given file with some example postprocessing
     // Usually - if speed is not the most important aspect for you - you'll 
     // propably to request more postprocessing than we do in this example.
-    const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     
     // If the import failed, report it
     if( !scene)
@@ -42,6 +42,16 @@ nimo::Mesh::Mesh(const std::string& file)
                 {
                     NIMO_ERROR("Model has no normals");
                     vertex.normal = glm::vec3(0.0f, 0.0f, 0.0f);
+                }
+                if(scene->mMeshes[i]->HasTangentsAndBitangents())
+                {
+                    vertex.tangent = {scene->mMeshes[i]->mTangents[j].x,scene->mMeshes[i]->mTangents[j].y,scene->mMeshes[i]->mTangents[j].z};
+                    vertex.bitangent = {scene->mMeshes[i]->mBitangents[j].x,scene->mMeshes[i]->mBitangents[j].y,scene->mMeshes[i]->mBitangents[j].z};
+                }
+                else{
+                    NIMO_ERROR("Model has no tangent space");
+                    vertex.tangent = glm::vec3(0.0f, 0.0f, 0.0f);
+                    vertex.bitangent = glm::vec3(0.0f, 0.0f, 0.0f);
                 }
                 // texture coordinates
                 if (scene->mMeshes[i]->mTextureCoords[0]) // does the mesh contain texture coordinates?
@@ -101,7 +111,9 @@ nimo::Mesh::Mesh(const std::string& file)
         {
             {"position", ShaderDataType::Float3},
             {"normal", ShaderDataType::Float3},
-            {"uv", ShaderDataType::Float2}
+            {"uv", ShaderDataType::Float2},
+            {"tangent", ShaderDataType::Float3},
+            {"bitangent", ShaderDataType::Float3},
         },
         m_vertices.data(), sizeof(Vertex) * m_vertices.size()
     );
@@ -120,7 +132,9 @@ nimo::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned
         {
             {"position", ShaderDataType::Float3},
             {"normal", ShaderDataType::Float3},
-            {"uv", ShaderDataType::Float2}
+            {"uv", ShaderDataType::Float2},
+            {"tangent", ShaderDataType::Float3},
+            {"bitangent", ShaderDataType::Float3},
         },
         m_vertices.data(), sizeof(Vertex) * m_vertices.size()
     );

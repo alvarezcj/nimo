@@ -37,20 +37,35 @@ nimo::Texture::Texture(const std::string& path)
         
     if (data)
     {
+        NIMO_DEBUG("Loaded Texture Data - Size: {}x{} Channels: {}", width, height, channels);
 
         m_width = width;
         m_height = height;
 
         GLenum internalFormat = 0, dataFormat = 0;
-        if (channels == 4)
+        switch (channels)
         {
-            internalFormat = GL_RGBA8;
-            dataFormat = GL_RGBA;
-        }
-        else if (channels == 3)
-        {
+        case 1:
+            internalFormat = GL_RED;
+            dataFormat = GL_RED;
+            break;
+        case 2:
+            internalFormat = GL_RG8;
+            dataFormat = GL_RG;
+            break;
+        case 3:
             internalFormat = GL_RGB8;
             dataFormat = GL_RGB;
+            break;
+        case 4:
+            internalFormat = GL_RGBA8;
+            dataFormat = GL_RGBA;
+            break;
+        
+        default:
+            internalFormat = GL_RGBA8;
+            dataFormat = GL_RGBA;
+            break;
         }
 
         m_internalFormat = internalFormat;

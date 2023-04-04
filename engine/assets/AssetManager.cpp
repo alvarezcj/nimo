@@ -129,7 +129,10 @@ nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
     auto& info = GetMetadata(path);
 
     if(info.id.valid())
+    {
+        NIMO_INFO("Asset {}({}) already imported with id: {}", info.filepath.string(), AssetTypeToString(info.type), info.id.str());
         return info.id;
+    }
 
     if(!filepath.has_extension())
         return info.id;

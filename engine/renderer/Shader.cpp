@@ -92,7 +92,7 @@ bool nimo::Shader::Compile(const std::string& vertexCode, const std::string& fra
 
     glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
     NIMO_DEBUG("Active Uniforms: {}", count);
-
+    m_uniforms.clear();
     for (int i = 0; i < count; i++)
     {
         glGetActiveUniform(ID, (GLuint)i, bufSize, &length, &size, &type, name);
