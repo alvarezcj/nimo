@@ -20,6 +20,7 @@ public:
 
 private:
     unsigned int m_id;
+    unsigned int m_cubemap;
     unsigned int m_width;
     unsigned int m_height;
 };

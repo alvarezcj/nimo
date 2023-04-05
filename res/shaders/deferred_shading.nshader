@@ -22,6 +22,7 @@ in vec2 TexCoords;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoSpec;
+uniform sampler2D gARM;
 
 struct Light {
     vec3 Position;
@@ -39,22 +40,14 @@ uniform Light lights[NR_LIGHTS];
 uniform vec3 viewPos;
 uniform int currentLights;
 
-vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
-{
-    float height = texture(gNormal, TexCoords).a;
-    return texCoords - viewDir.xy * (height * .1);
-}
 void main()
 {             
     // then calculate lighting as usual
     // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
     vec3 viewDir  = normalize(viewPos - FragPos);
-	vec2 newTexCoords = TexCoords;
-    //if(newTexCoords.x > 1.0 || newTexCoords.y > 1.0 || newTexCoords.x < 0.0 || newTexCoords.y < 0.0)
-       // discard;
-    vec3 Normal = texture(gNormal, newTexCoords).rgb;
-    vec3 Diffuse = texture(gAlbedoSpec, newTexCoords).rgb;
+    vec3 Normal = normalize(texture(gNormal, TexCoords).rgb);
+    vec3 Diffuse =  pow(texture(gAlbedoSpec, TexCoords).rgb, vec3(2.2));
     float Specular = texture(gAlbedoSpec, TexCoords).a;
 
     vec3 lighting  = Diffuse * 0.1; // hard-coded ambient component
@@ -81,6 +74,6 @@ void main()
         }
     }    
     FragColor = vec4(lighting, 1.0);
-    //FragColor = vec4(texture(gNormal, TexCoords).a, newTexCoords, 1.0);
+    //FragColor = vec4(texture(gARM, TexCoords).rgb, 1.0);
 }
 @FRAGMENTEND

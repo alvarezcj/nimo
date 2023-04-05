@@ -13,7 +13,7 @@ nimo::Mesh::Mesh(const std::string& file)
     // And have it read the given file with some example postprocessing
     // Usually - if speed is not the most important aspect for you - you'll 
     // propably to request more postprocessing than we do in this example.
-    const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
     
     // If the import failed, report it
     if( !scene)

@@ -1,5 +1,6 @@
 #pragma once
 #include "scene/Scene.h"
+#include "EnvironmentMap.h"
 
 namespace nimo
 {
@@ -15,7 +16,9 @@ private:
     std::shared_ptr<FrameBuffer> m_gBuffer;
     std::shared_ptr<FrameBuffer> m_hdrColorBuffer;
     std::shared_ptr<Shader> m_shaderLightingPass;
+    std::shared_ptr<Shader> m_backgroundPass;
     std::shared_ptr<Shader> m_hdrToneMappingPass;
+    std::shared_ptr<EnvironmentMap> m_environmentMap;
     std::shared_ptr<Mesh> m_quadMesh;
 };  
 } // namespace nimo

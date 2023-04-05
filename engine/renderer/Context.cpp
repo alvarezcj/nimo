@@ -10,7 +10,9 @@ nimo::Context::Context(){
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
 }
 nimo::Context::~Context(){
     
