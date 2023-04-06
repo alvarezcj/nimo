@@ -71,13 +71,18 @@ void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& mo
     ImGui::Separator();
     if(ImGui::MenuItem("Import New Asset..."))
     {
-        nfdchar_t *outPath = NULL;
-        nfdresult_t result = NFD_OpenDialog( NULL, NULL, &outPath );
+        nfdpathset_t pathSet;
+        nfdresult_t result = NFD_OpenDialogMultiple( NULL, NULL, &pathSet );
             
         if ( result == NFD_OKAY ) {
-            if(nimo::AssetManager::Import(outPath).valid())
-                nimo::AssetManager::WriteIndex();
-            free(outPath);
+            size_t i;
+            for ( i = 0; i < NFD_PathSet_GetCount(&pathSet); ++i )
+            {
+                nfdchar_t *path = NFD_PathSet_GetPath(&pathSet, i);
+                if(nimo::AssetManager::Import(path).valid())
+                    nimo::AssetManager::WriteIndex();
+            }
+            NFD_PathSet_Free(&pathSet);
         }
     }
 }
