@@ -84,8 +84,11 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {             
+    vec4 albedoSample = texture(gAlbedoSpec, TexCoords);
+    if(albedoSample.a == 0.0) 
+        discard;
     vec3 WorldPos = texture(gPosition, TexCoords).rgb;
-    vec3 albedo     = pow(texture(gAlbedoSpec, TexCoords).rgb, vec3(2.2));
+    vec3 albedo     = pow(albedoSample.rgb, vec3(2.2));
     float metallic  = texture(gARM, TexCoords).b;
     float roughness = texture(gARM, TexCoords).g;
     float ao        = texture(gARM, TexCoords).r;

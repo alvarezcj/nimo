@@ -22,9 +22,11 @@ nimo::Mesh::Mesh(const std::string& file)
     }
     else
     {
+        NIMO_DEBUG("Succesfully loaded assimp scene file: {}", file);
         // std::cout << "Succesfully loaded assimp scene for " << file << std::endl;
         // std::cout << file << std::endl;
         // std::cout << "\t NumMeshes: " << scene->mNumMeshes << std::endl;
+        NIMO_DEBUG("\t NumMeshes: {}", scene->mNumMeshes);
         for(unsigned int i = 0; i < scene->mNumMeshes; ++i)
         {
             // std::cout << "\t\tMesh " << i << std::endl;
@@ -96,9 +98,7 @@ nimo::Mesh::Mesh(const std::string& file)
         // std::cout << "\tRootNode NumChildren: " << scene->mRootNode->mNumChildren << std::endl;
         for(unsigned int i = 0; i < scene->mRootNode->mNumChildren; ++i)
         {
-            // std::cout << "\t\tRootNode Child " << i << std::endl;
-            // std::cout << "\t\tRootNode Child Name " << scene->mRootNode->mChildren[i]->mName.C_Str() << std::endl;
-            // std::cout << "\t\tRootNode Child NumMeshes " << scene->mRootNode->mChildren[i]->mNumMeshes << std::endl;
+            NIMO_DEBUG("\t\tRootNode Child {} - Name: {} - NumMeshes: {}", i, scene->mRootNode->mChildren[i]->mName.C_Str(), scene->mRootNode->mChildren[i]->mNumMeshes);
             for(int j = 0; j < scene->mRootNode->mChildren[i]->mNumMeshes; ++j)
             {
                 // std::cout << "\t\t\tRootNode Child Mesh Id " << scene->mRootNode->mChildren[i]->mMeshes[j] << std::endl;

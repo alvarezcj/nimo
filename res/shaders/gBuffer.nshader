@@ -80,7 +80,7 @@ void main()
     // store the fragment position vector in the first gbuffer texture
     gPosition = FragPos;
     // and the diffuse per-fragment color
-    gAlbedoSpec.rgb = texture(texture_diffuse1, texCoord).rgb;
+    gAlbedoSpec = vec4(texture(texture_diffuse1, texCoord).rgb, 1.0);
     
     gARM.rgb = texture(texture_arm1, texCoord).rgb;
 }

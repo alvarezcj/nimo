@@ -99,7 +99,7 @@ nimo::SceneRenderer::SceneRenderer()
     m_shaderLightingPass = nimo::AssetManager::Get<Shader>("Shaders/deferred_shading_pbr.nshader");
     //Cubemap background shader
     m_backgroundPass = nimo::AssetManager::Get<Shader>("Shaders/background.nshader");
-    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("EnvMaps/photo_studio_loft_hall_4k.hdr");
+    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("EnvMaps/hilly_terrain_01_puresky_4k.hdr");
     //Tone mapping shaderm_backgroundPass
     m_hdrToneMappingPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_tone_mapping.nshader");
 
@@ -149,7 +149,6 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     });
 
     // Lighting pass
-    // glDepthMask(GL_FALSE);
     m_hdrColorBuffer->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_shaderLightingPass->use();
@@ -185,18 +184,17 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     }
     m_shaderLightingPass->set("viewPos", viewPosition);
     m_quadMesh->draw();
-    // glDepthMask(GL_TRUE);
 
     // Background pass
-    // glDepthFunc(GL_LEQUAL);
-    // m_hdrColorBuffer->bind();
-    // m_backgroundPass->use();
-    // m_backgroundPass->set("view", viewMatrix);
-    // m_backgroundPass->set("projection", projection);
-    // m_backgroundPass->set("environmentMap", 0);
-    // m_environmentMap->bind(0);
-    // renderCube2();
-    // glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);
+    glBlitNamedFramebuffer(m_gBuffer->m_id, m_hdrColorBuffer->m_id, 0,0,1920,1080, 0,0,1920,1080, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    m_backgroundPass->use();
+    m_backgroundPass->set("view", viewMatrix);
+    m_backgroundPass->set("projection", projection);
+    m_backgroundPass->set("environmentMap", 0);
+    m_environmentMap->bind(0);
+    renderCube2();
+    glDepthFunc(GL_LESS);
 
     // HDR tone mapping pass
     target->bind();
