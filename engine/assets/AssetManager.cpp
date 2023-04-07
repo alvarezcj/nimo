@@ -151,3 +151,23 @@ nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
     return metadata.id;
 }
 
+void nimo::AssetManager::ImportDirectory(const std::filesystem::path& folderpath, bool includeSubdirectories)
+{
+    if(!FileHandling::Exists(folderpath) || !FileHandling::IsDirectory(folderpath))
+    {
+        NIMO_WARN("Trying to import {}, as it may not exist or be a directory.", folderpath.string());
+        return;
+    }
+    for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(folderpath))
+    {
+        if(FileHandling::IsDirectory(dir_entry.path()) && includeSubdirectories)
+        {
+            ImportDirectory(dir_entry.path());
+        }
+        else
+        {
+            Import(dir_entry.path());
+        }
+    }
+}
+

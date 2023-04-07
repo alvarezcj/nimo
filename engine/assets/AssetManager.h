@@ -125,6 +125,7 @@ public:
 	static void UpdatePath(AssetId id, const std::filesystem::path& newPath);
 	static void Unregister(AssetId id);
 	static AssetId Import(const std::filesystem::path& filepath);
+	static void ImportDirectory(const std::filesystem::path& folderpath, bool includeSubdirectories = true);
 
 private:
 	static AssetMetadata& GetMetadataRef(AssetId handle);
