@@ -249,8 +249,11 @@ void EditorLayer::OnAttach()
                 }
                 if (ImGui::MenuItem("Save Project"))
                 {
-                    nimo::ProjectSerializer projectSer(nimo::Project::GetActiveProject());
-                    projectSer.Serialize((nimo::Project::GetActiveProject()->GetSettings().projectDirectory/nimo::Project::GetActiveProject()->GetSettings().name).replace_extension(".nproj"));
+                    if(nimo::Project::GetActiveProject())
+                    {
+                        nimo::ProjectSerializer projectSer(nimo::Project::GetActiveProject());
+                        projectSer.Serialize((nimo::Project::GetActiveProject()->GetSettings().projectDirectory/nimo::Project::GetActiveProject()->GetSettings().name).replace_extension(".nproj"));
+                    }
                 }
                 ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
                 if (ImGui::MenuItem("Exit"))
@@ -385,18 +388,12 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         std::shared_ptr<nimo::Project> project = std::make_shared<nimo::Project>(settings);
         nimo::Project::SetActiveProject(project);
 
+
+        nimo::FileHandling::Copy("NewProjectAssets", projectFolderPath/"Assets");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Scenes");
+        nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Materials");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Logs");
-        nimo::FileHandling::Copy("shaders", projectFolderPath/"Assets"/"Shaders");
-        nimo::FileHandling::Copy("objects", projectFolderPath/"Assets"/"Objects");
-        nimo::FileHandling::Copy("materials", projectFolderPath/"Assets"/"Materials");
-        nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/unlit_color.nshader");
-        nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/unlit_texture.nshader");
-        nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/gBuffer.nshader");
-        nimo::AssetManager::CreateNewAsset<nimo::Shader>("Shaders/deferred_shading.nshader");
-        nimo::AssetManager::CreateNewAsset<nimo::Mesh>("Objects/cube/cube.obj");
-        nimo::AssetManager::CreateNewAsset<nimo::Texture>("Objects/cube/cube.png");
-        nimo::AssetManager::CreateNewAsset<nimo::Texture>("Objects/cube/cube_ks.png");
+        nimo::AssetManager::ImportDirectory(projectFolderPath/"Assets");
 
         auto unlitShader = nimo::AssetManager::Get<nimo::Shader>("Shaders/gBuffer.nshader");
         std::vector<nimo::IMaterialProperty*> props;
@@ -404,32 +401,56 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             auto prop = new nimo::MaterialPropertyTexture();
             prop->name = "texture_diffuse1";
             prop->type = nimo::ShaderUniformDataType::Sampler2D;
-            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube.png"));
+            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_diff_4k.jpg"));
             prop->SetValue(0);
             props.push_back(prop);
         }
         {
             auto prop = new nimo::MaterialPropertyTexture();
-            prop->name = "texture_specular1";
+            prop->name = "texture_normal1";
             prop->type = nimo::ShaderUniformDataType::Sampler2D;
-            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Objects/cube/cube_ks.png"));
+            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_nor_dx_4k.jpg"));
             prop->SetValue(1);
             props.push_back(prop);
         }
+        {
+            auto prop = new nimo::MaterialPropertyTexture();
+            prop->name = "texture_disp1";
+            prop->type = nimo::ShaderUniformDataType::Sampler2D;
+            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_mask_4k.jpg"));
+            prop->SetValue(2);
+            props.push_back(prop);
+        }
+        {
+            auto prop = new nimo::MaterialPropertyTexture();
+            prop->name = "texture_arm1";
+            prop->type = nimo::ShaderUniformDataType::Sampler2D;
+            prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_arm_4k.jpg"));
+            prop->SetValue(3);
+            props.push_back(prop);
+        }
         std::shared_ptr<nimo::Material> material = std::make_shared<nimo::Material>(unlitShader, props);
-        nimo::AssetManager::CreateAssetFromMemory<nimo::Material>("Materials/test.nmat", material);
+        nimo::AssetManager::CreateAssetFromMemory<nimo::Material>("Materials/bust.nmat", material);
 
         std::shared_ptr<nimo::Scene> createdScene = std::make_shared<nimo::Scene>();
         {
             auto e = createdScene->CreateEntity("MainCamera");
-            e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -5.0f};
+            e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
             e.AddComponent<nimo::CameraComponent>();
         }
         {
-            nimo::Entity ent_cube1 = createdScene->CreateEntity("Cube");
-            ent_cube1.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, 0.0f};
-            ent_cube1.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("Objects/cube/cube.obj");
-            ent_cube1.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/test.nmat");
+            nimo::Entity e = createdScene->CreateEntity("Bust");
+            e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, -0.2f, 0.0f};
+            e.GetComponent<nimo::TransformComponent>().Rotation = {-1.5f, 0.0f, 0.0f};
+            e.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("MarbleBust/marble_bust_01_4k.fbx");
+            e.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/bust.nmat");
+        }
+        {
+            nimo::Entity e = createdScene->CreateEntity("PointLight");
+            e.GetComponent<nimo::TransformComponent>().Translation = {0.5f, 0.5f, 0.0f};
+            auto& light = e.AddComponent<nimo::PointLightComponent>();
+            light.Color = {1.0f,1.0f,1.0f};
+            light.Intensity = 5.0f;
         }
         nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("Scenes/NewScene.nscene", createdScene);
         nimo::AssetManager::WriteIndex();

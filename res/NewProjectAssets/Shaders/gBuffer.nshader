@@ -1,0 +1,87 @@
+@VERTEX
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBitangent;
+
+out vec3 FragPos;
+out vec2 TexCoords;
+out vec3 Normal;
+out mat3 TBN;
+
+uniform mat4 transform;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+    vec4 worldPos = transform * vec4(aPos, 1.0);
+    FragPos = worldPos.xyz; 
+    TexCoords = aTexCoords;
+    
+    vec3 T = normalize(vec3(transform * vec4(aTangent,0.0)));
+    vec3 B = normalize(vec3(transform * vec4(aBitangent,0.0)));
+    vec3 N = normalize(vec3(transform * vec4(aNormal,0.0)));
+    TBN = (mat3 (T,B,N));
+    mat3 normalMatrix = transpose(inverse(mat3(transform)));
+    Normal = normalMatrix * aNormal;
+    //Normal = aNormal;
+
+    gl_Position = projection * view * worldPos;
+}
+@VERTEXEND@FRAGMENT
+#version 330 core
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec4 gNormal;
+layout (location = 2) out vec4 gAlbedoSpec;
+layout (location = 3) out vec4 gARM;
+
+in vec2 TexCoords;
+in vec3 FragPos;
+in vec3 Normal;
+in mat3 TBN;
+
+uniform vec3 viewPos;
+uniform mat4 transform;
+uniform mat4 view;
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_normal1;
+uniform sampler2D texture_disp1;
+uniform sampler2D texture_arm1;
+
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{
+  float height =1.0- texture(texture_disp1, texCoords).r;
+  vec2 p = viewDir.xy / viewDir.z * (height * .2);
+  return texCoords - p;
+}
+void main()
+{
+    // also store the per-fragment normals into the gbuffer
+    //gNormal = normalize(Normal);
+
+	vec2 texCoord = TexCoords;
+	vec3 viewDir = normalize( (transpose(TBN) *viewPos - transpose(TBN) *FragPos)); // tangent space view dir
+	//texCoord = ParallaxMapping(texCoord, viewDir);
+    if (texCoord.x > 1.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.y < 0.0) {
+   	discard;
+	}
+
+    gNormal.rgb = texture(texture_normal1, texCoord).rgb;
+    gNormal = gNormal * 2.0 -1.0;
+    gNormal.rgb = TBN*gNormal.rgb;
+	gNormal.rgb = normalize( mat3(view * transform)*gNormal.rgb );
+	//gNormal.rgb = vec3(texCoord, 0.0);
+	gNormal.a = texture(texture_disp1, texCoord).r;
+
+    // store the fragment position vector in the first gbuffer texture
+    gPosition = FragPos;
+    // and the diffuse per-fragment color
+    gAlbedoSpec = vec4(texture(texture_diffuse1, texCoord).rgb, 1.0);
+    
+    gARM.rgb = texture(texture_arm1, texCoord).rgb;
+}
+@FRAGMENTEND

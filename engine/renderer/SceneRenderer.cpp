@@ -99,7 +99,7 @@ nimo::SceneRenderer::SceneRenderer()
     m_shaderLightingPass = nimo::AssetManager::Get<Shader>("Shaders/deferred_shading_pbr.nshader");
     //Cubemap background shader
     m_backgroundPass = nimo::AssetManager::Get<Shader>("Shaders/background.nshader");
-    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("EnvMaps/hilly_terrain_01_puresky_4k.hdr");
+    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("Environment/old_room_4k.hdr");
     //Tone mapping shaderm_backgroundPass
     m_hdrToneMappingPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_tone_mapping.nshader");
 
