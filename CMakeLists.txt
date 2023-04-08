@@ -63,3 +63,4 @@ target_include_directories(spdlog INTERFACE ${CMAKE_SOURCE_DIR}/third_party/spdl
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/engine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/editor)
+add_subdirectory(${CMAKE_SOURCE_DIR}/runtime)

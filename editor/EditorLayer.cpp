@@ -390,6 +390,8 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
 
 
         nimo::FileHandling::Copy("NewProjectAssets", projectFolderPath/"Assets");
+        nimo::FileHandling::Copy("assimp-vc143-mt.dll", projectFolderPath/"assimp-vc143-mt.dll");
+        nimo::FileHandling::Copy("nimo_runtime.exe", projectFolderPath/(name+".exe"));
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Scenes");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Materials");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Logs");

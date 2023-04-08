@@ -46,3 +46,13 @@ bool nimo::FileHandling::IsDirectory(const std::filesystem::path& filepath)
 {
     return std::filesystem::is_directory(filepath);
 }
+std::vector<std::filesystem::path> nimo::FileHandling::GetFilesWithExtension(const std::filesystem::path& folderpath, const std::string& extension)
+{
+    std::vector<std::filesystem::path> res;
+    for (auto &p : std::filesystem::directory_iterator(folderpath))
+    {
+        if (p.path().extension() == extension)
+            res.push_back(p.path());
+    }
+    return res;
+}

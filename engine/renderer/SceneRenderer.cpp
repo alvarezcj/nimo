@@ -197,7 +197,10 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     glDepthFunc(GL_LESS);
 
     // HDR tone mapping pass
-    target->bind();
+    if(target)
+        target->bind();
+    else
+        FrameBuffer::unbind();
     m_hdrToneMappingPass->use();
     m_shaderLightingPass->set("hdrBuffer", 0);
     m_hdrColorBuffer->BindColorTexture(0,0);
