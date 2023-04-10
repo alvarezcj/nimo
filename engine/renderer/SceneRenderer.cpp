@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 #include "glad/glad.h"
+#include "core/Application.h"
 
 unsigned int cubeVAO2 = 0;
 unsigned int cubeVBO2 = 0;
@@ -130,7 +131,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     auto cam = camera.GetComponent<CameraComponent>();
     glm::mat4 projection;
     if(cam.Projection == CameraComponent::Projection::Perspective)
-        projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)1920 , (float)1080, cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
+        projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)Application::Instance().GetWindow().GetWidth() , (float)Application::Instance().GetWindow().GetHeight(), cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
     else
         projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
     glm::mat4 viewMatrix = glm::toMat4(glm::quat(camTransform.Rotation)) * glm::translate(glm::mat4(1.0f), {camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z});
@@ -200,7 +201,10 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     if(target)
         target->bind();
     else
+    {
         FrameBuffer::unbind();
+        glViewport(0, 0, Application::Instance().GetWindow().GetWidth(), Application::Instance().GetWindow().GetHeight());
+    }
     m_hdrToneMappingPass->use();
     m_shaderLightingPass->set("hdrBuffer", 0);
     m_hdrColorBuffer->BindColorTexture(0,0);

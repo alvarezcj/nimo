@@ -60,6 +60,8 @@ nimo::Window::Window(const WindowDescription& description)
     glfwSetWindowSizeCallback(pimpl->handle, [](GLFWwindow* window, int width, int height)
     {
         auto data = ((Window*)glfwGetWindowUserPointer(window));
+        data->pimpl->width = width;
+        data->pimpl->height = height;
         EventManager::Publish(WindowResizeEvent(width,height));
     });
     glfwSetWindowCloseCallback(pimpl->handle, [](GLFWwindow* window)
@@ -229,4 +231,12 @@ void nimo::Window::SetTitle(const std::string& title)
 {
     pimpl->title = title;
     glfwSetWindowTitle(pimpl->handle, pimpl->title.c_str());
+}
+unsigned int nimo::Window::GetWidth() const
+{
+    return pimpl->width;
+}
+unsigned int nimo::Window::GetHeight() const
+{
+    return pimpl->height;
 }
