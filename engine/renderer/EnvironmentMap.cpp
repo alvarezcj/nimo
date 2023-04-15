@@ -104,7 +104,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
     {
         NIMO_ERROR("Could not load {} as environment map!", path);
     }
-
+    NIMO_DEBUG("EnvironmentMap data loaded: {}x{}",m_width, m_height);
     // pbr: setup framebuffer
     unsigned int captureFBO;
     unsigned int captureRBO;
@@ -113,23 +113,21 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 2048, 2048);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 1024);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
     // pbr: setup cubemap to render to and attach to framebuffer
     unsigned int m_cubemap;
     glGenTextures(1, &m_cubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 2048, 2048, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 1024, 1024, 0, GL_RGB, GL_FLOAT, 0);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
     glm::mat4 captureViews[] =
@@ -151,7 +149,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    glViewport(0, 0, 2048, 2048); // don't forget to configure the viewport to the capture dimensions.
+    glViewport(0, 0, 1024, 1024); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {
@@ -162,6 +160,8 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
         renderCube();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &captureFBO);
+    glDeleteRenderbuffers(1, &captureRBO);
 }
 
 nimo::EnvironmentMap::~EnvironmentMap()
