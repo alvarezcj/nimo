@@ -3,6 +3,7 @@
 #include "Components.h"
 #include <fstream>
 #include "project/Project.h"
+#include "scripting/ScriptManager.h"
 
 void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset)
 {
@@ -117,6 +118,16 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         };
         jentity["PointLight"] = jpointlight;
     }
+    if(e.HasComponent<ScriptComponent>())
+    {
+        const ScriptComponent& l = e.GetComponent<ScriptComponent>();
+        auto instances = nlohmann::json::array();
+        for(auto instance : l.instances)
+        {
+            instances.push_back(nlohmann::ordered_json({{"Source", instance.script->id.str()}}));
+        }
+        jentity["Scripts"] = instances;
+    }
     return jentity;
 }
 nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source)
@@ -176,6 +187,14 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             PointLightComponent& l = createdEntity.AddComponent<PointLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
             l.Intensity = (float)field.value()["Intensity"];
+        }
+        if(field.key() == "Scripts")
+        {
+            ScriptComponent& l = createdEntity.AddComponent<ScriptComponent>();
+            for(auto i : field.value())
+            {
+                l.instances.push_back(ScriptManager::CreateInstance(AssetManager::Get<Script>(GUID(std::string(i["Source"])))));
+            }
         }
     }
     return createdEntity.GetComponent<IDComponent>().Id;

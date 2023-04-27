@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "assets/AssetManager.h"
+#include "scripting/ScriptManager.h"
 
 namespace nimo
 {
@@ -27,11 +28,13 @@ namespace nimo
         inline static void SetActiveProject(std::shared_ptr<Project> p ) 
         { 
             if(activeProject){
+                ScriptManager::Cleanup();
                 AssetManager::Cleanup();
             }
             activeProject = p;
             if(activeProject){
                 AssetManager::Initialize();
+                ScriptManager::Initialize();
             }
         }
         inline static std::shared_ptr<Project> GetActiveProject(){ return activeProject;}
