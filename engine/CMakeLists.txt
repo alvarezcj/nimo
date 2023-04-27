@@ -41,6 +41,7 @@ json
 imgui
 entt
 spdlog
+lua
 )
 
 add_library(nimo_engine STATIC ${SOURCES})

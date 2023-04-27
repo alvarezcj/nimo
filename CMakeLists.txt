@@ -61,6 +61,43 @@ target_include_directories(nfd PUBLIC ${NFDIncludes})
 add_library(spdlog INTERFACE)
 target_include_directories(spdlog INTERFACE ${CMAKE_SOURCE_DIR}/third_party/spdlog/v1.11.0/include)
 
+set(LUA_LIB_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lapi.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lcode.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lctype.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ldebug.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ldo.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ldump.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lfunc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lgc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/llex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lmem.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lobject.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lopcodes.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lparser.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lstate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lstring.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ltable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ltm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lundump.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lvm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lzio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lauxlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lbaselib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lcorolib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ldblib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/liolib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lmathlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/loadlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/loslib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lstrlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/ltablib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/lutf8lib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src/linit.c
+)
+add_library(lua STATIC ${LUA_LIB_SRCS})
+target_include_directories(lua PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src)
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/engine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/editor)
 add_subdirectory(${CMAKE_SOURCE_DIR}/runtime)
