@@ -3,6 +3,7 @@
 #include "EditorLayer.h"
 #include "core/Log.h"
 #include "misc/cpp/imgui_stdlib.h"
+#include "scripting/ScriptManager.h"
 
 void InspectorPanel::OnRender()
 {
@@ -329,6 +330,17 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::ScriptComponent>())
+        {
+            for(auto instance : ent.GetComponent<nimo::ScriptComponent>().instances)
+            {
+                if (ImGui::CollapsingHeader((std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                }
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         ImGui::Spacing();
 
         float alignment = 0.5f;
@@ -350,16 +362,29 @@ void InspectorPanel::OnRender()
         {
             ImGui::CollapsingHeader("\tComponents...", ImGuiTreeNodeFlags_Leaf);
             ImGui::Separator();
-            if (ImGui::Selectable("Mesh")){
+            if (ImGui::MenuItem("Mesh")){
                 ent.AddComponent<nimo::MeshComponent>();
             }
-            if (ImGui::Selectable("Mesh Renderer")){
+            if (ImGui::MenuItem("Mesh Renderer")){
                 ent.AddComponent<nimo::MeshRendererComponent>();
             }
-            if (ImGui::Selectable("Point Light")){
+            if (ImGui::MenuItem("Point Light")){
                 ent.AddComponent<nimo::PointLightComponent>();
             }
-            if (ImGui::Selectable("Camera")){}
+            if (ImGui::MenuItem("Camera")){}
+            if(ImGui::BeginMenu("Scripts"))
+            {
+                auto scripts = nimo::AssetManager::GetAllExisting<nimo::Script>();
+                for(int i = 0; i < scripts.size(); ++i)
+                {
+                    if (ImGui::MenuItem(scripts[i].filepath.stem().string().c_str())){
+                        if(!ent.HasComponent<nimo::ScriptComponent>())
+                            ent.AddComponent<nimo::ScriptComponent>();
+                        ent.GetComponent<nimo::ScriptComponent>().instances.push_back(nimo::ScriptManager::CreateInstance(nimo::AssetManager::Get<nimo::Script>(scripts[i].id)));
+                    }
+                }
+                ImGui::EndMenu();
+            }
             ImGui::EndPopup();
         }
     }

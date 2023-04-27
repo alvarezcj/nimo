@@ -7,6 +7,7 @@
 #include "renderer/Material.h"
 #include "renderer/Mesh.h"
 #include "project/Project.h"
+#include "scripting/Script.h"
 
 #include <fstream>
 
@@ -119,4 +120,14 @@ std::shared_ptr<nimo::Mesh> nimo::AssetSerializer<nimo::Mesh>::Deserialize(const
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
     return std::make_shared<Mesh>((p/metadata.filepath).string());
+}
+
+// Script
+void nimo::AssetSerializer<nimo::Script>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Script>& asset){}
+std::shared_ptr<nimo::Script> nimo::AssetSerializer<nimo::Script>::Deserialize(const nimo::AssetMetadata& metadata)
+{
+    std::filesystem::path p = ".";
+    if(nimo::Project::GetActiveProject())
+        p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
+    return std::make_shared<Script>((p/metadata.filepath).string());
 }

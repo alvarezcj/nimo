@@ -1,9 +1,11 @@
 #include "Entry.h"
 #include "core/Log.h"
+#include "scripting/ScriptManager.h"
 
 int main(int argc, char** argv)
 {
     nimo::Log::Initialize();
+	nimo::ScriptManager::Initialize();
 	auto app = CreateApplication();
 	if(app == nullptr) 
 	{
@@ -12,5 +14,7 @@ int main(int argc, char** argv)
 	}
 	app->Run();
 	delete app;
+    nimo::ScriptManager::Cleanup();
+    nimo::Log::Cleanup();
     return 0;
 }

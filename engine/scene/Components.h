@@ -9,6 +9,7 @@
 #include "renderer/Mesh.h"
 #include "renderer/Material.h"
 #include "core/GUID.h"
+#include "scripting/ScriptInstance.h"
 
 namespace nimo{
 struct IDComponent
@@ -72,5 +73,8 @@ struct MeshComponent{
 
 struct MeshRendererComponent{
     std::shared_ptr<Material> material;
+};
+struct ScriptComponent{
+    std::vector<ScriptInstance> instances;
 };
 };

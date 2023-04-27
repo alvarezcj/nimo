@@ -36,4 +36,9 @@ namespace nimo
         void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::EnvironmentMap>& asset);
         std::shared_ptr<nimo::EnvironmentMap> Deserialize(const nimo::AssetMetadata& metadata);
     };
+    class Script;
+    template<> struct AssetSerializer<Script>{
+        void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Script>& asset);
+        std::shared_ptr<nimo::Script> Deserialize(const nimo::AssetMetadata& metadata);
+    };
 } // namespace nimo
