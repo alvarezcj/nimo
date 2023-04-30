@@ -193,7 +193,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             ScriptComponent& l = createdEntity.AddComponent<ScriptComponent>();
             for(auto i : field.value())
             {
-                l.instances.push_back(ScriptManager::CreateInstance(AssetManager::Get<Script>(GUID(std::string(i["Source"])))));
+                l.instances.push_back(ScriptManager::CreateInstance(AssetManager::Get<Script>(GUID(std::string(i["Source"]))), createdEntity.ID(), scene));
             }
         }
     }

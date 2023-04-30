@@ -380,7 +380,7 @@ void InspectorPanel::OnRender()
                     if (ImGui::MenuItem(scripts[i].filepath.stem().string().c_str())){
                         if(!ent.HasComponent<nimo::ScriptComponent>())
                             ent.AddComponent<nimo::ScriptComponent>();
-                        ent.GetComponent<nimo::ScriptComponent>().instances.push_back(nimo::ScriptManager::CreateInstance(nimo::AssetManager::Get<nimo::Script>(scripts[i].id)));
+                        ent.GetComponent<nimo::ScriptComponent>().instances.push_back(nimo::ScriptManager::CreateInstance(nimo::AssetManager::Get<nimo::Script>(scripts[i].id), ent.ID(), scene));
                     }
                 }
                 ImGui::EndMenu();
