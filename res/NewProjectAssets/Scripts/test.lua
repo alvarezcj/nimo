@@ -5,7 +5,12 @@ function this:OnCreate()
 end
 function this:OnUpdate(deltaTime)
     local transform = nimo.Entity.GetComponent(this.entity, "Transform")
+    if nimo.Input.GetKey(nimo.KeyCode.D) then
     transform.Rotation.y = transform.Rotation.y + this.speed * deltaTime
+    end
+    if nimo.Input.GetKey(nimo.KeyCode.A) then
+    transform.Rotation.y = transform.Rotation.y - this.speed * deltaTime
+    end
     nimo.Entity.SetComponent(this.entity, "Transform", transform)
 end
 function this:OnDestroy()
