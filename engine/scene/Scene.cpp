@@ -45,7 +45,6 @@ nimo::Scene::~Scene()
 void nimo::Scene::Update(float deltaTime)
 {
     Scene::activeScene = this;
-    NIMO_DEBUG("Executing Scene::Update function");
     m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
     {
         for(const auto& instance : script.instances)

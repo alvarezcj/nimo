@@ -10,8 +10,8 @@ namespace nimo{
         Entity(entt::entity handle, entt::registry& registry);
         ~Entity();
 
-		GUID ID() const;
-		GUID Parent() const;
+		const GUID& ID() const;
+		const GUID& Parent() const;
 		const std::vector<GUID>& Children() const;
 
 		template<typename T, typename... Args>

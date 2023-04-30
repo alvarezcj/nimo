@@ -460,6 +460,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::Project::GetActiveProject()->GetSettings().startScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id.str();
         nimo::ProjectSerializer projectSer(project);
         projectSer.Serialize((projectFolderPath/settings.name).replace_extension(".nproj"));
+        lastModifiedScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id;
         NIMO_DEBUG("Serialized Project {}", settings.name);
         renderer = std::make_shared<nimo::SceneRenderer>();
     }

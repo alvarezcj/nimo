@@ -12,11 +12,11 @@ nimo::Entity::~Entity()
 {
 }
 
-nimo::GUID nimo::Entity::ID() const
+const nimo::GUID& nimo::Entity::ID() const
 {
     return GetComponent<IDComponent>().Id;
 }
-nimo::GUID nimo::Entity::Parent() const
+const nimo::GUID& nimo::Entity::Parent() const
 {
     return GetComponent<FamilyComponent>().Parent;
 }

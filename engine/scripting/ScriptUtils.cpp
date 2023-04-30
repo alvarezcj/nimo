@@ -62,7 +62,7 @@ void nimo::ScriptUtils::PrintStackItem(lua_State *L, int i)
         break;
     case LUA_TTABLE:
         NIMO_DEBUG("{}\t{}\t{}", i, luaL_typename(L,i), lua_topointer(L,i));
-        PrintLuaTable(L, i);
+        // PrintLuaTable(L, i);
         break;
     default:
         NIMO_DEBUG("{}\t{}\t{}", i, luaL_typename(L,i), lua_topointer(L,i));

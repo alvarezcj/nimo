@@ -1,12 +1,12 @@
 local this = {}
-this.id = 8
-this.guid = "adfdsaf"
+this.speed = 1.0
 function this:OnCreate()
-    nimo.Debug.Log(package.path)
-    nimo.Entity.GetComponent(this.entity)
+    nimo.Debug.Log("ASD")
 end
 function this:OnUpdate(deltaTime)
-    nimo.Debug.Log(tostring(deltaTime))
+    local transform = nimo.Entity.GetComponent(this.entity, "Transform")
+    transform.Rotation.y = transform.Rotation.y + this.speed * deltaTime
+    nimo.Entity.SetComponent(this.entity, "Transform", transform)
 end
 function this:OnDestroy()
 end
