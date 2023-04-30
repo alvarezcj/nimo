@@ -19,6 +19,8 @@ std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::exte
     {".fbx", AssetType::Mesh},
     // Script
     {".lua", AssetType::Script},
+    // Prefab
+    {".nprefab", AssetType::Prefab},
 };
 
 

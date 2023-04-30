@@ -41,4 +41,9 @@ namespace nimo
         void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Script>& asset);
         std::shared_ptr<nimo::Script> Deserialize(const nimo::AssetMetadata& metadata);
     };
+    class Prefab;
+    template<> struct AssetSerializer<Prefab>{
+        void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Prefab>& asset);
+        std::shared_ptr<nimo::Prefab> Deserialize(const nimo::AssetMetadata& metadata);
+    };
 } // namespace nimo

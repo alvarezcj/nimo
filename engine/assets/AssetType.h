@@ -13,7 +13,8 @@ namespace nimo
         Material,
         Scene,
         EnvironmentMap,
-        Script
+        Script,
+        Prefab
 	};
 
     inline AssetType AssetTypeFromString(const std::string& str){
@@ -25,6 +26,7 @@ namespace nimo
         if (str == "Scene")			return AssetType::Scene;
         if (str == "EnvironmentMap")			return AssetType::EnvironmentMap;
         if (str == "Script")			return AssetType::Script;
+        if (str == "Prefab")			return AssetType::Prefab;
         return AssetType::None;
     }
 
@@ -40,6 +42,7 @@ namespace nimo
             case AssetType::Scene:		return "Scene"; break;
             case AssetType::EnvironmentMap:		return "EnvironmentMap"; break;
             case AssetType::Script:		return "Script"; break;
+            case AssetType::Prefab:		return "Prefab"; break;
             default:  break;
         }
         return "None";
