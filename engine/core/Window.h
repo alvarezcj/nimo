@@ -31,6 +31,7 @@ namespace nimo{
 		bool VSync() const;
 		void SetResizable(bool resizable) const;
 		void Maximize();
+		void Restore();
 		void CenterWindow();
 		const std::string& GetTitle() const;
 		void SetTitle(const std::string& title);

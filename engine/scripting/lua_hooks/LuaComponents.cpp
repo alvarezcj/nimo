@@ -1,0 +1,125 @@
+#include "LuaComponents.h"
+#include "scene/Scene.h"
+#include "scene/Components.h"
+
+int nimo_luafn_HasEntityComponent(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 2);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    std::string componentType = luaL_checkstring(L, 2);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        if(componentType == "Transform")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::TransformComponent>());
+        }
+        else if(componentType == "Label")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::LabelComponent>());
+        }
+    }
+    return 1;
+}
+int nimo_luafn_GetEntityComponent(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 2);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    std::string componentType = luaL_checkstring(L, 2);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        if(componentType == "Transform")
+        {
+            auto t = scene->GetEntity(*id).GetComponent<nimo::TransformComponent>();
+            lua_newtable(L);
+            // Translation
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, t.Translation.x);
+                lua_setfield(L, -2, "x");
+                lua_pushnumber(L, t.Translation.y);
+                lua_setfield(L, -2, "y");
+                lua_pushnumber(L, t.Translation.z);
+                lua_setfield(L, -2, "z");
+                lua_setfield(L, -2, "Translation");
+            }
+            // Rotation
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, t.Rotation.x);
+                lua_setfield(L, -2, "x");
+                lua_pushnumber(L, t.Rotation.y);
+                lua_setfield(L, -2, "y");
+                lua_pushnumber(L, t.Rotation.z);
+                lua_setfield(L, -2, "z");
+                lua_setfield(L, -2, "Rotation");
+            }
+            // Scale
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, t.Scale.x);
+                lua_setfield(L, -2, "x");
+                lua_pushnumber(L, t.Scale.y);
+                lua_setfield(L, -2, "y");
+                lua_pushnumber(L, t.Scale.z);
+                lua_setfield(L, -2, "z");
+                lua_setfield(L, -2, "Scale");
+            }
+        }
+        else if(componentType == "Label")
+        {
+            lua_pushstring(L, scene->GetEntity(*id).GetComponent<nimo::LabelComponent>().Label.c_str());
+        }
+    }
+    return 1;
+}
+int nimo_luafn_SetEntityComponent(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 3);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    std::string componentType = luaL_checkstring(L, 2);
+    luaL_checktype(L, 3, LUA_TTABLE);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        if(componentType == "Transform")
+        {
+            auto& t = scene->GetEntity(*id).GetComponent<nimo::TransformComponent>();
+            lua_getfield(L, 3, "Translation");
+            lua_getfield(L, -1, "x");
+            lua_getfield(L, -2, "y");
+            lua_getfield(L, -3, "z");
+            t.Translation.x = lua_tonumber(L, -3);
+            t.Translation.y = lua_tonumber(L, -2);
+            t.Translation.z = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Rotation");
+            lua_getfield(L, -1, "x");
+            lua_getfield(L, -2, "y");
+            lua_getfield(L, -3, "z");
+            t.Rotation.x = lua_tonumber(L, -3);
+            t.Rotation.y = lua_tonumber(L, -2);
+            t.Rotation.z = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Scale");
+            lua_getfield(L, -1, "x");
+            lua_getfield(L, -2, "y");
+            lua_getfield(L, -3, "z");
+            t.Scale.x = lua_tonumber(L, -3);
+            t.Scale.y = lua_tonumber(L, -2);
+            t.Scale.z = lua_tonumber(L, -1);
+        }
+    }
+    return 0;
+}

@@ -8,7 +8,6 @@
 // const unsigned int NR_LIGHTS = 32;
 // std::vector<glm::vec3> lightPositions;
 // std::vector<glm::vec3> lightColors;
-nimo::Scene* nimo::Scene::activeScene = nullptr;
 nimo::Scene::Scene(const std::string& name)
     : name(name)
 {
@@ -44,7 +43,6 @@ nimo::Scene::~Scene()
 
 void nimo::Scene::Update(float deltaTime)
 {
-    Scene::activeScene = this;
     m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
     {
         for(const auto& instance : script.instances)
@@ -52,7 +50,6 @@ void nimo::Scene::Update(float deltaTime)
             ScriptManager::OnUpdate(instance, deltaTime);
         }
     });
-    Scene::activeScene = nullptr;
 }
 nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
 {

@@ -216,6 +216,10 @@ void nimo::Window::Maximize()
 {
     glfwMaximizeWindow(pimpl->handle);
 }
+void nimo::Window::Restore()
+{
+    glfwRestoreWindow(pimpl->handle);
+}
 void nimo::Window::CenterWindow()
 {
     const GLFWvidmode* videmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
