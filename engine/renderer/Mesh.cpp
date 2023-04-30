@@ -8,6 +8,7 @@
 
 nimo::Mesh::Mesh(const std::string& file)
 {
+    NIMO_DEBUG("nimo::Mesh::Mesh({})", file);
     // Create an instance of the Importer class
     Assimp::Importer importer;
     // And have it read the given file with some example postprocessing
@@ -127,6 +128,7 @@ nimo::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned
     : m_vertices(vertices)
     , m_indices(indices)
 {
+    NIMO_DEBUG("nimo::Mesh::Mesh");
     m_vao = new VertexArray();
     m_vbo = new VertexBuffer(
         {
@@ -146,6 +148,7 @@ nimo::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned
 }
 nimo::Mesh::~Mesh()
 {
+    NIMO_DEBUG("nimo::Mesh::~Mesh");
     delete m_vao;
     delete m_ibo;
     delete m_vbo;

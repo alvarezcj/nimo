@@ -4,6 +4,7 @@
 #include <fstream>
 #include "project/Project.h"
 #include "scripting/ScriptManager.h"
+#include "SceneManager.h"
 
 void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset)
 {
@@ -38,7 +39,7 @@ std::shared_ptr<nimo::Scene> nimo::AssetSerializer<nimo::Scene>::Deserialize(con
     nlohmann::ordered_json j;
     j << ifs;
 
-    std::shared_ptr<Scene> scene = std::make_shared<Scene>(metadata.filepath.filename().string());
+    std::shared_ptr<Scene> scene = SceneManager::CreateScene(metadata.filepath.stem().string());
 
     scene->id = GUID(std::string(j["GUID"]));
     for(auto entity : j["Entities"])

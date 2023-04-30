@@ -171,3 +171,30 @@ void nimo::AssetManager::ImportDirectory(const std::filesystem::path& folderpath
     }
 }
 
+void nimo::AssetManager::UnloadUnused()
+{
+    bool needRecurse = false;
+    for(auto& [type,map] : m_loadedAssets)
+    {
+        std::vector<GUID> toUnload;
+        for(auto& [id, asset] : map)
+        {
+            NIMO_DEBUG("Asset loaded {} - ref count: {}", id.str(), asset.use_count());
+            if(asset.use_count() == 1)
+            {
+                toUnload.push_back(id);
+            }
+        }
+        for(auto id : toUnload)
+        {
+            map.erase(id);
+            needRecurse = true;
+        }
+    }
+    if(needRecurse)
+    {
+        UnloadUnused();
+    }
+}
+
+

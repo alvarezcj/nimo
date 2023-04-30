@@ -1,7 +1,7 @@
 #include "RuntimeLayer.h"
 #include "project/ProjectSerializer.h"
 #include "renderer/Renderer.h"
-#include "scene/SceneSerializer.h"
+#include "scene/SceneManager.h"
 
 void RuntimeLayer::OnAttach()
 {
@@ -12,7 +12,7 @@ void RuntimeLayer::OnAttach()
     nimo::Project::SetActiveProject(project);
     nimo::AssetId startingSceneId = nimo::AssetId(nimo::Project::GetActiveProject()->GetSettings().startScene);
     NIMO_DEBUG("Loading scene {}", nimo::Project::GetActiveProject()->GetSettings().startScene);
-    nimo::AssetManager::Get<nimo::Scene>(startingSceneId);
+    nimo::SceneManager::LoadScene(startingSceneId);
     renderer = std::make_shared<nimo::SceneRenderer>();
 }
   

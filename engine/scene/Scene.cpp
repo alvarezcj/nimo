@@ -11,6 +11,7 @@
 nimo::Scene::Scene(const std::string& name)
     : name(name)
 {
+    NIMO_DEBUG("nimo::Scene::Scene({})", name);
     // FrameBuffer::Details gBufferDetails;
     // gBufferDetails.width = 1920;
     // gBufferDetails.height = 1080;
@@ -38,7 +39,7 @@ nimo::Scene::Scene(const std::string& name)
 }
 nimo::Scene::~Scene()
 {
-
+    NIMO_DEBUG("nimo::Scene::~Scene({})", name);
 }
 
 void nimo::Scene::Update(float deltaTime)

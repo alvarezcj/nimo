@@ -11,6 +11,7 @@
 #include "UIHelpers.h"
 
 #include "core/Application.h"
+#include "scene/SceneManager.h"
 
 void EditorLayer::OnAttach()
 {
@@ -240,8 +241,9 @@ void EditorLayer::OnAttach()
                         nimo::Project::SetActiveProject(project);
                         nimo::AssetId startingSceneId = nimo::AssetId(nimo::Project::GetActiveProject()->GetSettings().startScene);
                         NIMO_DEBUG(nimo::AssetManager::GetMetadata(startingSceneId).filepath.string());
-                        nimo::AssetManager::Get<nimo::Scene>(startingSceneId);
+                        nimo::SceneManager::LoadScene(startingSceneId);
                         lastModifiedScene = startingSceneId;
+                        nimo::AssetManager::UnloadUnused();
                         renderer = std::make_shared<nimo::SceneRenderer>();
 
                         free(outPath);
@@ -434,29 +436,50 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         std::shared_ptr<nimo::Material> material = std::make_shared<nimo::Material>(unlitShader, props);
         nimo::AssetManager::CreateAssetFromMemory<nimo::Material>("Materials/bust.nmat", material);
 
-        std::shared_ptr<nimo::Scene> createdScene = std::make_shared<nimo::Scene>();
         {
-            auto e = createdScene->CreateEntity("MainCamera");
-            e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
-            e.AddComponent<nimo::CameraComponent>();
+            std::shared_ptr<nimo::Scene> createdScene = nimo::SceneManager::CreateScene("NewScene");
+            {
+                auto e = createdScene->CreateEntity("MainCamera");
+                e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
+                e.AddComponent<nimo::CameraComponent>();
+            }
+            {
+                nimo::Entity e = createdScene->CreateEntity("Bust");
+                e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, -0.2f, 0.0f};
+                e.GetComponent<nimo::TransformComponent>().Rotation = {-1.5f, 0.0f, 0.0f};
+                e.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("MarbleBust/marble_bust_01_4k.fbx");
+                e.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/bust.nmat");
+            }
+            {
+                nimo::Entity e = createdScene->CreateEntity("PointLight");
+                e.GetComponent<nimo::TransformComponent>().Translation = {0.5f, 0.5f, 0.0f};
+                auto& light = e.AddComponent<nimo::PointLightComponent>();
+                light.Color = {1.0f,1.0f,1.0f};
+                light.Intensity = 5.0f;
+            }
+            nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("Scenes/NewScene.nscene", createdScene);
+            nimo::AssetManager::WriteIndex();
+            nimo::SceneManager::SetActiveScene(createdScene);
         }
         {
-            nimo::Entity e = createdScene->CreateEntity("Bust");
-            e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, -0.2f, 0.0f};
-            e.GetComponent<nimo::TransformComponent>().Rotation = {-1.5f, 0.0f, 0.0f};
-            e.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("MarbleBust/marble_bust_01_4k.fbx");
-            e.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/bust.nmat");
+            std::shared_ptr<nimo::Scene> createdScene = nimo::SceneManager::CreateScene("Second");
+            {
+                auto e = createdScene->CreateEntity("MainCamera");
+                e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
+                e.AddComponent<nimo::CameraComponent>();
+            }
+            {
+                nimo::Entity e = createdScene->CreateEntity("PointLight");
+                e.GetComponent<nimo::TransformComponent>().Translation = {0.5f, 0.5f, 0.0f};
+                auto& light = e.AddComponent<nimo::PointLightComponent>();
+                light.Color = {1.0f,1.0f,1.0f};
+                light.Intensity = 5.0f;
+            }
+            nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("Scenes/Second.nscene", createdScene);
+            nimo::AssetManager::WriteIndex();
         }
-        {
-            nimo::Entity e = createdScene->CreateEntity("PointLight");
-            e.GetComponent<nimo::TransformComponent>().Translation = {0.5f, 0.5f, 0.0f};
-            auto& light = e.AddComponent<nimo::PointLightComponent>();
-            light.Color = {1.0f,1.0f,1.0f};
-            light.Intensity = 5.0f;
-        }
-        nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("Scenes/NewScene.nscene", createdScene);
-        nimo::AssetManager::WriteIndex();
 
+        nimo::AssetManager::UnloadUnused();
         nimo::Project::GetActiveProject()->GetSettings().startScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id.str();
         nimo::ProjectSerializer projectSer(project);
         projectSer.Serialize((projectFolderPath/settings.name).replace_extension(".nproj"));

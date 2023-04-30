@@ -209,4 +209,6 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_shaderLightingPass->set("hdrBuffer", 0);
     m_hdrColorBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
+
+    m_scene = {};
 }

@@ -6,6 +6,7 @@ namespace nimo
 {
     class IMaterialProperty{
     public:
+        virtual ~IMaterialProperty(){}
         std::string name;
         ShaderUniformDataType type;
         virtual void Setup(Shader* shader){}

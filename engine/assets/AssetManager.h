@@ -127,6 +127,8 @@ public:
 	static AssetId Import(const std::filesystem::path& filepath);
 	static void ImportDirectory(const std::filesystem::path& folderpath, bool includeSubdirectories = true);
 
+	static void UnloadUnused();
+
 private:
 	static AssetMetadata& GetMetadataRef(AssetId handle);
 
