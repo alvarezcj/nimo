@@ -17,7 +17,6 @@ public:
     ~MyApp()
     {
         NIMO_DEBUG( "My app destructor");
-        delete editorLayer;
     }
     EditorLayer* editorLayer;
 };

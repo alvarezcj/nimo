@@ -23,6 +23,10 @@ struct AssetExplorerPanel : public EditorPanel
         AssetExplorerPanel::mapExtensionIcon[".obj"] = std::make_shared<nimo::Texture>("icon_cube.png");
         AssetExplorerPanel::mapExtensionIcon[".fbx"] = std::make_shared<nimo::Texture>("icon_cube.png");
     }
+    ~AssetExplorerPanel()
+    {
+        AssetExplorerPanel::mapExtensionIcon.clear();
+    }
     void PaintDirectory(const std::filesystem::path& path);
 private:
     void OnRender();

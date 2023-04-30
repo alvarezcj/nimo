@@ -2,6 +2,7 @@
 #include "core/Log.h"
 #include "scripting/ScriptManager.h"
 #include "assets/AssetManager.h"
+#include "scene/SceneManager.h"
 
 int main(int argc, char** argv)
 {
@@ -15,7 +16,9 @@ int main(int argc, char** argv)
 	app->Run();
 	delete app;
     nimo::ScriptManager::Cleanup();
+	nimo::SceneManager::SetActiveScene({});
+	nimo::AssetManager::UnloadUnused();
 	nimo::AssetManager::Cleanup();
-    nimo::Log::Cleanup();
+    //nimo::Log::Cleanup();
     return 0;
 }

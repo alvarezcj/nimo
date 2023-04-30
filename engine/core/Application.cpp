@@ -53,6 +53,8 @@ nimo::Application::~Application()
 {
     EventManager::Unsubscribe(this, &Application::OnWindowClose);
     EventManager::Unsubscribe(this, &Application::OnWindowResize);
+    for(auto layer : m_layers)
+        delete layer;
     NIMO_INFO("Destroyed nimo::Application");    
 }
 
