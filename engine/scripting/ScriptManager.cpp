@@ -3,11 +3,11 @@
 #include "ScriptUtils.h"
 #include "core/Log.h"
 #include "project/Project.h"
-#include "scene/Scene.h"
-#include "scene/Components.h"
 #include "lua_hooks/LuaDebug.h"
 #include "lua_hooks/LuaInput.h"
 #include "lua_hooks/LuaComponents.h"
+#include "lua_hooks/LuaApplication.h"
+#include "lua_hooks/LuaWindow.h"
 
 lua_State* nimo::ScriptManager::L = nullptr;
 
@@ -42,6 +42,28 @@ void nimo::ScriptManager::Initialize()
         lua_pushcfunction(L, nimo_luafn_SetEntityComponent);
         lua_setfield(L, -2, "SetComponent");
         lua_setfield(L, -2, "Entity");
+    }
+    // Application
+    {
+        lua_newtable(L);
+        lua_pushcfunction(L, nimo_luafn_ApplicationClose);
+        lua_setfield(L, -2, "Close");
+        lua_setfield(L, -2, "Application");
+    }
+    // Window
+    {
+        lua_newtable(L);
+        lua_pushcfunction(L, nimo_luafn_WindowMaximize);
+        lua_setfield(L, -2, "Maximize");
+        lua_pushcfunction(L, nimo_luafn_WindowRestore);
+        lua_setfield(L, -2, "Restore");
+        lua_pushcfunction(L, nimo_luafn_WindowSetTitle);
+        lua_setfield(L, -2, "SetTitle");
+        lua_pushcfunction(L, nimo_luafn_WindowGetTitle);
+        lua_setfield(L, -2, "GetTitle");
+        lua_pushcfunction(L, nimo_luafn_WindowGetSize);
+        lua_setfield(L, -2, "GetSize");
+        lua_setfield(L, -2, "Window");
     }
     // Input
     {
