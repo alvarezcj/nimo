@@ -18,6 +18,7 @@ void RuntimeLayer::OnAttach()
   
 void RuntimeLayer::OnUpdate(float deltaTime)
 {
+    nimo::SceneManager::ProcessLoadRequests();
     nimo::Renderer::BeginFrame();
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {

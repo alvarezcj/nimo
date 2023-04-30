@@ -39,6 +39,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaInput.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaComponents.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaApplication.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaWindow.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaSceneManagement.cpp 
 )
 set(LIBS
 glad

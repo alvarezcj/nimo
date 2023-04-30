@@ -16,6 +16,10 @@ function this:OnUpdate(deltaTime)
     then
         nimo.Window.Restore()
     end
+    if nimo.Input.GetKey(nimo.KeyCode.L) 
+    then
+        nimo.SceneManagement.LoadScene("Second")
+    end
     local transform = nimo.Entity.GetComponent(this.entity, "Transform")
     if nimo.Input.GetKey(nimo.KeyCode.D) 
     then

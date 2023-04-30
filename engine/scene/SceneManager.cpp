@@ -3,6 +3,7 @@
 #include "scene/SceneSerializer.h"
 
 std::shared_ptr<nimo::Scene> nimo::SceneManager::activeScene = {};
+std::vector<std::string> nimo::SceneManager::loadSceneRequests = {};
 
 std::shared_ptr<nimo::Scene> nimo::SceneManager::CreateScene(const std::string& name)
 {
@@ -11,6 +12,7 @@ std::shared_ptr<nimo::Scene> nimo::SceneManager::CreateScene(const std::string& 
 
 void nimo::SceneManager::LoadScene(const std::string& name)
 {
+    NIMO_INFO("Trying to load scene {}", name);
     auto allScenes = AssetManager::GetAllExisting<Scene>();
     for(auto scene : allScenes)
     {

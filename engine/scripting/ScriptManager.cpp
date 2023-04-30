@@ -8,6 +8,7 @@
 #include "lua_hooks/LuaComponents.h"
 #include "lua_hooks/LuaApplication.h"
 #include "lua_hooks/LuaWindow.h"
+#include "lua_hooks/LuaSceneManagement.h"
 
 lua_State* nimo::ScriptManager::L = nullptr;
 
@@ -75,6 +76,13 @@ void nimo::ScriptManager::Initialize()
         lua_pushcfunction(L, nimo_luafn_InputGetMousePosition);
         lua_setfield(L, -2, "GetMousePosition");
         lua_setfield(L, -2, "Input");
+    }
+    // Input
+    {
+        lua_newtable(L);
+        lua_pushcfunction(L, nimo_luafn_SceneManagementLoadScene);
+        lua_setfield(L, -2, "LoadScene");
+        lua_setfield(L, -2, "SceneManagement");
     }
     // KeyCode
     {
