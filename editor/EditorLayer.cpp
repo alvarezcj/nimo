@@ -12,6 +12,7 @@
 
 #include "core/Application.h"
 #include "scene/SceneManager.h"
+#include "scene/Prefab.h"
 
 void EditorLayer::OnAttach()
 {
@@ -396,6 +397,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::FileHandling::Copy("nimo_runtime.exe", projectFolderPath/(name+".exe"));
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Scenes");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Materials");
+        nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Prefabs");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Logs");
         nimo::AssetManager::ImportDirectory(projectFolderPath/"Assets");
 
@@ -437,19 +439,28 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::AssetManager::CreateAssetFromMemory<nimo::Material>("Materials/bust.nmat", material);
 
         {
-            std::shared_ptr<nimo::Scene> createdScene = nimo::SceneManager::CreateScene("NewScene");
-            {
-                auto e = createdScene->CreateEntity("MainCamera");
-                e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
-                e.AddComponent<nimo::CameraComponent>();
-            }
+            std::shared_ptr<nimo::Scene> createdScene = nimo::SceneManager::CreateScene("Dummy");
             {
                 nimo::Entity e = createdScene->CreateEntity("Bust");
                 e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, -0.2f, 0.0f};
                 e.GetComponent<nimo::TransformComponent>().Rotation = {-1.5f, 0.0f, 0.0f};
                 e.AddComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>("MarbleBust/marble_bust_01_4k.fbx");
                 e.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/bust.nmat");
+                std::shared_ptr<nimo::Prefab> prefab = std::make_shared<nimo::Prefab>();
+                prefab->SetData(createdScene, e);
+                nimo::AssetManager::CreateAssetFromMemory<nimo::Prefab>("prefab1.nprefab", prefab);
+                nimo::AssetManager::WriteIndex();
             }
+        }
+
+        {
+            std::shared_ptr<nimo::Scene> createdScene = nimo::SceneManager::CreateScene("NewScene");
+            {
+                auto e = createdScene->CreateEntity("MainCamera");
+                e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
+                e.AddComponent<nimo::CameraComponent>();
+            }
+            nimo::AssetManager::Get<nimo::Prefab>("prefab1.nprefab")->Create(createdScene);
             {
                 nimo::Entity e = createdScene->CreateEntity("PointLight");
                 e.GetComponent<nimo::TransformComponent>().Translation = {0.5f, 0.5f, 0.0f};

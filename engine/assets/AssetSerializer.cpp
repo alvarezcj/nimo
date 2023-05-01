@@ -134,7 +134,14 @@ std::shared_ptr<nimo::Script> nimo::AssetSerializer<nimo::Script>::Deserialize(c
 }
 
 // Script
-void nimo::AssetSerializer<nimo::Prefab>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Prefab>& asset){}
+void nimo::AssetSerializer<nimo::Prefab>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Prefab>& asset)
+{
+    std::filesystem::path p = ".";
+    if(nimo::Project::GetActiveProject())
+        p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
+    std::ofstream ofs(p/metadata.filepath);
+    ofs << asset->source.dump(4);
+}
 std::shared_ptr<nimo::Prefab> nimo::AssetSerializer<nimo::Prefab>::Deserialize(const nimo::AssetMetadata& metadata)
 {
     std::filesystem::path p = ".";

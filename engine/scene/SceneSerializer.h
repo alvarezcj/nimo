@@ -11,6 +11,6 @@ namespace nimo {
         void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset);
         std::shared_ptr<nimo::Scene> Deserialize(const nimo::AssetMetadata& metadata);
 		nlohmann::ordered_json SerializeEntity(const std::shared_ptr<nimo::Scene>& scene, const Entity& entity);
-		nimo::GUID DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source);
+		nimo::GUID DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source, GUID desiredId = {});
     };
 }

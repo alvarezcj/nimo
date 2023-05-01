@@ -44,7 +44,7 @@ std::shared_ptr<nimo::Scene> nimo::AssetSerializer<nimo::Scene>::Deserialize(con
     scene->id = GUID(std::string(j["GUID"]));
     for(auto entity : j["Entities"])
     {
-        DeserializeEntity(scene, entity);
+        DeserializeEntity(scene, entity, GUID(std::string(entity["GUID"])));
     }
     return scene;
 }
@@ -131,9 +131,14 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     }
     return jentity;
 }
-nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source)
+nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source, GUID desiredId)
 {
-    nimo::Entity createdEntity = scene->CreateEntityWithID(GUID(std::string(source["GUID"])));
+    GUID id;
+    if(desiredId.valid())
+        id = desiredId;
+    else
+        id = GUID::Create();
+    nimo::Entity createdEntity = scene->CreateEntityWithID(id);
     for (auto field : source.items())
     {
         if(field.key() == "Label")
@@ -156,7 +161,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             f.Parent = GUID(std::string(field.value()["Parent"]));
             for(auto child : field.value()["Children"])
             {
-                f.Children.push_back(DeserializeEntity(scene, child));
+                f.Children.push_back(DeserializeEntity(scene, child, GUID(std::string(child["GUID"]))));
             }
         }
         if(field.key() == "Camera")
