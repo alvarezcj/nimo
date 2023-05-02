@@ -42,6 +42,8 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "GetComponent");
         lua_pushcfunction(L, nimo_luafn_SetEntityComponent);
         lua_setfield(L, -2, "SetComponent");
+        lua_pushcfunction(L, nimo_luafn_EntityDestroy);
+        lua_setfield(L, -2, "Destroy");
         lua_setfield(L, -2, "Entity");
     }
     // Application
@@ -77,7 +79,7 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "GetMousePosition");
         lua_setfield(L, -2, "Input");
     }
-    // Input
+    // Scene management
     {
         lua_newtable(L);
         lua_pushcfunction(L, nimo_luafn_SceneManagementLoadScene);

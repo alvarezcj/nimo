@@ -21,6 +21,14 @@ function this:OnUpdate(deltaTime)
         nimo.SceneManagement.LoadScene("Second")
     end
     local transform = nimo.Entity.GetComponent(this.entity, "Transform")
+    if nimo.Input.GetKey(nimo.KeyCode.I) 
+    then
+        -- nimo.Entity.Instantiate("prefab1")
+    end
+    if nimo.Input.GetKey(nimo.KeyCode.K) 
+    then
+        nimo.Entity.Destroy(this.entity)
+    end
     if nimo.Input.GetKey(nimo.KeyCode.D) 
     then
         transform.Rotation.y = transform.Rotation.y + this.speed * deltaTime

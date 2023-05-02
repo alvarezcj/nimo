@@ -123,3 +123,19 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
     }
     return 0;
 }
+
+int nimo_luafn_EntityDestroy(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 1);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        scene->RequestEntityDestruction(scene->GetEntity(*id));
+    }
+    return 0;
+}

@@ -25,11 +25,13 @@ namespace nimo{
         const std::string& GetName() {return name;}
         Entity GetEntity(GUID id) {return {m_entities[id], m_registry};}
         glm::mat4 GetWorldSpaceTransformMatrix(Entity entity);
+        void RequestEntityDestruction(Entity entity);
     private:
         friend class SceneRenderer;
         std::string name; 
         entt::registry m_registry;
         std::unordered_map<GUID, entt::entity> m_entities;
+        std::vector<Entity> requestedEntitiesToDestroy;
 
         friend struct AssetSerializer<Scene>;
     };

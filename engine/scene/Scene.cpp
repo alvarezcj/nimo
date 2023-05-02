@@ -51,6 +51,11 @@ void nimo::Scene::Update(float deltaTime)
             ScriptManager::OnUpdate(instance, deltaTime);
         }
     });
+    for(auto e : requestedEntitiesToDestroy)
+    {
+        DestroyEntity(e);
+    }
+    requestedEntitiesToDestroy.clear();
 }
 nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
 {
@@ -127,5 +132,9 @@ glm::mat4 nimo::Scene::GetWorldSpaceTransformMatrix(Entity entity)
     }
 
     return transform * entity.GetComponent<TransformComponent>().GetTransform();
+}
+void nimo::Scene::RequestEntityDestruction(Entity entity)
+{
+    requestedEntitiesToDestroy.push_back(entity);
 }
 
