@@ -387,6 +387,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         settings.assetDirectory = "Assets";
         settings.assetIndexPath = name + ".nidx";
         settings.logsDirectory = "Logs";
+        settings.modulesDirectory = "Modules";
         settings.startScene = "NewScene";
         std::shared_ptr<nimo::Project> project = std::make_shared<nimo::Project>(settings);
         nimo::Project::SetActiveProject(project);
@@ -399,6 +400,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Materials");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Prefabs");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Logs");
+        nimo::FileHandling::CreateDiretory(projectFolderPath/"Modules");
         nimo::AssetManager::ImportDirectory(projectFolderPath/"Assets");
 
         auto unlitShader = nimo::AssetManager::Get<nimo::Shader>("Shaders/gBuffer.nshader");
@@ -460,7 +462,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
                 e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -0.7f};
                 e.AddComponent<nimo::CameraComponent>();
             }
-            nimo::AssetManager::Get<nimo::Prefab>("prefab1.nprefab")->Create(createdScene);
+            nimo::AssetManager::Get<nimo::Prefab>("Prefabs/prefab1.nprefab")->Create(createdScene);
             {
                 nimo::Entity e = createdScene->CreateEntity("PointLight");
                 e.GetComponent<nimo::TransformComponent>().Translation = {0.5f, 0.5f, 0.0f};

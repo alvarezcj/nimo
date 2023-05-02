@@ -13,6 +13,7 @@ void nimo::ProjectSerializer::Serialize(const std::filesystem::path& filepath)
     j["AssetsDirectory"] = m_project->settings.assetDirectory;
     j["IndexPath"] = m_project->settings.assetIndexPath;
     j["LogsDirectory"] = m_project->settings.logsDirectory;
+    j["ModulesDirectory"] = m_project->settings.modulesDirectory;
     j["StartScene"] = m_project->settings.startScene;
     std::ofstream ofs(filepath);
     ofs << j;
@@ -26,6 +27,7 @@ bool nimo::ProjectSerializer::Deserialize(const std::filesystem::path& filepath)
     m_project->settings.assetDirectory = j["AssetsDirectory"];
     m_project->settings.assetIndexPath = j["IndexPath"];
     m_project->settings.logsDirectory = j["LogsDirectory"];
+    m_project->settings.modulesDirectory = j["ModulesDirectory"];
     m_project->settings.startScene = j["StartScene"];
     std::filesystem::path copypath = filepath;
     m_project->settings.projectDirectory = copypath.remove_filename();

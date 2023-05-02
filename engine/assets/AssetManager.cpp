@@ -76,7 +76,7 @@ const nimo::AssetMetadata& nimo::AssetManager::GetMetadata(const std::filesystem
             return metadata;
     }
 
-    return {};
+    return AssetMetadata();
 }
 
 std::filesystem::path nimo::AssetManager::GetRelativePath(const std::filesystem::path& filepath)

@@ -15,6 +15,7 @@ namespace nimo
         std::string assetDirectory;
         std::string assetIndexPath;
         std::string logsDirectory;
+        std::string modulesDirectory;
         std::string startScene;
 
         std::filesystem::path projectDirectory;
@@ -40,6 +41,8 @@ namespace nimo
         inline static std::shared_ptr<Project> GetActiveProject(){ return activeProject;}
         inline ProjectSettings& GetSettings(){return settings;}
         inline static const std::filesystem::path GetAssetsFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().assetDirectory;}
+        inline static const std::filesystem::path GetLogsFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().logsDirectory;}
+        inline static const std::filesystem::path GetModulesFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().modulesDirectory;}
         inline static const std::filesystem::path GetAssetIndexPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().assetIndexPath;}
     private:
         ProjectSettings settings;
