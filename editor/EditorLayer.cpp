@@ -448,7 +448,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
                 e.AddComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>("Materials/bust.nmat");
                 std::shared_ptr<nimo::Prefab> prefab = std::make_shared<nimo::Prefab>();
                 prefab->SetData(createdScene, e);
-                nimo::AssetManager::CreateAssetFromMemory<nimo::Prefab>("prefab1.nprefab", prefab);
+                nimo::AssetManager::CreateAssetFromMemory<nimo::Prefab>("Prefabs/prefab1.nprefab", prefab);
                 nimo::AssetManager::WriteIndex();
             }
         }

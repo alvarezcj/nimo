@@ -44,6 +44,7 @@ public:
         assetIcons[nimo::AssetType::Scene] = std::make_shared<nimo::Texture>("icon_castle.png");
         assetIcons[nimo::AssetType::EnvironmentMap] = std::make_shared<nimo::Texture>("icon_picture.png");
         assetIcons[nimo::AssetType::Script] = std::make_shared<nimo::Texture>("icon_gears.png");
+        assetIcons[nimo::AssetType::Prefab] = std::make_shared<nimo::Texture>("icon_box.png");
     }
     ~EditorLayer()
     {
