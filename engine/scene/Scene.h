@@ -16,6 +16,7 @@ namespace nimo{
         AssetType Type() const { return AssetType::Scene; }
         static AssetType StaticType(){return AssetType::Scene;}
         void Update();
+        void LateUpdate();
         void ForEachEntity(std::function<void(Entity&)> action);
         Entity CreateEntity(const std::string& name = "");
         Entity CreateEntityWithID(GUID desiredId);

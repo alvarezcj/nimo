@@ -17,6 +17,7 @@ public:
     static void UpdateTime(float deltaTime);
     static void OnCreate(const ScriptInstance& instance);
     static void OnUpdate(const ScriptInstance& instance);
+    static void OnLateUpdate(const ScriptInstance& instance);
 
 private: 
     static lua_State* L;

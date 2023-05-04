@@ -56,6 +56,16 @@ void nimo::Scene::Update()
             ScriptManager::OnUpdate(instance);
         }
     });
+}
+void nimo::Scene::LateUpdate()
+{
+    m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
+    {
+        for(auto& instance : script.instances)
+        {
+            ScriptManager::OnLateUpdate(instance);
+        }
+    });
     for(auto e : requestedEntitiesToDestroy)
     {
         DestroyEntity(e);

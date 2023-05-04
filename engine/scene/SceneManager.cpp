@@ -37,4 +37,8 @@ void nimo::SceneManager::UpdateScenes(float deltaTime)
     {
         scene->Update();
     }
+    for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
+    {
+        scene->LateUpdate();
+    }
 }

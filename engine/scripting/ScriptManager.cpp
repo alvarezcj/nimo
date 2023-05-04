@@ -369,3 +369,15 @@ void nimo::ScriptManager::OnUpdate(const ScriptInstance& instance)
     }
     lua_pop(L, 1);
 }
+void nimo::ScriptManager::OnLateUpdate(const ScriptInstance& instance)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+    lua_pushstring(L, "OnLateUpdate");
+    lua_gettable(L, -2);
+    if(!lua_isnil(L, -1))
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+        lua_pcall(L, 1, 0, 0);
+    }
+    lua_pop(L, 1);
+}
