@@ -383,8 +383,13 @@ void nimo::ScriptManager::UpdateTime(float deltaTime)
 {
     lua_getglobal(L, "nimo");
     lua_getfield(L, -1, "Time");
-    lua_pushnumber(L, deltaTime);
+    lua_getfield(L, -1, "timeScale");
+    auto timeScale = lua_tonumber(L,-1);
+    lua_remove(L, -1);
+    lua_pushnumber(L, deltaTime * timeScale);
     lua_setfield(L, -2, "deltaTime");
+    lua_pushnumber(L, deltaTime);
+    lua_setfield(L, -2, "unscaledDeltaTime");
     lua_pushnumber(L, Application::Instance().Time());
     lua_setfield(L, -2, "time");
     lua_remove(L, -1);
