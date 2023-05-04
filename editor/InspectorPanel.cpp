@@ -336,6 +336,33 @@ void InspectorPanel::OnRender()
             {
                 if (ImGui::CollapsingHeader((std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
                 {
+                    for(auto& field : instance.fields)
+                    {
+                        ImGui::Text(field.first.c_str());
+                        ImGui::SameLine();
+                        ImGui::Spacing();
+                        ImGui::SameLine();
+                        switch (field.second->GetType())
+                        {
+                        case nimo::ScriptFieldType::Number:
+                            ImGui::DragFloat(
+                                ("##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(),
+                                (float*)&std::static_pointer_cast<nimo::ScriptFieldNumber>(field.second)->value);
+                            break;
+                        case nimo::ScriptFieldType::Boolean:
+                            ImGui::Checkbox(
+                                ("##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(),
+                                &std::static_pointer_cast<nimo::ScriptFieldBool>(field.second)->value);
+                            break;
+                        case nimo::ScriptFieldType::String:
+                            ImGui::InputText(
+                                ("##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(),
+                                &std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
             }
             ImGui::Spacing();

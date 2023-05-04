@@ -123,9 +123,29 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         const ScriptComponent& l = e.GetComponent<ScriptComponent>();
         auto instances = nlohmann::json::array();
-        for(auto instance : l.instances)
+        for(auto& instance : l.instances)
         {
-            instances.push_back(nlohmann::ordered_json({{"Source", instance.script->id.str()}}));
+            auto instanceJson = nlohmann::json({{"Source", instance.script->id.str()}});
+            auto fields = nlohmann::json::array();
+            for(auto& field : instance.fields)
+            {
+                switch (field.second->GetType())
+                {
+                case nimo::ScriptFieldType::Number:
+                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldNumber>(field.second)->value}});
+                    break;
+                case nimo::ScriptFieldType::Boolean:
+                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldBool>(field.second)->value}});
+                    break;
+                case nimo::ScriptFieldType::String:
+                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value}});
+                    break;
+                default:
+                    break;
+                }
+            }
+            instanceJson.push_back({"Fields", fields});
+            instances.push_back(instanceJson);
         }
         jentity["Scripts"] = instances;
     }
@@ -199,7 +219,29 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             ScriptComponent& l = createdEntity.AddComponent<ScriptComponent>();
             for(auto i : field.value())
             {
-                l.instances.push_back(ScriptManager::CreateInstance(AssetManager::Get<Script>(GUID(std::string(i["Source"]))), createdEntity.ID(), scene));
+                auto instance = ScriptManager::CreateInstance(AssetManager::Get<Script>(GUID(std::string(i["Source"]))), createdEntity.ID(), scene);
+                for(auto field : i ["Fields"])
+                {
+                    auto it = instance.fields.find(field["Name"]);
+                    auto value = field["Value"];
+                    if(it != instance.fields.end())
+                    {
+                        if(value.is_number() && it->second->GetType() == ScriptFieldType::Number)
+                        {
+                            std::static_pointer_cast<nimo::ScriptFieldNumber>(instance.fields[field["Name"]])->value = value;
+                        }
+                        if(value.is_boolean() && it->second->GetType() == ScriptFieldType::Boolean)
+                        {
+                            std::static_pointer_cast<nimo::ScriptFieldBool>(instance.fields[field["Name"]])->value = value;
+                        }
+                        if(value.is_string() && it->second->GetType() == ScriptFieldType::String)
+                        {
+                            std::static_pointer_cast<nimo::ScriptFieldString>(instance.fields[field["Name"]])->value = value;
+                        }
+                    }
+                }
+                ScriptManager::ApplyFields(instance);
+                l.instances.push_back(instance);
             }
         }
     }

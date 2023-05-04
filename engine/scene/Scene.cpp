@@ -46,8 +46,13 @@ void nimo::Scene::Update(float deltaTime)
 {
     m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
     {
-        for(const auto& instance : script.instances)
+        for(auto& instance : script.instances)
         {
+            if(!instance.initialized)
+            {
+                ScriptManager::OnCreate(instance);
+                instance.initialized = true;
+            }
             ScriptManager::OnUpdate(instance, deltaTime);
         }
     });

@@ -13,6 +13,7 @@ public:
 	static void Initialize();
 	static void Cleanup();
     static ScriptInstance CreateInstance(std::shared_ptr<Script> source, const GUID& owner, std::shared_ptr<Scene> scene);
+    static void ApplyFields(const ScriptInstance& instance);
     static void OnCreate(const ScriptInstance& instance);
     static void OnUpdate(const ScriptInstance& instance, float deltaTime);
 

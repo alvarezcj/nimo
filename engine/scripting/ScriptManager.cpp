@@ -242,6 +242,42 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
         ScriptUtils::PrintLuaStack(L);
         if(lua_istable(L, -1))
         {
+            // Look for Public table
+            if(lua_getfield(L, -1, "Public") == LUA_TTABLE)
+            {
+                // Iterate over the public fields table
+                lua_pushvalue(L, -1);
+                lua_pushnil(L);
+                while (lua_next(L, -2))
+                {
+                    lua_pushvalue(L, -2);
+                    int type = lua_type(L,-2);
+                    const char *key = lua_tostring(L, -1);
+                    // const char *value = lua_tostring(L, -2);
+                    // NIMO_DEBUG("{}({}) - {}", key, type, value);
+                    // Create map with public fields memory representation to serialize/deserialize
+                    std::map<std::string, void*> fieldMap;
+                    switch(type)
+                    {
+                    case LUA_TNUMBER:
+                        res.fields[key] = std::make_shared<ScriptFieldNumber>(key, lua_tonumber(L, -2));
+                        break;
+                    case LUA_TSTRING:
+                        res.fields[key] = std::make_shared<ScriptFieldString>(key, lua_tostring(L, -2));
+                        break;
+                    case LUA_TBOOLEAN:
+                        res.fields[key] = std::make_shared<ScriptFieldBool>(key, lua_toboolean(L, -2));
+                        break;
+                    default:
+                        break;
+                    }
+                    lua_pop(L, 2);
+                }
+                lua_pop(L, 1);
+            }
+            lua_remove(L, -1);
+
+            // Push entity table with id and scene
             lua_newtable(L);
             lua_pushlightuserdata(L, (void*)&owner);
             lua_setfield(L, -2, "id");
@@ -259,6 +295,36 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
     ScriptUtils::PrintLuaStack(L);
     return res;
 }
+void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+    // Look for Public table
+    if(lua_getfield(L, -1, "Public") == LUA_TTABLE)
+    {
+        for(const auto& field : instance.fields)
+        {
+            switch (field.second->GetType())
+            {
+            case nimo::ScriptFieldType::Number:
+                lua_pushnumber(L, std::static_pointer_cast<nimo::ScriptFieldNumber>(field.second)->value);
+                lua_setfield(L, -2, field.first.c_str());
+                break;
+            case nimo::ScriptFieldType::Boolean:
+                lua_pushboolean(L, std::static_pointer_cast<nimo::ScriptFieldBool>(field.second)->value);
+                lua_setfield(L, -2, field.first.c_str());
+                break;
+            case nimo::ScriptFieldType::String:
+                lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value.c_str());
+                lua_setfield(L, -2, field.first.c_str());
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    lua_remove(L, -1);
+    lua_remove(L, -1);
+}
 void nimo::ScriptManager::OnCreate(const ScriptInstance& instance)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
@@ -266,7 +332,8 @@ void nimo::ScriptManager::OnCreate(const ScriptInstance& instance)
     lua_gettable(L, -2);
     if(!lua_isnil(L, -1))
     {
-        lua_pcall(L, 0, 0, 0);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+        lua_pcall(L, 1, 0, 0);
     }
     else
     {
