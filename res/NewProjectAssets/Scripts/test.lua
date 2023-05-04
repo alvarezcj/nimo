@@ -33,7 +33,7 @@ function test:OnUpdate()
     local transform = nimo.Entity.GetComponent(self.entity, "Transform")
     if nimo.Input.GetKey(nimo.KeyCode.I) 
     then
-        -- nimo.Entity.Instantiate("prefab1")
+        nimo.Entity.Instantiate(self.Public.prefab)
     end
     if nimo.Input.GetKey(nimo.KeyCode.K) 
     then

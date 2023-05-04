@@ -1,6 +1,10 @@
 #include "LuaComponents.h"
 #include "scene/Scene.h"
 #include "scene/Components.h"
+#include "assets/AssetType.h"
+#include "assets/AssetManager.h"
+#include "scene/SceneManager.h"
+#include "scene/Prefab.h"
 
 int nimo_luafn_HasEntityComponent(lua_State* L)
 {
@@ -138,4 +142,25 @@ int nimo_luafn_EntityDestroy(lua_State* L)
         scene->RequestEntityDestruction(scene->GetEntity(*id));
     }
     return 0;
+}
+int nimo_luafn_EntityInstantiate(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 1);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "assetType");
+    if((lua_isinteger(L, -1) && lua_isstring(L, -2)))
+    {
+        nimo::GUID id(lua_tostring(L, -2));
+        nimo::AssetType assetType = (nimo::AssetType)lua_tointeger(L, -1);
+        nimo::GUID createdEntityId = nimo::AssetManager::Get<nimo::Prefab>(id)->Create(nimo::SceneManager::GetActiveScene());
+        // Push entity table with id and scene
+        lua_newtable(L);
+        lua_pushlightuserdata(L, (void*)&nimo::SceneManager::GetActiveScene()->GetEntity(createdEntityId).GetComponent<nimo::IDComponent>().Id);
+        lua_setfield(L, -2, "id");
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+        lua_setfield(L, -2, "scene");
+    }
+    return 1;
 }

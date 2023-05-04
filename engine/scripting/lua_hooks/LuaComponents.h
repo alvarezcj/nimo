@@ -5,3 +5,4 @@ int nimo_luafn_HasEntityComponent(lua_State* L);
 int nimo_luafn_GetEntityComponent(lua_State* L);
 int nimo_luafn_SetEntityComponent(lua_State* L);
 int nimo_luafn_EntityDestroy(lua_State* L);
+int nimo_luafn_EntityInstantiate(lua_State* L);

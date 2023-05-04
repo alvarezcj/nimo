@@ -47,6 +47,8 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "SetComponent");
         lua_pushcfunction(L, nimo_luafn_EntityDestroy);
         lua_setfield(L, -2, "Destroy");
+        lua_pushcfunction(L, nimo_luafn_EntityInstantiate);
+        lua_setfield(L, -2, "Instantiate");
         lua_setfield(L, -2, "Entity");
     }
     // Application
