@@ -1,12 +1,15 @@
 #pragma once
 #include <string>
+#include <memory>
+#include "assets/AssetType.h"
 
 namespace nimo
 {
 enum class ScriptFieldType{
     Number,
     String,
-    Boolean
+    Boolean,
+    Asset,
 };
 struct ScriptField
 {
@@ -35,5 +38,15 @@ struct ScriptFieldBool : public ScriptField
         : ScriptField(name), value(value) {}
     ScriptFieldType GetType() { return ScriptFieldType::Boolean;};
     bool value;
+};
+struct ScriptFieldAsset : public ScriptField
+{
+    ScriptFieldAsset(const std::string& name, AssetType type) 
+        : ScriptField(name), value({}), type(type) {}
+    ScriptFieldAsset(const std::string& name, std::shared_ptr<Asset> value, AssetType type) 
+        : ScriptField(name), value(value), type(type){}
+    ScriptFieldType GetType() { return ScriptFieldType::Asset;};
+    std::shared_ptr<Asset> value;
+    AssetType type;
 };
 } // namespace nimo

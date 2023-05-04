@@ -400,7 +400,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Materials");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Assets"/"Prefabs");
         nimo::FileHandling::CreateDiretory(projectFolderPath/"Logs");
-        nimo::FileHandling::CreateDiretory(projectFolderPath/"Modules");
+        nimo::FileHandling::Copy("modules", projectFolderPath/"Modules");
         nimo::AssetManager::ImportDirectory(projectFolderPath/"Assets");
 
         auto unlitShader = nimo::AssetManager::Get<nimo::Shader>("Shaders/gBuffer.nshader");

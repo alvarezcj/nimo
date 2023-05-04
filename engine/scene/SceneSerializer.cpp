@@ -5,6 +5,7 @@
 #include "project/Project.h"
 #include "scripting/ScriptManager.h"
 #include "SceneManager.h"
+#include "Prefab.h"
 
 void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset)
 {
@@ -132,13 +133,21 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
                 switch (field.second->GetType())
                 {
                 case nimo::ScriptFieldType::Number:
-                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldNumber>(field.second)->value}});
+                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldNumber>(field.second)->value}, {"Type","Number"}});
                     break;
                 case nimo::ScriptFieldType::Boolean:
-                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldBool>(field.second)->value}});
+                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldBool>(field.second)->value}, {"Type","Boolean"}});
                     break;
                 case nimo::ScriptFieldType::String:
-                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value}});
+                    fields.push_back({{"Name",field.first}, {"Value",std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value}, {"Type","String"}});
+                    break;
+                case nimo::ScriptFieldType::Asset:
+                    fields.push_back({
+                        {"Name",field.first},
+                        {"Value",std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value ? std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str() : ""},
+                        {"Type","Asset"},
+                        {"AssetType",AssetTypeToString(std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->type)}
+                    });
                     break;
                 default:
                     break;
@@ -224,19 +233,35 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
                 {
                     auto it = instance.fields.find(field["Name"]);
                     auto value = field["Value"];
+                    auto type = field["Type"];
                     if(it != instance.fields.end())
                     {
-                        if(value.is_number() && it->second->GetType() == ScriptFieldType::Number)
+                        if(type == "Number" && it->second->GetType() == ScriptFieldType::Number)
                         {
                             std::static_pointer_cast<nimo::ScriptFieldNumber>(instance.fields[field["Name"]])->value = value;
                         }
-                        if(value.is_boolean() && it->second->GetType() == ScriptFieldType::Boolean)
+                        if(type == "Boolean" && it->second->GetType() == ScriptFieldType::Boolean)
                         {
                             std::static_pointer_cast<nimo::ScriptFieldBool>(instance.fields[field["Name"]])->value = value;
                         }
-                        if(value.is_string() && it->second->GetType() == ScriptFieldType::String)
+                        if(type == "String" && it->second->GetType() == ScriptFieldType::String)
                         {
                             std::static_pointer_cast<nimo::ScriptFieldString>(instance.fields[field["Name"]])->value = value;
+                        }
+                        if(type == "Asset" && it->second->GetType() == ScriptFieldType::Asset)
+                        {
+                            if(value != "")
+                            {
+                                switch(AssetManager::GetMetadata(GUID(std::string(value))).type)
+                                {
+                                case AssetType::Prefab:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Prefab>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
+                                default:
+                                    break;
+                                }                                
+                            }
                         }
                     }
                 }

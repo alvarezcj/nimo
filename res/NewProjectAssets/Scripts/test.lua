@@ -1,14 +1,16 @@
+local AssetHandle = require("AssetHandle")
 local test = {
     speed = 1.0,
     Public = {
         field1 = 1,
         field2 = "asdasd",
-        field3 = true
+        field3 = true,
+        prefab = AssetHandle(nimo.AssetType.Prefab)
     }
 }
 
 function test:OnCreate()
-    nimo.Debug.Log("ASD")
+    nimo.Debug.Log(self.Public.prefab.id)
 end
 
 function test:OnUpdate()

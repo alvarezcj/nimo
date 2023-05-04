@@ -3,7 +3,9 @@
 #include "ScriptUtils.h"
 #include "core/Log.h"
 #include "core/Application.h"
+#include "assets/AssetManager.h"
 #include "project/Project.h"
+#include "scene/Prefab.h"
 #include "lua_hooks/LuaDebug.h"
 #include "lua_hooks/LuaInput.h"
 #include "lua_hooks/LuaComponents.h"
@@ -19,7 +21,7 @@ void nimo::ScriptManager::Initialize()
     luaL_openlibs(L);
     // Set asset folder as package path
 
-    std::string code = "package.path = [[" + Project::GetActiveProject()->GetAssetsFolderPath().string() + "\\?.lua]]";
+    std::string code = "package.path = [[" + Project::GetActiveProject()->GetAssetsFolderPath().string() + "\\?.lua;" + Project::GetActiveProject()->GetModulesFolderPath().string() +"\\?.lua]]";
     luaL_dostring(L, code.c_str());
     // Create nimo lib global table
     lua_newtable(L);
@@ -57,7 +59,26 @@ void nimo::ScriptManager::Initialize()
     // Time
     {
         lua_newtable(L);
+        lua_pushnumber(L, 1.0);
+        lua_setfield(L, -2, "timeScale");
         lua_setfield(L, -2, "Time");
+    }
+    // AssetType
+    {
+        lua_newtable(L);
+        lua_pushinteger(L, (unsigned int)AssetType::Texture);
+        lua_setfield(L, -2, "Texture");
+        lua_pushinteger(L, (unsigned int)AssetType::Mesh);
+        lua_setfield(L, -2, "Mesh");
+        lua_pushinteger(L, (unsigned int)AssetType::Material);
+        lua_setfield(L, -2, "Material");
+        lua_pushinteger(L, (unsigned int)AssetType::EnvironmentMap);
+        lua_setfield(L, -2, "EnvironmentMap");
+        lua_pushinteger(L, (unsigned int)AssetType::Script);
+        lua_setfield(L, -2, "Script");
+        lua_pushinteger(L, (unsigned int)AssetType::Prefab);
+        lua_setfield(L, -2, "Prefab");
+        lua_setfield(L, -2, "AssetType");
     }
     // Window
     {
@@ -274,6 +295,26 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
                     case LUA_TBOOLEAN:
                         res.fields[key] = std::make_shared<ScriptFieldBool>(key, lua_toboolean(L, -2));
                         break;
+                    case LUA_TTABLE:
+                        // Assethandle
+                        if(lua_getfield(L, -2, "assetType") != LUA_TNIL)
+                        {
+                            int assetType = lua_tointeger(L, -1);
+                            lua_getfield(L, -3, "id");
+                            std::string assetIdString = lua_tostring(L, -1);
+                            if(assetIdString != "")
+                            {
+                                GUID assetId(assetIdString);
+                                res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Prefab>(assetId), (AssetType)assetType);
+                            }
+                            else
+                            {
+                                res.fields[key] = std::make_shared<ScriptFieldAsset>(key, (AssetType)assetType);
+                            }
+                            lua_pop(L, 1);
+                        }
+                        lua_pop(L, 1);
+                        break;
                     default:
                         break;
                     }
@@ -321,6 +362,12 @@ void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
             case nimo::ScriptFieldType::String:
                 lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value.c_str());
                 lua_setfield(L, -2, field.first.c_str());
+                break;
+            case nimo::ScriptFieldType::Asset:
+                lua_getfield(L, -1, field.first.c_str());
+                lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_remove(L, -1);
                 break;
             default:
                 break;
