@@ -6,6 +6,9 @@
 #include "assets/AssetManager.h"
 #include "project/Project.h"
 #include "scene/Prefab.h"
+#include "renderer/Texture.h"
+#include "renderer/EnvironmentMap.h"
+#include "renderer/Mesh.h"
 #include "lua_hooks/LuaDebug.h"
 #include "lua_hooks/LuaInput.h"
 #include "lua_hooks/LuaComponents.h"
@@ -301,13 +304,36 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
                         // Assethandle
                         if(lua_getfield(L, -2, "assetType") != LUA_TNIL)
                         {
-                            int assetType = lua_tointeger(L, -1);
+                            AssetType assetType = (AssetType)lua_tointeger(L, -1);
                             lua_getfield(L, -3, "id");
                             std::string assetIdString = lua_tostring(L, -1);
                             if(assetIdString != "")
                             {
                                 GUID assetId(assetIdString);
-                                res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Prefab>(assetId), (AssetType)assetType);
+                                switch (assetType)
+                                {
+                                case AssetType::Prefab:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Prefab>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::Texture:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Texture>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::Mesh:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Mesh>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::Material:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Material>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::EnvironmentMap:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<EnvironmentMap>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::Script:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Script>(assetId), (AssetType)assetType);
+                                    break;
+                                
+                                default:
+                                    break;
+                                }
                             }
                             else
                             {

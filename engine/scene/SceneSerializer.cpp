@@ -6,6 +6,10 @@
 #include "scripting/ScriptManager.h"
 #include "SceneManager.h"
 #include "Prefab.h"
+#include "renderer/Texture.h"
+#include "renderer/Mesh.h"
+#include "renderer/Material.h"
+#include "renderer/EnvironmentMap.h"
 
 void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Scene>& asset)
 {
@@ -256,6 +260,26 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
                                 {
                                 case AssetType::Prefab:
                                     std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Prefab>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
+                                case AssetType::Texture:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Texture>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
+                                case AssetType::EnvironmentMap:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<EnvironmentMap>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
+                                case AssetType::Mesh:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Mesh>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
+                                case AssetType::Material:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Material>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
+                                case AssetType::Script:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Script>(GUID(std::string(value))));
                                     std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
                                     break;
                                 default:
