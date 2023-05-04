@@ -2,6 +2,7 @@
 #include "lua.hpp"
 #include "ScriptUtils.h"
 #include "core/Log.h"
+#include "core/Application.h"
 #include "project/Project.h"
 #include "lua_hooks/LuaDebug.h"
 #include "lua_hooks/LuaInput.h"
@@ -52,6 +53,11 @@ void nimo::ScriptManager::Initialize()
         lua_pushcfunction(L, nimo_luafn_ApplicationClose);
         lua_setfield(L, -2, "Close");
         lua_setfield(L, -2, "Application");
+    }
+    // Time
+    {
+        lua_newtable(L);
+        lua_setfield(L, -2, "Time");
     }
     // Window
     {
@@ -289,7 +295,6 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
             res.stackReference = luaL_ref(L, LUA_REGISTRYINDEX);
             res.script = source;
             NIMO_INFO("Registering script instance for {} with reference {}", source->filepath, res.stackReference);
-            OnCreate(res);
         }
     }
     ScriptUtils::PrintLuaStack(L);
@@ -325,6 +330,17 @@ void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
     lua_remove(L, -1);
     lua_remove(L, -1);
 }
+void nimo::ScriptManager::UpdateTime(float deltaTime)
+{
+    lua_getglobal(L, "nimo");
+    lua_getfield(L, -1, "Time");
+    lua_pushnumber(L, deltaTime);
+    lua_setfield(L, -2, "deltaTime");
+    lua_pushnumber(L, Application::Instance().Time());
+    lua_setfield(L, -2, "time");
+    lua_remove(L, -1);
+    lua_remove(L, -1);
+}
 void nimo::ScriptManager::OnCreate(const ScriptInstance& instance)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
@@ -341,7 +357,7 @@ void nimo::ScriptManager::OnCreate(const ScriptInstance& instance)
     }
     lua_pop(L, 1);
 }
-void nimo::ScriptManager::OnUpdate(const ScriptInstance& instance, float deltaTime)
+void nimo::ScriptManager::OnUpdate(const ScriptInstance& instance)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
     lua_pushstring(L, "OnUpdate");
@@ -349,8 +365,7 @@ void nimo::ScriptManager::OnUpdate(const ScriptInstance& instance, float deltaTi
     if(!lua_isnil(L, -1))
     {
         lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
-        lua_pushnumber(L, deltaTime);
-        lua_pcall(L, 2, 0, 0);
+        lua_pcall(L, 1, 0, 0);
     }
     lua_pop(L, 1);
 }

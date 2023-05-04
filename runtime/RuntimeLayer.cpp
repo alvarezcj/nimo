@@ -20,9 +20,9 @@ void RuntimeLayer::OnUpdate(float deltaTime)
 {
     nimo::SceneManager::ProcessLoadRequests();
     nimo::Renderer::BeginFrame();
+    nimo::SceneManager::UpdateScenes(deltaTime);
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
-        scene->Update(deltaTime);
         renderer->SetScene(scene);
         renderer->Render();
     }

@@ -9,6 +9,7 @@ public:
     static std::shared_ptr<Scene> CreateScene(const std::string& name);
     static void LoadScene(const std::string& name);
     static void LoadScene(GUID id);
+    static void UpdateScenes(float deltaTime);
     inline static std::shared_ptr<Scene> GetActiveScene() {return activeScene;}
     inline static void SetActiveScene(std::shared_ptr<Scene> scene) {activeScene = scene;}
     inline static void AddLoadRequest(const std::string& name){loadSceneRequests.push_back(name);}

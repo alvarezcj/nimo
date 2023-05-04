@@ -42,7 +42,7 @@ nimo::Scene::~Scene()
     NIMO_DEBUG("nimo::Scene::~Scene({})", name);
 }
 
-void nimo::Scene::Update(float deltaTime)
+void nimo::Scene::Update()
 {
     m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
     {
@@ -53,7 +53,7 @@ void nimo::Scene::Update(float deltaTime)
                 ScriptManager::OnCreate(instance);
                 instance.initialized = true;
             }
-            ScriptManager::OnUpdate(instance, deltaTime);
+            ScriptManager::OnUpdate(instance);
         }
     });
     for(auto e : requestedEntitiesToDestroy)

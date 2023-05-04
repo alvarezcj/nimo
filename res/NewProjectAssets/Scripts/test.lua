@@ -11,7 +11,7 @@ function test:OnCreate()
     nimo.Debug.Log("ASD")
 end
 
-function test:OnUpdate(deltaTime)
+function test:OnUpdate()
     if nimo.Input.GetKey(nimo.KeyCode.Escape) 
     then
         nimo.Application.Close()
@@ -39,11 +39,11 @@ function test:OnUpdate(deltaTime)
     end
     if nimo.Input.GetKey(nimo.KeyCode.D) 
     then
-        transform.Rotation.y = transform.Rotation.y + self.Public.field1 * deltaTime
+        transform.Rotation.y = transform.Rotation.y + self.Public.field1 * nimo.Time.deltaTime
     end
     if nimo.Input.GetKey(nimo.KeyCode.A) 
     then
-        transform.Rotation.y = transform.Rotation.y - self.speed * deltaTime
+        transform.Rotation.y = transform.Rotation.y - self.speed * nimo.Time.deltaTime
     end
     nimo.Entity.SetComponent(self.entity, "Transform", transform)
 end
