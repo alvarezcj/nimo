@@ -3,6 +3,7 @@
 #include "EditorLayer.h"
 #include "core/Log.h"
 #include "InspectorPanel.h"
+#include "scene/Prefab.h"
 
 void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, nimo::Entity& ent)
 {
@@ -35,6 +36,13 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
         }
         if (ImGui::Selectable("Delete")){
             mustDestroy = true;
+        }
+        ImGui::Separator();
+        if (ImGui::Selectable("Create Prefab")){
+            auto prefab = std::make_shared<nimo::Prefab>();
+            prefab->SetData(scene, ent);
+            nimo::AssetManager::CreateAssetFromMemory<nimo::Prefab>(entityName + ".nprefab", prefab);
+            nimo::AssetManager::WriteIndex();
         }
         ImGui::EndPopup();
     }
