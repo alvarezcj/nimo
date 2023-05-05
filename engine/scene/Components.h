@@ -20,7 +20,10 @@ struct LabelComponent
 {
     std::string Label;
 };
-
+struct ActiveComponent
+{
+    bool active = true;
+};
 struct FamilyComponent
 {
     GUID Parent;

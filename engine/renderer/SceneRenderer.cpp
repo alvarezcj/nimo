@@ -138,7 +138,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
     // Render scene into gbuffer
     m_gBuffer->bind();
-    m_scene->m_registry.view<IDComponent, MeshComponent, TransformComponent, MeshRendererComponent>().each([&](IDComponent& id, MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
+    m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, TransformComponent, MeshRendererComponent>().each([&](ActiveComponent active, IDComponent& id, MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
+        if(!active.active) return;
         if(!r.material || !r.material->shader || !m.source) return;
         r.material->shader->use();
         r.material->Setup();
@@ -162,8 +163,9 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_gBuffer->BindColorTexture(2,2);
     m_gBuffer->BindColorTexture(3,3);
     int currentLights = 0;
-    m_scene->m_registry.view<PointLightComponent, TransformComponent>().each([&](PointLightComponent& light, TransformComponent& lightTransform)
+    m_scene->m_registry.view<ActiveComponent, PointLightComponent, TransformComponent>().each([&](ActiveComponent active,PointLightComponent& light, TransformComponent& lightTransform)
     {
+        if(!active.active) return;
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Position", lightTransform.Translation);
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Color", light.Color);
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Intensity", light.Intensity);

@@ -65,6 +65,10 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         jentity["Label"] = e.GetComponent<LabelComponent>().Label;
     }
+    if(e.HasComponent<ActiveComponent>())
+    {
+        jentity["Active"] = e.GetComponent<ActiveComponent>().active;
+    }
     if(e.HasComponent<FamilyComponent>())
     {
         const FamilyComponent& f = e.GetComponent<FamilyComponent>();
@@ -177,6 +181,10 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         if(field.key() == "Label")
         {
             createdEntity.GetComponent<LabelComponent>().Label = field.value();
+        }
+        if(field.key() == "Active")
+        {
+            createdEntity.GetComponent<ActiveComponent>().active = field.value();
         }
         if(field.key() == "Transform")
         {

@@ -55,8 +55,9 @@ nimo::Scene::~Scene()
 
 void nimo::Scene::Update()
 {
-    m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
+    m_registry.view<ActiveComponent, ScriptComponent>().each([&](ActiveComponent& active, ScriptComponent& script)
     {
+        if(!active.active) return;
         for(auto& instance : script.instances)
         {
             if(!instance.initialized)
@@ -70,8 +71,9 @@ void nimo::Scene::Update()
 }
 void nimo::Scene::LateUpdate()
 {
-    m_registry.view<ScriptComponent>().each([&](ScriptComponent& script)
+    m_registry.view<ActiveComponent, ScriptComponent>().each([&](ActiveComponent& active, ScriptComponent& script)
     {
+        if(!active.active) return;
         for(auto& instance : script.instances)
         {
             ScriptManager::OnLateUpdate(instance);
@@ -94,6 +96,7 @@ nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
         e.AddComponent<LabelComponent>().Label = name;
     e.AddComponent<FamilyComponent>();
     e.AddComponent<TransformComponent>();
+    e.AddComponent<ActiveComponent>();
     m_entities[e.GetComponent<IDComponent>().Id] = id;
     return e;
 }
@@ -108,6 +111,7 @@ nimo::Entity nimo::Scene::CreateEntityWithID(GUID desiredId)
         e.AddComponent<LabelComponent>().Label = name;
     e.AddComponent<FamilyComponent>();
     e.AddComponent<TransformComponent>();
+    e.AddComponent<ActiveComponent>();
     m_entities[e.GetComponent<IDComponent>().Id] = id;
     return e;
 }
