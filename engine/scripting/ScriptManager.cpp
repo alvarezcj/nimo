@@ -381,6 +381,7 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
 }
 void nimo::ScriptManager::DestroyInstance(const ScriptInstance& instance)
 {
+    OnDestroy(instance);
     NIMO_INFO("Unregistering script instance for {} with reference {}", instance.script->filepath, instance.stackReference);
     luaL_unref(L, LUA_REGISTRYINDEX, instance.stackReference);
 }
@@ -449,6 +450,18 @@ void nimo::ScriptManager::OnCreate(const ScriptInstance& instance)
     else
     {
         NIMO_DEBUG("No OnCreate function");
+    }
+    lua_pop(L, 1);
+}
+void nimo::ScriptManager::OnDestroy(const ScriptInstance& instance)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+    lua_pushstring(L, "OnDestroy");
+    lua_gettable(L, -2);
+    if(!lua_isnil(L, -1))
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+        lua_pcall(L, 1, 0, 0);
     }
     lua_pop(L, 1);
 }
