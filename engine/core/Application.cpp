@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "glfw/glfw3.h"
 #include "events/EventManager.h"
+#include "input/Input.h"
 
 nimo::Application* nimo::Application::instance = nullptr;
 
@@ -33,6 +34,7 @@ void nimo::Application::Run()
     OnStart();
     while(m_appRunning)
     {
+        Input::Update();
         m_window->ProcessEvents();
         OnUpdate(m_frameTime);
         for(auto l : m_layers)

@@ -105,10 +105,20 @@ void nimo::ScriptManager::Initialize()
         lua_newtable(L);
         lua_pushcfunction(L, nimo_luafn_InputGetKey);
         lua_setfield(L, -2, "GetKey");
+        lua_pushcfunction(L, nimo_luafn_InputGetKeyPressed);
+        lua_setfield(L, -2, "GetKeyPressed");
+        lua_pushcfunction(L, nimo_luafn_InputGetKeyReleased);
+        lua_setfield(L, -2, "GetKeyReleased");
         lua_pushcfunction(L, nimo_luafn_InputGetMouseButton);
         lua_setfield(L, -2, "GetMouseButton");
+        lua_pushcfunction(L, nimo_luafn_InputGetMouseButtonPressed);
+        lua_setfield(L, -2, "GetMouseButtonPressed");
+        lua_pushcfunction(L, nimo_luafn_InputGetMouseButtonReleased);
+        lua_setfield(L, -2, "GetMouseButtonReleased");
         lua_pushcfunction(L, nimo_luafn_InputGetMousePosition);
         lua_setfield(L, -2, "GetMousePosition");
+        lua_pushcfunction(L, nimo_luafn_InputGetMouseScroll);
+        lua_setfield(L, -2, "GetMouseScroll");
         lua_setfield(L, -2, "Input");
     }
     // Scene management

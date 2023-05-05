@@ -31,7 +31,7 @@ function test:OnUpdate()
         nimo.SceneManagement.LoadScene("Second")
     end
     local transform = nimo.Entity.GetComponent(self.entity, "Transform")
-    if nimo.Input.GetKey(nimo.KeyCode.I) 
+    if nimo.Input.GetKeyReleased(nimo.KeyCode.I) 
     then
         nimo.Entity.Instantiate(self.Public.prefab)
     end
