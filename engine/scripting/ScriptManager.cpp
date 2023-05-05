@@ -379,6 +379,11 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
     ScriptUtils::PrintLuaStack(L);
     return res;
 }
+void nimo::ScriptManager::DestroyInstance(const ScriptInstance& instance)
+{
+    NIMO_INFO("Unregistering script instance for {} with reference {}", instance.script->filepath, instance.stackReference);
+    luaL_unref(L, LUA_REGISTRYINDEX, instance.stackReference);
+}
 void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);

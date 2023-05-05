@@ -40,6 +40,17 @@ nimo::Scene::Scene(const std::string& name)
 nimo::Scene::~Scene()
 {
     NIMO_DEBUG("nimo::Scene::~Scene({})", name);
+    ForEachEntity([](Entity entity)
+    {
+        if(entity.HasComponent<ScriptComponent>())
+        {
+            const auto& s = entity.GetComponent<ScriptComponent>();
+            for(const auto& i : s.instances)
+            {
+                ScriptManager::DestroyInstance(i);
+            }
+        }
+    });
 }
 
 void nimo::Scene::Update()
@@ -122,6 +133,14 @@ void nimo::Scene::DestroyEntity(Entity entity)
     for(auto child : entity.Children())
     {
         DestroyEntity(GetEntity(child));
+    }
+    if(entity.HasComponent<ScriptComponent>())
+    {
+        const auto& s = entity.GetComponent<ScriptComponent>();
+        for(const auto& i : s.instances)
+        {
+            ScriptManager::DestroyInstance(i);
+        }
     }
     m_registry.destroy(entity.m_handle);
 }

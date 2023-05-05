@@ -1,5 +1,5 @@
 #include "Log.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/dist_sink.h"
 
@@ -9,7 +9,7 @@ void nimo::Log::Initialize()
 {
     std::vector<spdlog::sink_ptr> sinks =
     {
-        std::make_shared<spdlog::sinks::basic_file_sink_mt>("nimo.log", true),
+        std::make_shared<spdlog::sinks::rotating_file_sink_mt>("nimo.log", 1048576 * 100, 99),
         std::make_shared<spdlog::sinks::stdout_color_sink_mt>()
     };
     sinks[0]->set_pattern("[%Y-%m-%d %T.%e] [%l] %n: %v%$");
