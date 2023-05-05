@@ -298,6 +298,8 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
                     }
                 }
                 ScriptManager::ApplyFields(instance);
+                if(createdEntity.GetComponent<ActiveComponent>().active)
+                    ScriptManager::OnEnable(instance);
                 l.instances.push_back(instance);
             }
         }

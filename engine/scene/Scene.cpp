@@ -125,7 +125,18 @@ nimo::Entity nimo::Scene::CreateEntityWithParent(Entity parent, const std::strin
 }
 void nimo::Scene::SetEntityActive(Entity e, bool active)
 {
+    bool prevActive = e.GetComponent<nimo::ActiveComponent>().active;
     e.GetComponent<ActiveComponent>().active = active;
+    if(prevActive != active)
+    {
+        if(e.HasComponent<ScriptComponent>())
+        {
+            for(const auto& instance : e.GetComponent<ScriptComponent>().instances)
+            {
+                prevActive ? ScriptManager::OnDisable(instance) : ScriptManager::OnEnable(instance);
+            }
+        }
+    }
     for(auto child : e.Children())
     {
         SetEntityActive(GetEntity(child), active);

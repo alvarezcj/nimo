@@ -164,3 +164,25 @@ int nimo_luafn_EntityInstantiate(lua_State* L)
     }
     return 1;
 }
+
+int nimo_luafn_EntitySetActive(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 2);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    bool active = lua_toboolean(L, 2);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        auto e = scene->GetEntity(*id);
+        bool prevActive = e.GetComponent<nimo::ActiveComponent>().active;
+        if(prevActive != active)
+        {
+            scene->SetEntityActive(e, active);
+        }
+    }
+    return 0;
+}

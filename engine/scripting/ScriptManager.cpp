@@ -52,6 +52,8 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "Destroy");
         lua_pushcfunction(L, nimo_luafn_EntityInstantiate);
         lua_setfield(L, -2, "Instantiate");
+        lua_pushcfunction(L, nimo_luafn_EntitySetActive);
+        lua_setfield(L, -2, "SetActive");
         lua_setfield(L, -2, "Entity");
     }
     // Application
@@ -481,6 +483,30 @@ void nimo::ScriptManager::OnLateUpdate(const ScriptInstance& instance)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
     lua_pushstring(L, "OnLateUpdate");
+    lua_gettable(L, -2);
+    if(!lua_isnil(L, -1))
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+        lua_pcall(L, 1, 0, 0);
+    }
+    lua_pop(L, 1);
+}
+void nimo::ScriptManager::OnEnable(const ScriptInstance& instance)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+    lua_pushstring(L, "OnEnable");
+    lua_gettable(L, -2);
+    if(!lua_isnil(L, -1))
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+        lua_pcall(L, 1, 0, 0);
+    }
+    lua_pop(L, 1);    
+}
+void nimo::ScriptManager::OnDisable(const ScriptInstance& instance)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+    lua_pushstring(L, "OnDisable");
     lua_gettable(L, -2);
     if(!lua_isnil(L, -1))
     {

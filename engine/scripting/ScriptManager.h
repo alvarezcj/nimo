@@ -18,6 +18,8 @@ public:
     static void UpdateTime(float deltaTime);
     static void OnCreate(const ScriptInstance& instance);
     static void OnDestroy(const ScriptInstance& instance);
+    static void OnEnable(const ScriptInstance& instance);
+    static void OnDisable(const ScriptInstance& instance);
     static void OnUpdate(const ScriptInstance& instance);
     static void OnLateUpdate(const ScriptInstance& instance);
 
