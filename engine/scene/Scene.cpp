@@ -123,6 +123,14 @@ nimo::Entity nimo::Scene::CreateEntityWithParent(Entity parent, const std::strin
     parent.GetComponent<FamilyComponent>().Children.push_back(e.GetComponent<IDComponent>().Id);
     return e;
 }
+void nimo::Scene::SetEntityActive(Entity e, bool active)
+{
+    e.GetComponent<ActiveComponent>().active = active;
+    for(auto child : e.Children())
+    {
+        SetEntityActive(GetEntity(child), active);
+    }
+}
 
 void nimo::Scene::DestroyEntity(Entity entity)
 {

@@ -218,6 +218,12 @@ void InspectorPanel::OnRender()
         ImGui::Image((ImTextureID)m_editor->entityIcon->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::SameLine();
         ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
+        static bool activeValue = ent.GetComponent<nimo::ActiveComponent>().active;
+        if(ImGui::Checkbox(("##Active##" + entityIdString).c_str(), &activeValue))
+        {
+            scene->SetEntityActive(ent, activeValue);
+        }
+        ImGui::SameLine();
         ImGui::InputText(("##Label##" + entityIdString).c_str(), &ent.GetComponent<nimo::LabelComponent>().Label);
         ImGui::TextDisabled(entityIdString.c_str());
         ImGui::Spacing();

@@ -21,6 +21,7 @@ namespace nimo{
         Entity CreateEntity(const std::string& name = "");
         Entity CreateEntityWithID(GUID desiredId);
         Entity CreateEntityWithParent(Entity parent, const std::string& name = "");
+        void SetEntityActive(Entity e, bool active);
         void DestroyEntity(Entity entity);
         void SetName(const std::string& newName) {name = newName;}
         const std::string& GetName() {return name;}
