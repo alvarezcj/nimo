@@ -17,8 +17,10 @@ nimo::FrameBuffer::FrameBuffer(const FrameBuffer::Details& details)
         glGenTextures(1, &m_textureAttachments[i]);
         glBindTexture(GL_TEXTURE_2D, m_textureAttachments[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, m_details.colorAttachments[i].internalFormat, m_details.width, m_details.height, 0, m_details.colorAttachments[i].format, m_details.colorAttachments[i].type, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glBindTexture(GL_TEXTURE_2D, 0);
         // attach it to currently bound framebuffer object
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_textureAttachments[i], 0);

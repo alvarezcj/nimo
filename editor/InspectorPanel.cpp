@@ -332,7 +332,7 @@ void InspectorPanel::OnRender()
             if (ImGui::CollapsingHeader((std::string("Point Light##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::ColorEdit3(("Color##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Color, ImGuiColorEditFlags_Float);
-                ImGui::DragFloat(("Intesity##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Intensity, 0.01f, 0.0f, 15.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::DragFloat(("Intesity##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Intensity, 0.1f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
             }
             ImGui::Spacing();
             ImGui::Separator();

@@ -95,6 +95,48 @@ nimo::SceneRenderer::SceneRenderer()
     hdrColorBufferDetails.clearDepthOnBind = true;
     hdrColorBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGB, GL_FLOAT});
     m_hdrColorBuffer = std::make_shared<FrameBuffer>(hdrColorBufferDetails);
+    // HDR brightness buffer
+    FrameBuffer::Details hdrBrightnessBufferDetails;
+    hdrBrightnessBufferDetails.width = 960;
+    hdrBrightnessBufferDetails.height = 540;
+    hdrBrightnessBufferDetails.clearColorOnBind = true;
+    hdrBrightnessBufferDetails.clearDepthOnBind = true;
+    hdrBrightnessBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGB, GL_FLOAT});
+    m_hdrBrightnessBuffer = std::make_shared<FrameBuffer>(hdrBrightnessBufferDetails);
+    // HDR bloom buffers
+    FrameBuffer::Details hdrBloomBufferDetails;
+    hdrBloomBufferDetails.clearColorOnBind = true;
+    hdrBloomBufferDetails.clearDepthOnBind = true;
+    hdrBloomBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGB, GL_FLOAT});
+    hdrBloomBufferDetails.width = 1920;
+    hdrBloomBufferDetails.height = 1080;
+    m_hdrFinalBloomBuffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 960;
+    hdrBloomBufferDetails.height = 540;
+    m_hdrBloomUpsample1Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 480;
+    hdrBloomBufferDetails.height = 270;
+    m_hdrBloomDownsample1Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    m_hdrBloomUpsample2Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 240;
+    hdrBloomBufferDetails.height = 135;
+    m_hdrBloomDownsample2Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    m_hdrBloomUpsample3Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 120;
+    hdrBloomBufferDetails.height = 67;
+    m_hdrBloomDownsample3Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    m_hdrBloomUpsample4Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 60;
+    hdrBloomBufferDetails.height = 33;
+    m_hdrBloomDownsample4Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    m_hdrBloomUpsample5Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 30;
+    hdrBloomBufferDetails.height = 16;
+    m_hdrBloomDownsample5Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    m_hdrBloomUpsample6Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
+    hdrBloomBufferDetails.width = 15;
+    hdrBloomBufferDetails.height = 8;
+    m_hdrBloomDownsample6Buffer = std::make_shared<FrameBuffer>(hdrBloomBufferDetails);
 
     //Lighting shader
     m_shaderLightingPass = nimo::AssetManager::Get<Shader>("Shaders/deferred_shading_pbr.nshader");
@@ -103,6 +145,10 @@ nimo::SceneRenderer::SceneRenderer()
     m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("Environment/old_room_4k.hdr");
     //Tone mapping shaderm_backgroundPass
     m_hdrToneMappingPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_tone_mapping.nshader");
+    //Bloom
+    m_hdrBrightFilterPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bright_filter.nshader");
+    m_hdrBloomDownsamplePass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bloom_downsample.nshader");
+    m_hdrBloomUpsamplePass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bloom_upsample.nshader");
 
     // Full screen Quad mesh
     std::vector<Vertex> vertices ={
@@ -134,7 +180,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)Application::Instance().GetWindow().GetWidth() , (float)Application::Instance().GetWindow().GetHeight(), cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
     else
         projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
-    glm::mat4 viewMatrix = glm::toMat4(glm::quat(camTransform.Rotation)) * glm::translate(glm::mat4(1.0f), {camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z});
+    glm::mat4 viewMatrix = camTransform.GetView();
     auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
     // Render scene into gbuffer
     m_gBuffer->bind();
@@ -199,6 +245,93 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     renderCube2();
     glDepthFunc(GL_LESS);
 
+    // Bloom
+    // Get bright pixels in buffer
+    m_hdrBrightnessBuffer->bind(); //960x520
+    m_hdrBrightFilterPass->use();
+    m_hdrBrightFilterPass->set("hdrBuffer", 0);
+    m_hdrColorBuffer->BindColorTexture(0,0);
+    m_quadMesh->draw();
+    // Downsample
+    m_hdrBloomDownsample1Buffer->bind(); //480x270
+    m_hdrBloomDownsamplePass->use();
+    m_hdrBloomDownsamplePass->set("hdrBuffer", 0);
+    m_hdrBrightnessBuffer->BindColorTexture(0,0); //960x540
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(960.0f, 540.0f));
+    m_quadMesh->draw();
+    m_hdrBloomDownsample2Buffer->bind(); //240x135
+    m_hdrBloomDownsample1Buffer->BindColorTexture(0,0); //480x270
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(480.0f, 270.0f)); 
+    m_quadMesh->draw();
+    m_hdrBloomDownsample3Buffer->bind(); //120x67
+    m_hdrBloomDownsample2Buffer->BindColorTexture(0,0); //240x135
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(240.0f, 135.0f));
+    m_quadMesh->draw();
+    m_hdrBloomDownsample4Buffer->bind(); //60x33
+    m_hdrBloomDownsample3Buffer->BindColorTexture(0,0); //120x67
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(120.0f, 67.0f)); 
+    m_quadMesh->draw();
+    m_hdrBloomDownsample5Buffer->bind(); //30x16
+    m_hdrBloomDownsample4Buffer->BindColorTexture(0,0); //60x33
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(60.0f, 33.0f)); 
+    m_quadMesh->draw();
+    m_hdrBloomDownsample6Buffer->bind(); //15x8
+    m_hdrBloomDownsample5Buffer->BindColorTexture(0,0); //30x16
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(30.0f, 16.0f)); 
+    m_quadMesh->draw();
+    //Upsample
+    m_hdrBloomUpsample6Buffer->bind(); //30x16
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrBloomDownsample5Buffer->BindColorTexture(0,0); //30x16
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomDownsample6Buffer->BindColorTexture(0,1); //15x8
+    m_quadMesh->draw();
+    m_hdrBloomUpsample5Buffer->bind(); //60x33
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrBloomDownsample4Buffer->BindColorTexture(0,0); //60x33
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomUpsample6Buffer->BindColorTexture(0,1); //30x16
+    m_quadMesh->draw();
+    m_hdrBloomUpsample4Buffer->bind(); //120x67
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrBloomDownsample3Buffer->BindColorTexture(0,0); //120x67
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomUpsample5Buffer->BindColorTexture(0,1); //60x33
+    m_quadMesh->draw();
+    m_hdrBloomUpsample3Buffer->bind(); //240x135
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrBloomDownsample2Buffer->BindColorTexture(0,0); //240x135
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomUpsample4Buffer->BindColorTexture(0,1); //120x67
+    m_quadMesh->draw();
+    m_hdrBloomUpsample2Buffer->bind(); //480x270
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrBloomDownsample1Buffer->BindColorTexture(0,0); //480x270
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomUpsample3Buffer->BindColorTexture(0,1); //240x135
+    m_quadMesh->draw();
+    m_hdrBloomUpsample1Buffer->bind(); //960x540
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrBrightnessBuffer->BindColorTexture(0,0); //960x540
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomUpsample2Buffer->BindColorTexture(0,1); //480x270
+    m_quadMesh->draw();
+
+    m_hdrFinalBloomBuffer->bind(); //1920x1080
+    m_hdrBloomUpsamplePass->use();
+    m_hdrBloomUpsamplePass->set("textureBig", 0);
+    m_hdrColorBuffer->BindColorTexture(0,0); //1920x1080
+    m_hdrBloomUpsamplePass->set("textureSmall", 1);
+    m_hdrBloomUpsample1Buffer->BindColorTexture(0,1); //960x540
+    m_quadMesh->draw();
+
+
     // HDR tone mapping pass
     if(target)
         target->bind();
@@ -208,8 +341,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         glViewport(0, 0, Application::Instance().GetWindow().GetWidth(), Application::Instance().GetWindow().GetHeight());
     }
     m_hdrToneMappingPass->use();
-    m_shaderLightingPass->set("hdrBuffer", 0);
-    m_hdrColorBuffer->BindColorTexture(0,0);
+    m_hdrToneMappingPass->set("hdrBuffer", 0);
+    m_hdrFinalBloomBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
 
     m_scene = {};
