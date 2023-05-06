@@ -286,6 +286,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsample5Buffer->BindColorTexture(0,0); //30x16
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomDownsample6Buffer->BindColorTexture(0,1); //15x8
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(15.0f, 8.0f)); 
     m_quadMesh->draw();
     m_hdrBloomUpsample5Buffer->bind(); //60x33
     m_hdrBloomUpsamplePass->use();
@@ -293,6 +294,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsample4Buffer->BindColorTexture(0,0); //60x33
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomUpsample6Buffer->BindColorTexture(0,1); //30x16
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(30.0f, 16.0f)); 
     m_quadMesh->draw();
     m_hdrBloomUpsample4Buffer->bind(); //120x67
     m_hdrBloomUpsamplePass->use();
@@ -300,6 +302,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsample3Buffer->BindColorTexture(0,0); //120x67
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomUpsample5Buffer->BindColorTexture(0,1); //60x33
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(60.0f, 33.0f)); 
     m_quadMesh->draw();
     m_hdrBloomUpsample3Buffer->bind(); //240x135
     m_hdrBloomUpsamplePass->use();
@@ -307,6 +310,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsample2Buffer->BindColorTexture(0,0); //240x135
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomUpsample4Buffer->BindColorTexture(0,1); //120x67
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(120.0f, 67.0f)); 
     m_quadMesh->draw();
     m_hdrBloomUpsample2Buffer->bind(); //480x270
     m_hdrBloomUpsamplePass->use();
@@ -314,6 +318,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsample1Buffer->BindColorTexture(0,0); //480x270
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomUpsample3Buffer->BindColorTexture(0,1); //240x135
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(240.0f, 135.0f)); 
     m_quadMesh->draw();
     m_hdrBloomUpsample1Buffer->bind(); //960x540
     m_hdrBloomUpsamplePass->use();
@@ -321,6 +326,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBrightnessBuffer->BindColorTexture(0,0); //960x540
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomUpsample2Buffer->BindColorTexture(0,1); //480x270
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(480.0f, 270.0f)); 
     m_quadMesh->draw();
 
     m_hdrFinalBloomBuffer->bind(); //1920x1080
@@ -329,6 +335,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrColorBuffer->BindColorTexture(0,0); //1920x1080
     m_hdrBloomUpsamplePass->set("textureSmall", 1);
     m_hdrBloomUpsample1Buffer->BindColorTexture(0,1); //960x540
+    m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(960.0f, 540.0f)); 
     m_quadMesh->draw();
 
 

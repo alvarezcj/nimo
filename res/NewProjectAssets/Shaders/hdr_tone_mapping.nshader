@@ -24,7 +24,7 @@ uniform sampler2D hdrBuffer;
 void main()
 {
 	const float gamma = 2.2;
-	const float exposure = 1.0;
+	const float exposure = 1.2;
     vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
 	// exposure tone mapping
 	vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
