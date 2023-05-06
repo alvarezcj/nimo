@@ -48,8 +48,26 @@ struct TransformComponent
     glm::mat4 GetTransform() const
     {
         return glm::translate(glm::mat4(1.0f), Translation)
-            * glm::toMat4(glm::quat(Rotation))
+            * glm::toMat4(glm::quat(glm::radians(Rotation)))
             * glm::scale(glm::mat4(1.0f), Scale);
+    }
+    glm::mat4 GetView() const
+    {
+        glm::rotate(glm::quat(glm::radians(Rotation)), glm::vec3(0.0f, 1.0f, 0.0f));
+        return glm::toMat4(glm::quat(glm::radians(Rotation))) 
+                * glm::translate(glm::mat4(1.0f), {-Translation.x, -Translation.y, Translation.z});
+    }
+    glm::vec3 GetFront() const 
+    {
+        return normalize(glm::vec3(glm::inverse(GetTransform())[2]))*glm::vec3(1 , 1 ,-1);
+    }
+    glm::vec3 GetUp() const 
+    {
+        return normalize(glm::vec3(glm::inverse(GetTransform())[1]))*glm::vec3(1 , 1 ,-1);
+    }
+    glm::vec3 GetRight() const 
+    {
+        return normalize(glm::vec3(glm::inverse(GetTransform())[0]))*glm::vec3(1 , 1 ,-1);
     }
 };
 
