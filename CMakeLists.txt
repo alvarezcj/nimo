@@ -98,6 +98,9 @@ set(LUA_LIB_SRCS
 add_library(lua STATIC ${LUA_LIB_SRCS})
 target_include_directories(lua PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/lua/v5.4.4/src)
 
+add_library(miniaudio INTERFACE)
+target_include_directories(miniaudio INTERFACE ${CMAKE_SOURCE_DIR}/third_party/miniaudio/)
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/engine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/editor)
 add_subdirectory(${CMAKE_SOURCE_DIR}/runtime)

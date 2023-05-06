@@ -53,6 +53,7 @@ imgui
 entt
 spdlog
 lua
+miniaudio
 )
 
 add_library(nimo_engine STATIC ${SOURCES})
