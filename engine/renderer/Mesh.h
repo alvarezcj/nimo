@@ -3,6 +3,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include <memory>
+#include <vector>
 #include "assets/Asset.h"
 #include "glm/glm.hpp"
 
@@ -14,6 +15,18 @@ namespace nimo{
         glm::vec3 tangent;
         glm::vec3 bitangent;
     };
+    struct Submesh{
+        Submesh();
+        ~Submesh();
+        void Submit();
+        void Draw();
+        VertexArray* m_vao = nullptr;
+        VertexBuffer* m_vbo = nullptr;
+        IndexBuffer* m_ibo = nullptr;
+        std::vector<Vertex> m_vertices;
+        std::vector<unsigned int> m_indices;
+        std::string m_name;
+    };
     class Mesh : public Asset{
     public:
         Mesh(const std::string& file);
@@ -22,10 +35,7 @@ namespace nimo{
         AssetType Type() const { return AssetType::Mesh; }
         static AssetType StaticType(){return AssetType::Mesh;}
         void draw();
-        VertexArray* m_vao;
-        VertexBuffer* m_vbo;
-        IndexBuffer* m_ibo;
-        std::vector<Vertex> m_vertices;
-        std::vector<unsigned int> m_indices;
+        std::vector<std::shared_ptr<Submesh>> submeshes;
+    private:
     };
 };

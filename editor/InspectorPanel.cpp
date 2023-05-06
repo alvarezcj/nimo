@@ -138,8 +138,14 @@ void InspectorPanel::OnRender()
             // Show vertices, submeshes, indices,...
             {
                 std::shared_ptr<nimo::Mesh> meshAsset = nimo::AssetManager::Get<nimo::Mesh>(metadata.id);
-                ImGui::Text("Vertices: %d", meshAsset->m_vertices.size());
-                ImGui::Text("Indices: %d", meshAsset->m_indices.size());
+                ImGui::Text("Submeshes: %d", meshAsset->submeshes.size());
+                ImGui::Separator();
+                for(auto submesh : meshAsset->submeshes)
+                {
+                    ImGui::Text(submesh->m_name.c_str());
+                    ImGui::TextDisabled("\tVertices: %d", submesh->m_vertices.size());
+                    ImGui::TextDisabled("\tIndices: %d", submesh->m_indices.size());
+                }
                 ImGui::Separator();
             }
             break;

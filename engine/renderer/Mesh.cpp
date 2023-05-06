@@ -46,11 +46,15 @@ nimo::Mesh::Mesh(const std::string& file)
         NIMO_DEBUG("\t NumMeshes: {}", scene->mNumMeshes);
         for(unsigned int i = 0; i < scene->mNumMeshes; ++i)
         {
+            NIMO_DEBUG("\t\t Mesh: {}", scene->mMeshes[i]->mName.C_Str());
+            
             // std::cout << "\t\tMesh " << i << std::endl;
             // std::cout << "\t\t NumVertices: " << scene->mMeshes[i]->mNumVertices << std::endl;
             // std::cout << "\t\t NumFaces: " << scene->mMeshes[i]->mNumFaces << std::endl;
             // std::cout << "\t\t NumAnimMeshes: " << scene->mMeshes[i]->mNumAnimMeshes << std::endl;
             // std::cout << "\t\t NumBones: " << scene->mMeshes[i]->mNumBones << std::endl;
+            auto submesh = std::make_shared<Submesh>();
+            submesh->m_name = scene->mMeshes[i]->mName.C_Str();
             for(int j = 0; j< scene->mMeshes[i]->mNumVertices; ++j)
             {
                 Vertex vertex;
@@ -84,15 +88,17 @@ nimo::Mesh::Mesh(const std::string& file)
                 else
                     vertex.uv = glm::vec2(0.0f, 0.0f);
                 // std::cout << "Vertex num " << i << "[" << vertex.position.x << ", "<< vertex.position.y << ", "<< vertex.position.z << "]["<< vertex.uv.x << ", "<< vertex.uv.y << "]"<< std::endl;
-                m_vertices.push_back(vertex);
+                submesh->m_vertices.push_back(vertex);
             }
             for(int j = 0; j< scene->mMeshes[i]->mNumFaces; ++j)
             {
                 aiFace face = scene->mMeshes[i]->mFaces[j];
                 // retrieve all indices of the face and store them in the indices vector
                 for (unsigned int k = 0; k < face.mNumIndices; k++)
-                    m_indices.push_back(face.mIndices[k]);
+                    submesh->m_indices.push_back(face.mIndices[k]);
             }
+            submesh->Submit();
+            submeshes.push_back(submesh);
         }
         // std::cout << "\t NumTextures: " << scene->mNumTextures << std::endl;
         // std::cout << "\t NumMaterials: " << scene->mNumMaterials << std::endl;
@@ -113,6 +119,8 @@ nimo::Mesh::Mesh(const std::string& file)
         // std::cout << "\tRootNode name: " << scene->mRootNode->mName.C_Str() << std::endl;
         // std::cout << "\tRootNode NumMeshes: " << scene->mRootNode->mNumMeshes << std::endl;
         // std::cout << "\tRootNode NumChildren: " << scene->mRootNode->mNumChildren << std::endl;
+        
+        NIMO_DEBUG("\tRootNode - Name: {} - NumMeshes: {}", scene->mRootNode->mName.C_Str(), scene->mRootNode->mNumMeshes);
         for(unsigned int i = 0; i < scene->mRootNode->mNumChildren; ++i)
         {
             NIMO_DEBUG("\t\tRootNode Child {} - Name: {} - NumMeshes: {}", i, scene->mRootNode->mChildren[i]->mName.C_Str(), scene->mRootNode->mChildren[i]->mNumMeshes);
@@ -123,53 +131,56 @@ nimo::Mesh::Mesh(const std::string& file)
         }
         
     }
-    m_vao = new VertexArray();
-    m_vbo = new VertexBuffer(
-        {
-            {"position", ShaderDataType::Float3},
-            {"normal", ShaderDataType::Float3},
-            {"uv", ShaderDataType::Float2},
-            {"tangent", ShaderDataType::Float3},
-            {"bitangent", ShaderDataType::Float3},
-        },
-        m_vertices.data(), sizeof(Vertex) * m_vertices.size()
-    );
-    m_ibo = new IndexBuffer(m_indices.data(), m_indices.size());
-    m_vao->bind();
-    m_ibo->bind();
-    m_vbo->bind();
-    m_vbo->applyLayout();
 }
 nimo::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
-    : m_vertices(vertices)
-    , m_indices(indices)
 {
     NIMO_DEBUG("nimo::Mesh::Mesh");
-    m_vao = new VertexArray();
-    m_vbo = new VertexBuffer(
-        {
-            {"position", ShaderDataType::Float3},
-            {"normal", ShaderDataType::Float3},
-            {"uv", ShaderDataType::Float2},
-            {"tangent", ShaderDataType::Float3},
-            {"bitangent", ShaderDataType::Float3},
-        },
-        m_vertices.data(), sizeof(Vertex) * m_vertices.size()
-    );
-    m_ibo = new IndexBuffer(m_indices.data(), m_indices.size());
-    m_vao->bind();
-    m_ibo->bind();
-    m_vbo->bind();
-    m_vbo->applyLayout();
+    auto submesh = std::make_shared<Submesh>();
+    submeshes.push_back(submesh);
+    submesh->m_vertices = vertices;
+    submesh->m_indices = indices;
+    submesh->Submit();
 }
 nimo::Mesh::~Mesh()
 {
     NIMO_DEBUG("nimo::Mesh::~Mesh");
-    delete m_vao;
-    delete m_ibo;
-    delete m_vbo;
 }
 void nimo::Mesh::draw()
+{
+    submeshes[0]->Draw();
+}
+
+nimo::Submesh::Submesh()
+{
+    NIMO_DEBUG("nimo::Submesh::Submesh");
+}
+nimo::Submesh::~Submesh()
+{
+    NIMO_DEBUG("nimo::Submesh::~Submesh");
+    if(m_vao) delete m_vao;
+    if(m_ibo) delete m_ibo;
+    if(m_vbo) delete m_vbo;
+}
+void nimo::Submesh::Submit()
+{
+    m_vao = new VertexArray();
+    m_vbo = new VertexBuffer(
+        {
+            {"position", ShaderDataType::Float3},
+            {"normal", ShaderDataType::Float3},
+            {"uv", ShaderDataType::Float2},
+            {"tangent", ShaderDataType::Float3},
+            {"bitangent", ShaderDataType::Float3},
+        },
+        m_vertices.data(), sizeof(Vertex) * m_vertices.size()
+    );
+    m_ibo = new IndexBuffer(m_indices.data(), m_indices.size());
+    m_vao->bind();
+    m_ibo->bind();
+    m_vbo->bind();
+    m_vbo->applyLayout();
+}
+void nimo::Submesh::Draw()
 {
     m_vao->bind();
     glDrawElements(GL_TRIANGLES, m_ibo->count(), GL_UNSIGNED_INT, 0);
