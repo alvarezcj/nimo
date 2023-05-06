@@ -22,6 +22,7 @@ struct AssetExplorerPanel : public EditorPanel
         AssetExplorerPanel::mapExtensionIcon[".jpg"] = std::make_shared<nimo::Texture>("icon_camera.png");
         AssetExplorerPanel::mapExtensionIcon[".obj"] = std::make_shared<nimo::Texture>("icon_cube.png");
         AssetExplorerPanel::mapExtensionIcon[".fbx"] = std::make_shared<nimo::Texture>("icon_cube.png");
+        AssetExplorerPanel::mapExtensionIcon[".gltf"] = std::make_shared<nimo::Texture>("icon_cube.png");
         AssetExplorerPanel::mapExtensionIcon[".nprefab"] = std::make_shared<nimo::Texture>("icon_box.png");
     }
     ~AssetExplorerPanel()

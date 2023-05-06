@@ -66,9 +66,9 @@ void main()
 	vec2 texCoord = TexCoords;
 	vec3 viewDir = normalize( (transpose(TBN) *viewPos - transpose(TBN) *FragPos)); // tangent space view dir
 	//texCoord = ParallaxMapping(texCoord, viewDir);
-    if (texCoord.x > 1.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.y < 0.0) {
-   	discard;
-	}
+    //if (texCoord.x > 1.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.y < 0.0) {
+   	//discard;
+	//}
 
     gNormal.rgb = texture(texture_normal1, texCoord).rgb;
     gNormal = gNormal * 2.0 -1.0;

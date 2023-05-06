@@ -221,7 +221,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Linear", linear);
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Quadratic", quadratic);
         // then calculate radius of light volume/sphere
-        const float maxBrightness = std::fmaxf(std::fmaxf(light.Color.r, light.Color.g), light.Color.b);
+        const float maxBrightness = std::fmaxf(std::fmaxf(light.Color.r, light.Color.g), light.Color.b) * light.Intensity;
         float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Radius", radius);
         m_shaderLightingPass->set("lights[" + std::to_string(currentLights) + "].Active", true);
