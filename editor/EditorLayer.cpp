@@ -1,5 +1,6 @@
 #include "EditorLayer.h"
 
+#include "shellapi.h"
 #include "LogPanel.h"
 #include "StatisticsPanel.h"
 #include "GameViewPanel.h"
@@ -283,6 +284,40 @@ void EditorLayer::OnAttach()
                 ImGui::MenuItem("Log", NULL, &logPanel->open);
                 ImGui::MenuItem("Statistics", NULL, &statisticsPanel->open);
                 ImGui::EndMenu(); 
+            }
+            if(nimo::Project::GetActiveProject())
+            {
+                if (ImGui::MenuItem("Launch Game"))
+                {
+                    auto p = nimo::Project::GetActiveProject()->GetAssetIndexPath();
+                    p.replace_extension(".exe");
+                    NIMO_INFO("Launching game at: {}",p.string());
+		            ShellExecuteA(NULL, "open", p.string().c_str(), NULL, NULL, SW_SHOWDEFAULT);
+                    // additional information
+                    STARTUPINFOA si;     
+                    PROCESS_INFORMATION pi;
+
+                    // set the size of the structures
+                    ZeroMemory( &si, sizeof(si) );
+                    si.cb = sizeof(si);
+                    ZeroMemory( &pi, sizeof(pi) );
+
+                    // start the program up
+                    CreateProcessA((LPCSTR)p.string().c_str(),   // the path
+                        NULL,        // Command line
+                        NULL,           // Process handle not inheritable
+                        NULL,           // Thread handle not inheritable
+                        FALSE,          // Set handle inheritance to FALSE
+                        CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,              // No creation flags
+                        NULL,           // Use parent's environment block
+                        p.parent_path().string().c_str(),           // Use parent's starting directory 
+                        &si,            // Pointer to STARTUPINFO structure
+                        &pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
+                        );
+                    // Close process and thread handles. 
+                    CloseHandle( pi.hProcess );
+                    CloseHandle( pi.hThread );
+                }
             }
             // Always center this window when appearing
             ImVec2 center = ImGui::GetMainViewport()->GetCenter();
