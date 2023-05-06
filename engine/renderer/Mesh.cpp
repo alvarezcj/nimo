@@ -145,9 +145,9 @@ nimo::Mesh::~Mesh()
 {
     NIMO_DEBUG("nimo::Mesh::~Mesh");
 }
-void nimo::Mesh::draw()
+void nimo::Mesh::draw(unsigned int i)
 {
-    submeshes[0]->Draw();
+    (i < submeshes.size()) ? submeshes[i]->Draw() : submeshes[0]->Draw();
 }
 
 nimo::Submesh::Submesh()

@@ -89,6 +89,7 @@ struct PointLightComponent{
 
 struct MeshComponent{
     std::shared_ptr<Mesh> source;
+    unsigned int submeshIndex = 0;
 };
 
 struct MeshRendererComponent{

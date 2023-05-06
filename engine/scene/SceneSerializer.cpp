@@ -107,7 +107,8 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         MeshComponent m = e.GetComponent<MeshComponent>();
         nlohmann::ordered_json jmesh{
-            {"Source", m.source->id.str()}
+            {"Source", m.source->id.str()},
+            {"SubmeshIndex", m.submeshIndex}
         };
         jentity["Mesh"] = jmesh;
     }
@@ -223,6 +224,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         {
             MeshComponent& c = createdEntity.AddComponent<MeshComponent>();
             c.source = AssetManager::Get<Mesh>(AssetId((std::string)field.value()["Source"]));
+            c.submeshIndex = field.value()["SubmeshIndex"];
         }
         if(field.key() == "MeshRenderer")
         {

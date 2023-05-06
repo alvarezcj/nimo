@@ -193,7 +193,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         r.material->shader->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
         r.material->shader->set("view", viewMatrix);
         r.material->shader->set("projection", projection);
-        m.source->draw();
+        m.source->draw(m.submeshIndex);
     });
 
     // Lighting pass
