@@ -329,7 +329,8 @@ void InspectorPanel::OnRender()
                     }
                     ImGui::EndDragDropTarget();
                 }
-                ImGui::SliderInt(("Submesh##Asset##Mesh##"+entityIdString).c_str(), (int*)&ent.GetComponent<nimo::MeshComponent>().submeshIndex, 0, mesh->submeshes.size() -1, "%d", ImGuiSliderFlags_AlwaysClamp);
+                if (mesh)
+                    ImGui::SliderInt(("Submesh##Asset##Mesh##"+entityIdString).c_str(), (int*)&ent.GetComponent<nimo::MeshComponent>().submeshIndex, 0, mesh->submeshes.size() -1, "%d", ImGuiSliderFlags_AlwaysClamp);
             }
             ImGui::Spacing();
             ImGui::Separator();
