@@ -220,6 +220,81 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
             t.Scale.y = lua_tonumber(L, -2);
             t.Scale.z = lua_tonumber(L, -1);
         }
+        if(componentType == "Label")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::LabelComponent>();
+            c.Label = luaL_checkstring(L, 3);
+        }
+        if(componentType == "Active")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::ActiveComponent>();
+            c.active = lua_toboolean(L, 3);
+        }
+        if(componentType == "Camera")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::CameraComponent>();
+            lua_getfield(L, 3, "FOV");
+            c.FOV = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "ClippingPlanes");
+            lua_getfield(L, -1, "Near");
+            c.ClippingPlanes.Near = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "Far");
+            c.ClippingPlanes.Far = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+        if(componentType == "PointLight")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::PointLightComponent>();
+            lua_getfield(L, 3, "Intensity");
+            c.Intensity = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Color");
+            lua_getfield(L, -1, "r");
+            c.Color.r = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "g");
+            c.Color.g = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "b");
+            c.Color.b = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+        if(componentType == "Mesh")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::MeshComponent>();
+            lua_getfield(L, 3, "Submesh");
+            c.submeshIndex = lua_tointeger(L, -1);
+            lua_getfield(L, 3, "Mesh");
+            lua_getfield(L, -1, "id");
+            c.source = nimo::AssetManager::Get<nimo::Mesh>(nimo::GUID(lua_tostring(L, -1)));
+            lua_pop(L, 1);
+        }
+        if(componentType == "MeshRenderer")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::MeshRendererComponent>();
+            lua_getfield(L, 3, "Material");
+            lua_getfield(L, -1, "id");
+            c.material = nimo::AssetManager::Get<nimo::Material>(nimo::GUID(lua_tostring(L, -1)));
+            lua_pop(L, 1);
+        }
+        if(componentType == "AudioSource")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::AudioSourceComponent>();
+            lua_getfield(L, 3, "Volume");
+            c.volume = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Pan");
+            c.pan = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Pitch");
+            c.pitch = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "PlayOnCreate");
+            c.playOnCreate = lua_toboolean(L, -1);
+            lua_getfield(L, 3, "Loop");
+            c.loop = lua_toboolean(L, -1);
+            lua_getfield(L, 3, "Source");
+            lua_getfield(L, -1, "id");
+            c.source = nimo::AssetManager::Get<nimo::AudioSource>(nimo::GUID(lua_tostring(L, -1)));
+            lua_pop(L, 1);
+        }
     }
     return 0;
 }
