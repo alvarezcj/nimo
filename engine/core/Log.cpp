@@ -20,7 +20,8 @@ void nimo::Log::Initialize()
 }
 void nimo::Log::Cleanup()
 {
+    engineLogger->flush();
+    spdlog::drop_all();
     engineLogger.reset();
-    spdlog::drop_all(); 
 }
 

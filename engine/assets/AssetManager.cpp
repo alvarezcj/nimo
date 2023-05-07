@@ -76,7 +76,7 @@ const nimo::AssetMetadata& nimo::AssetManager::GetMetadata(const std::filesystem
             return metadata;
     }
 
-    return AssetMetadata();
+    return {};
 }
 
 std::filesystem::path nimo::AssetManager::GetRelativePath(const std::filesystem::path& filepath)
@@ -126,7 +126,7 @@ void nimo::AssetManager::Unregister(AssetId id)
 nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
 {
     std::filesystem::path path = GetRelativePath(filepath);
-    auto& info = GetMetadata(path);
+    auto info = GetMetadata(path);
 
     if(info.id.valid())
     {

@@ -19,12 +19,12 @@ int main(int argc, char** argv)
 	}
 	app->Run();
 	delete app;
-    nimo::ScriptManager::Cleanup();
 	nimo::SceneManager::SetActiveScene({});
 	nimo::AssetManager::UnloadUnused();
 	nimo::AssetManager::Cleanup();
+    nimo::ScriptManager::Cleanup();
 	nimo::AudioEngine::Cleanup();
     nimo::Input::Cleanup();
-    //nimo::Log::Cleanup();
+    nimo::Log::Cleanup();
     return 0;
 }

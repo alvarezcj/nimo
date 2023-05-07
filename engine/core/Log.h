@@ -33,6 +33,7 @@ namespace nimo
 template<typename... Args>
 void nimo::Log::Print(Level level, Args&&... args)
 {
+    if (!engineLogger) return;
     switch (level)
     {
     case Level::Debug:

@@ -5,6 +5,7 @@
 
 #include "assets/AssetManager.h"
 #include "scripting/ScriptManager.h"
+#include "scene/SceneManager.h"
 
 namespace nimo
 {
@@ -29,13 +30,14 @@ namespace nimo
         inline static void SetActiveProject(std::shared_ptr<Project> p ) 
         { 
             if(activeProject){
-                ScriptManager::Cleanup();
+                SceneManager::SetActiveScene({});
                 AssetManager::Cleanup();
+                ScriptManager::Cleanup();
             }
             activeProject = p;
             if(activeProject){
-                AssetManager::Initialize();
                 ScriptManager::Initialize();
+                AssetManager::Initialize();
             }
         }
         inline static std::shared_ptr<Project> GetActiveProject(){ return activeProject;}
