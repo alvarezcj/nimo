@@ -447,9 +447,9 @@ void InspectorPanel::OnRender()
                                 {
                                     std::string filepath;
                                     if (asset)
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag prefab asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag material asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
                                     else
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag prefab asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag material asset", &filepath, ImGuiInputTextFlags_ReadOnly);
                                     if (ImGui::BeginDragDropTarget())
                                     {
                                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
@@ -459,6 +459,50 @@ void InspectorPanel::OnRender()
                                             if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Material>(info.id));
+                                            }
+                                        }
+                                        ImGui::EndDragDropTarget();
+                                    }
+                                }
+                                break;
+                            case nimo::AssetType::Mesh:
+                                {
+                                    std::string filepath;
+                                    if (asset)
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                    else
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                    if (ImGui::BeginDragDropTarget())
+                                    {
+                                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                                        {
+                                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                                            {
+                                                std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Mesh>(info.id));
+                                            }
+                                        }
+                                        ImGui::EndDragDropTarget();
+                                    }
+                                }
+                                break;
+                            case nimo::AssetType::Audio:
+                                {
+                                    std::string filepath;
+                                    if (asset)
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag audio asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                    else
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag audio asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                    if (ImGui::BeginDragDropTarget())
+                                    {
+                                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                                        {
+                                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                                            {
+                                                std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::AudioSource>(info.id));
                                             }
                                         }
                                         ImGui::EndDragDropTarget();
