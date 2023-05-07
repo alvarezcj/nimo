@@ -10,6 +10,7 @@ class AudioSource : public Asset
 public:
     AudioSource(const std::string& filepath);
     ~AudioSource();
+    float GetDuration();
     inline ma_sound* GetSound() {return &sound;}
     std::string filepath;
 

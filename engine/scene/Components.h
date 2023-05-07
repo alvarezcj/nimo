@@ -107,8 +107,16 @@ struct AudioSourceComponent{
     bool loop = false;
     bool playOnCreate = false;
     std::unique_ptr<AudioSound> sound;
+    bool initialized = false;
     void Apply(){
-
+        if(source)
+        {
+            sound = std::make_unique<AudioSound>(source);
+            sound->SetVolume(volume);
+            sound->SetPan(pan);
+            sound->SetPitch(pitch);
+            sound->SetLoop(loop);
+        }
     }
 };
 };

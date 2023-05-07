@@ -55,6 +55,20 @@ nimo::Scene::~Scene()
 
 void nimo::Scene::Update()
 {
+    m_registry.view<ActiveComponent, AudioSourceComponent>().each([&](ActiveComponent& active, AudioSourceComponent& audio)
+    {
+        if(!active.active) return;
+        if(!audio.initialized)
+        {
+            audio.Apply();
+            if(audio.playOnCreate)
+            {
+                if(audio.sound)
+                    audio.sound->Play();
+            }
+            audio.initialized = true;
+        }
+    });
     m_registry.view<ActiveComponent, ScriptComponent>().each([&](ActiveComponent& active, ScriptComponent& script)
     {
         if(!active.active) return;

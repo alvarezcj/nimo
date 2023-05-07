@@ -212,6 +212,14 @@ void InspectorPanel::OnRender()
                 ImGui::Image((ImTextureID)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
             }
             break;
+        case nimo::AssetType::Audio:
+            // Show nothing
+            {
+                std::shared_ptr<nimo::AudioSource> audio = nimo::AssetManager::Get<nimo::AudioSource>(metadata.id);
+                ImGui::Text("Duration: %.3f seconds", audio->GetDuration());
+                ImGui::Spacing();
+            }
+            break;
         default:
             break;
         }
