@@ -83,6 +83,102 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
         {
             lua_pushstring(L, scene->GetEntity(*id).GetComponent<nimo::LabelComponent>().Label.c_str());
         }
+        else if(componentType == "Active")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).GetComponent<nimo::ActiveComponent>().active);
+        }
+        else if(componentType == "PointLight")
+        {
+            auto c = scene->GetEntity(*id).GetComponent<nimo::PointLightComponent>();
+            lua_newtable(L);
+            lua_pushnumber(L, c.Intensity);
+            lua_setfield(L, -2, "Intensity");
+            // Color
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.Color.x);
+                lua_setfield(L, -2, "r");
+                lua_pushnumber(L, c.Color.y);
+                lua_setfield(L, -2, "g");
+                lua_pushnumber(L, c.Color.z);
+                lua_setfield(L, -2, "b");
+                lua_setfield(L, -2, "Color");
+            }
+        }
+        else if(componentType == "Camera")
+        {
+            auto c = scene->GetEntity(*id).GetComponent<nimo::CameraComponent>();
+            lua_newtable(L);
+            lua_pushnumber(L, c.FOV);
+            lua_setfield(L, -2, "FOV");
+            // Clipping planes
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.ClippingPlanes.Near);
+                lua_setfield(L, -2, "Near");
+                lua_pushnumber(L, c.ClippingPlanes.Far);
+                lua_setfield(L, -2, "Far");
+                lua_setfield(L, -2, "ClippingPlanes");
+            }
+        }
+        else if(componentType == "Mesh")
+        {
+            auto c = scene->GetEntity(*id).GetComponent<nimo::MeshComponent>();
+            lua_newtable(L);
+            lua_pushnumber(L, c.submeshIndex);
+            lua_setfield(L, -2, "Submesh");
+            // Mesh
+            {
+                lua_newtable(L);
+                lua_pushinteger(L, (int)c.source->Type());
+                lua_setfield(L, -2, "assetType");
+                lua_pushstring(L, c.source->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_setfield(L, -2, "Mesh");
+            }
+        }
+        else if(componentType == "MeshRenderer")
+        {
+            auto c = scene->GetEntity(*id).GetComponent<nimo::MeshRendererComponent>();
+            lua_newtable(L);
+            // Material
+            {
+                lua_newtable(L);
+                lua_pushinteger(L, (int)c.material->Type());
+                lua_setfield(L, -2, "assetType");
+                lua_pushstring(L, c.material->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_setfield(L, -2, "Material");
+            }
+        }
+        else if(componentType == "AudioSource")
+        {
+            const auto& c = scene->GetEntity(*id).GetComponent<nimo::AudioSourceComponent>();
+            lua_newtable(L);
+            lua_pushnumber(L, c.volume);
+            lua_setfield(L, -2, "Volume");
+            lua_pushnumber(L, c.pan);
+            lua_setfield(L, -2, "Pan");
+            lua_pushnumber(L, c.pitch);
+            lua_setfield(L, -2, "Pitch");
+            lua_pushboolean(L, c.loop);
+            lua_setfield(L, -2, "Loop");
+            lua_pushboolean(L, c.playOnCreate);
+            lua_setfield(L, -2, "PlayOnCreate");
+            // Source
+            {
+                lua_newtable(L);
+                lua_pushinteger(L, (int)c.source->Type());
+                lua_setfield(L, -2, "assetType");
+                lua_pushstring(L, c.source->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_setfield(L, -2, "Source");
+            }
+        }
+        else
+        {
+            lua_pushnil(L);
+        }
     }
     return 1;
 }
