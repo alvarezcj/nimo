@@ -9,6 +9,7 @@
 #include "project/Project.h"
 #include "scripting/Script.h"
 #include "scene/Prefab.h"
+#include "audio/AudioSource.h"
 
 #include <fstream>
 
@@ -148,4 +149,13 @@ std::shared_ptr<nimo::Prefab> nimo::AssetSerializer<nimo::Prefab>::Deserialize(c
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
     return std::make_shared<Prefab>((p/metadata.filepath).string());
+}
+
+void nimo::AssetSerializer<nimo::AudioSource>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::AudioSource>& asset){}
+std::shared_ptr<nimo::AudioSource> nimo::AssetSerializer<nimo::AudioSource>::Deserialize(const nimo::AssetMetadata& metadata)
+{
+    std::filesystem::path p = ".";
+    if(nimo::Project::GetActiveProject())
+        p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
+    return std::make_shared<AudioSource>((p/metadata.filepath).string());
 }

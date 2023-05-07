@@ -22,6 +22,11 @@ std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::exte
     {".lua", AssetType::Script},
     // Prefab
     {".nprefab", AssetType::Prefab},
+    // Audio
+    {".wav", AssetType::Audio},
+    {".mp3", AssetType::Audio},
+    {".ogg", AssetType::Audio},
+
 };
 
 

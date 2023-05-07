@@ -5,6 +5,8 @@
 #include "events/EventManager.h"
 #include "input/Input.h"
 
+#include "miniaudio.h"
+
 nimo::Application* nimo::Application::instance = nullptr;
 
 nimo::Application::Application(const ApplicationDescription& description)

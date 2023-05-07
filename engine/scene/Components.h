@@ -10,6 +10,7 @@
 #include "renderer/Material.h"
 #include "core/GUID.h"
 #include "scripting/ScriptInstance.h"
+#include "audio/AudioSound.h"
 
 namespace nimo{
 struct IDComponent
@@ -97,5 +98,14 @@ struct MeshRendererComponent{
 };
 struct ScriptComponent{
     std::vector<ScriptInstance> instances;
+};
+struct AudioComponent{
+    std::shared_ptr<AudioSource> source;
+    float volume;
+    float pitch;
+    float pan;
+    bool loop;
+    bool playOnCreate;
+    std::unique_ptr<AudioSound> sound;
 };
 };

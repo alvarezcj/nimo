@@ -41,6 +41,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaComponents.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaApplication.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaWindow.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/scripting/lua_hooks/LuaSceneManagement.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/audio/miniaudio.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioEngine.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSource.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSound.cpp 
 )
 set(LIBS
 glad
