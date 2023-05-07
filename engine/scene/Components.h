@@ -99,13 +99,16 @@ struct MeshRendererComponent{
 struct ScriptComponent{
     std::vector<ScriptInstance> instances;
 };
-struct AudioComponent{
+struct AudioSourceComponent{
     std::shared_ptr<AudioSource> source;
-    float volume;
-    float pitch;
-    float pan;
-    bool loop;
-    bool playOnCreate;
+    float volume = 0.5f;
+    float pitch = 1.0f;
+    float pan = 0.0f;
+    bool loop = false;
+    bool playOnCreate = false;
     std::unique_ptr<AudioSound> sound;
+    void Apply(){
+
+    }
 };
 };

@@ -345,6 +345,40 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::AudioSourceComponent>())
+        {
+            if (ImGui::CollapsingHeader((std::string("Audio Source##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::Text("Audio source");
+                ImGui::SameLine();
+                auto audio = ent.GetComponent<nimo::AudioSourceComponent>().source;
+                std::string filepath;
+                if (audio)
+                    ImGui::InputTextWithHint(("##Asset##AudioSource##"+entityIdString).c_str(), "Drag audio asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::AudioSourceComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                else
+                    ImGui::InputTextWithHint(("##Asset##AudioSource##" + entityIdString).c_str(), "Drag audio asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                    {
+                        std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                        auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                        if(info.id.valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
+                        {
+                            ent.GetComponent<nimo::AudioSourceComponent>().source = nimo::AssetManager::Get<nimo::AudioSource>(info.id);
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                ImGui::SliderFloat(("Volume##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().volume, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::SliderFloat(("Pitch##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().pitch, 0.01f, 3.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::SliderFloat(("Pan##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().pan, -1.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::Checkbox(("Loop##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().loop);
+                ImGui::Checkbox(("Play on create##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().playOnCreate);
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         if(ent.HasComponent<nimo::ScriptComponent>())
         {
             for(auto instance : ent.GetComponent<nimo::ScriptComponent>().instances)
@@ -466,6 +500,9 @@ void InspectorPanel::OnRender()
             }
             if (ImGui::MenuItem("Point Light")){
                 ent.AddComponent<nimo::PointLightComponent>();
+            }
+            if (ImGui::MenuItem("Audio Source")){
+                ent.AddComponent<nimo::AudioSourceComponent>();
             }
             if (ImGui::MenuItem("Camera")){}
             if(ImGui::BeginMenu("Scripts"))

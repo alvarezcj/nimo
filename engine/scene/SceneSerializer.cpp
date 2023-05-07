@@ -129,6 +129,19 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         };
         jentity["PointLight"] = jpointlight;
     }
+    if(e.HasComponent<AudioSourceComponent>())
+    {
+        const AudioSourceComponent& a = e.GetComponent<AudioSourceComponent>();
+        nlohmann::ordered_json jaudio{
+            {"Source", a.source->id.str()},
+            {"Loop", a.loop},
+            {"Volume", a.volume},
+            {"PlayOnCreate", a.playOnCreate},
+            {"Pitch", a.pitch},
+            {"Pan", a.pan}
+        };
+        jentity["AudioSource"] = jaudio;
+    }
     if(e.HasComponent<ScriptComponent>())
     {
         const ScriptComponent& l = e.GetComponent<ScriptComponent>();
@@ -236,6 +249,16 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             PointLightComponent& l = createdEntity.AddComponent<PointLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
             l.Intensity = (float)field.value()["Intensity"];
+        }
+        if(field.key() == "AudioSource")
+        {
+            AudioSourceComponent& a = createdEntity.AddComponent<AudioSourceComponent>();
+            a.source = AssetManager::Get<AudioSource>(AssetId((std::string)field.value()["Source"]));
+            a.loop = (bool)field.value()["Loop"];
+            a.volume = (float)field.value()["Volume"];
+            a.playOnCreate = (bool)field.value()["PlayOnCreate"];
+            a.pitch = (float)field.value()["Pitch"];
+            a.pan = (float)field.value()["Pan"];
         }
         if(field.key() == "Scripts")
         {
