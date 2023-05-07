@@ -26,6 +26,26 @@ int nimo_luafn_HasEntityComponent(lua_State* L)
         {
             lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::LabelComponent>());
         }
+        else if(componentType == "Mesh")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::MeshComponent>());
+        }
+        else if(componentType == "MeshRenderer")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::MeshRendererComponent>());
+        }
+        else if(componentType == "PointLight")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::PointLightComponent>());
+        }
+        else if(componentType == "Camera")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::CameraComponent>());
+        }
+        else if(componentType == "AudioSource")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::AudioSource>());
+        }
     }
     return 1;
 }
