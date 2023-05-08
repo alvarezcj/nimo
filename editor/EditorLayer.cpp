@@ -8,6 +8,7 @@
 #include "SceneContentsPanel.h"
 #include "InspectorPanel.h"
 #include "AssetExplorerPanel.h"
+#include "RendererDebugPanel.h"
 #include "misc/cpp/imgui_stdlib.h"
 #include "UIHelpers.h"
 
@@ -29,6 +30,7 @@ void EditorLayer::OnAttach()
     sceneContentsPanel = new SceneContentsPanel(this);
     inspectorPanel = new InspectorPanel(this);
     assetExplorerPanel = new AssetExplorerPanel(this);
+    rendererDebugPanel = new RendererDebugPanel();
 
     auto& style = ImGui::GetStyle();
     auto& colors = ImGui::GetStyle().Colors;
@@ -246,7 +248,9 @@ void EditorLayer::OnAttach()
                         nimo::SceneManager::LoadScene(startingSceneId);
                         lastModifiedScene = startingSceneId;
                         nimo::AssetManager::UnloadUnused();
+                        rendererDebugPanel->SetRenderer({});
                         renderer = std::make_shared<nimo::SceneRenderer>();
+                        rendererDebugPanel->SetRenderer(renderer);
 
                         free(outPath);
                     }
@@ -283,6 +287,7 @@ void EditorLayer::OnAttach()
                 ImGui::MenuItem("Asset Explorer", NULL, &assetExplorerPanel->open);
                 ImGui::MenuItem("Log", NULL, &logPanel->open);
                 ImGui::MenuItem("Statistics", NULL, &statisticsPanel->open);
+                ImGui::MenuItem("Renderer Debug", NULL, &rendererDebugPanel->open);
                 ImGui::EndMenu(); 
             }
             if(nimo::Project::GetActiveProject())
@@ -387,6 +392,9 @@ void EditorLayer::OnAttach()
 
         ImGui::SetNextWindowSize(ImVec2(1000, 200), ImGuiCond_FirstUseEver);
         assetExplorerPanel->Render();
+
+        ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
+        rendererDebugPanel->Render();
 
         ImGui::Render();
 
@@ -533,7 +541,9 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         projectSer.Serialize((projectFolderPath/settings.name).replace_extension(".nproj"));
         lastModifiedScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id;
         NIMO_DEBUG("Serialized Project {}", settings.name);
+        rendererDebugPanel->SetRenderer({});
         renderer = std::make_shared<nimo::SceneRenderer>();
+        rendererDebugPanel->SetRenderer(renderer);
     }
     else{
         NIMO_ERROR("Error Creating directory {}", projectFolderPath.string());

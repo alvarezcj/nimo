@@ -11,7 +11,7 @@ public:
     ~SceneRenderer();
     void SetScene(std::shared_ptr<Scene> scene);
     void Render(std::shared_ptr<FrameBuffer> target = {});
-private:
+public:
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<FrameBuffer> m_gBuffer;
     std::shared_ptr<FrameBuffer> m_hdrColorBuffer;

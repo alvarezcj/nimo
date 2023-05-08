@@ -31,6 +31,7 @@ class SceneContentsPanel;
 class InspectorPanel;
 class AssetExplorerPanel;
 class SceneViewPanel;
+class RendererDebugPanel;
 
 class EditorLayer : public nimo::Layer
 {
@@ -56,6 +57,7 @@ public:
         delete sceneContentsPanel;
         delete assetExplorerPanel;
         delete sceneViewPanel;
+        delete rendererDebugPanel;
     }
 private:
     friend class GameViewPanel;
@@ -75,6 +77,7 @@ private:
     InspectorPanel* inspectorPanel;
     SceneContentsPanel* sceneContentsPanel;
     AssetExplorerPanel* assetExplorerPanel;
+    RendererDebugPanel* rendererDebugPanel;
     nimo::GUID lastModifiedScene;
     ChangeNameModalWindow newNameModal;
 
