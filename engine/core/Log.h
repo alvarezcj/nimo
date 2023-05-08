@@ -30,26 +30,31 @@ namespace nimo
 #define NIMO_ERROR(...)  ::nimo::Log::Print(::nimo::Log::Level::Error, __VA_ARGS__)
 #define NIMO_CRITICAL(...)  ::nimo::Log::Print(::nimo::Log::Level::Critical, __VA_ARGS__)
 
+#include "events/LogEvents.h"
+#include "events/EventManager.h"
+
 template<typename... Args>
 void nimo::Log::Print(Level level, Args&&... args)
 {
     if (!engineLogger) return;
+    auto msg = fmt::format(std::forward<Args>(args)...);
     switch (level)
     {
     case Level::Debug:
-        engineLogger->trace(fmt::format(std::forward<Args>(args)...));
+        engineLogger->trace(msg);
         break;
     case Level::Info:
-        engineLogger->info(fmt::format(std::forward<Args>(args)...));
+        engineLogger->info(msg);
         break;
     case Level::Warn:
-        engineLogger->warn(fmt::format(std::forward<Args>(args)...));
+        engineLogger->warn(msg);
         break;
     case Level::Error:
-        engineLogger->error(fmt::format(std::forward<Args>(args)...));
+        engineLogger->error(msg);
         break;
     case Level::Critical:
-        engineLogger->critical(fmt::format(std::forward<Args>(args)...));
+        engineLogger->critical(msg);
         break;
     }
+    EventManager::Publish(LogEvent(level, msg));
 }

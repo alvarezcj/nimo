@@ -151,7 +151,15 @@ void SceneContentsPanel::OnRender()
                 }
                 payloadEntity.GetComponent<nimo::FamilyComponent>().Parent = nimo::GUID();
             }
-
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+            {
+                std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                if(info.id.valid() && info.type == nimo::AssetType::Prefab) // Found in asset manager
+                {
+                    nimo::AssetManager::Get<nimo::Prefab>(info.id)->Create(scene);
+                }
+            }
             ImGui::EndDragDropTarget();
         }
         if(openHeader)
