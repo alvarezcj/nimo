@@ -46,6 +46,10 @@ int nimo_luafn_HasEntityComponent(lua_State* L)
         {
             lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::AudioSource>());
         }
+        else if(componentType == "SpriteRenderer")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::AudioSource>());
+        }
     }
     return 1;
 }
@@ -171,6 +175,49 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_setfield(L, -2, "Material");
             }
         }
+        else if(componentType == "SpriteRenderer")
+        {
+            auto c = scene->GetEntity(*id).GetComponent<nimo::SpriteRendererComponent>();
+            lua_newtable(L);
+            // Color
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.Color.x);
+                lua_setfield(L, -2, "r");
+                lua_pushnumber(L, c.Color.y);
+                lua_setfield(L, -2, "g");
+                lua_pushnumber(L, c.Color.z);
+                lua_setfield(L, -2, "b");
+                lua_setfield(L, -2, "Color");
+            }
+            // Offset
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.offset.x);
+                lua_setfield(L, -2, "x");
+                lua_pushnumber(L, c.offset.y);
+                lua_setfield(L, -2, "y");
+                lua_setfield(L, -2, "Offset");
+            }
+            // Tiling
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.tiling.x);
+                lua_setfield(L, -2, "x");
+                lua_pushnumber(L, c.tiling.y);
+                lua_setfield(L, -2, "y");
+                lua_setfield(L, -2, "Tiling");
+            }
+            // Source
+            {
+                lua_newtable(L);
+                lua_pushinteger(L, (int)c.texture->Type());
+                lua_setfield(L, -2, "assetType");
+                lua_pushstring(L, c.texture->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_setfield(L, -2, "Texture");
+            }
+        }
         else if(componentType == "AudioSource")
         {
             const auto& c = scene->GetEntity(*id).GetComponent<nimo::AudioSourceComponent>();
@@ -277,6 +324,37 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
             lua_pop(L, 1);
             lua_getfield(L, -1, "b");
             c.Color.b = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+        if(componentType == "PointLight")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::SpriteRendererComponent>();
+            lua_getfield(L, 3, "Color");
+            lua_getfield(L, -1, "r");
+            c.Color.r = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "g");
+            c.Color.g = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "b");
+            c.Color.b = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Offset");
+            lua_getfield(L, -1, "x");
+            c.offset.r = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "y");
+            c.offset.g = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, 3, "Tiling");
+            lua_getfield(L, -1, "x");
+            c.offset.r = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "y");
+            c.offset.g = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, 3, "Texture");
+            lua_getfield(L, -1, "id");
+            c.texture = nimo::AssetManager::Get<nimo::Texture>(nimo::GUID(lua_tostring(L, -1)));
             lua_pop(L, 1);
         }
         if(componentType == "Mesh")
