@@ -72,3 +72,15 @@ void nimo::FrameBuffer::BindColorTexture(int id, unsigned int slot)
     //NIMO_DEBUG("Binding color attachment {} with value {} to slot {}", id, m_textureAttachments[id], slot);
     glBindTextureUnit(slot, m_textureAttachments[id]);
 }
+void nimo::FrameBuffer::CopyDepthTo(std::shared_ptr<FrameBuffer> destination)
+{
+    glBlitNamedFramebuffer(m_id, destination->m_id, 0, 0, m_details.width, m_details.height, 0,0,destination->m_details.width, destination->m_details.height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+}
+void nimo::FrameBuffer::CopyColorTo(std::shared_ptr<FrameBuffer> destination)
+{
+    glBlitNamedFramebuffer(m_id, destination->m_id, 0, 0, m_details.width, m_details.height, 0,0,destination->m_details.width, destination->m_details.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+void nimo::FrameBuffer::CopyStencilTo(std::shared_ptr<FrameBuffer> destination)
+{
+    glBlitNamedFramebuffer(m_id, destination->m_id, 0, 0, m_details.width, m_details.height, 0,0,destination->m_details.width, destination->m_details.height, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+}

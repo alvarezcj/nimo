@@ -236,7 +236,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
 
     // Background pass
     glDepthFunc(GL_LEQUAL);
-    glBlitNamedFramebuffer(m_gBuffer->m_id, m_hdrColorBuffer->m_id, 0,0,1920,1080, 0,0,1920,1080, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    m_gBuffer->CopyDepthTo(m_hdrColorBuffer);
     m_backgroundPass->use();
     m_backgroundPass->set("view", viewMatrix);
     m_backgroundPass->set("projection", projection);

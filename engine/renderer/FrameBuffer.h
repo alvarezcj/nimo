@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <vector>
+#include <memory>
 
 namespace nimo{
 class FrameBuffer{
@@ -35,6 +36,9 @@ public:
     unsigned int GetColorAttachmentId(int id) {return m_textureAttachments[id];}
     inline const Details& GetDetails(){return m_details; }
     inline float GetAspectRatio(){return (float)m_details.width/(float)m_details.height; }
+    void CopyDepthTo(std::shared_ptr<FrameBuffer> destination);
+    void CopyColorTo(std::shared_ptr<FrameBuffer> destination);
+    void CopyStencilTo(std::shared_ptr<FrameBuffer> destination);
 
     unsigned int m_id;
 private:
