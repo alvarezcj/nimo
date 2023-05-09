@@ -85,6 +85,8 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "Script");
         lua_pushinteger(L, (unsigned int)AssetType::Prefab);
         lua_setfield(L, -2, "Prefab");
+        lua_pushinteger(L, (unsigned int)AssetType::Audio);
+        lua_setfield(L, -2, "Audio");
         lua_setfield(L, -2, "AssetType");
     }
     // Window
@@ -275,7 +277,8 @@ void nimo::ScriptManager::Initialize()
 }
 void nimo::ScriptManager::Cleanup()
 {
-    lua_close(L);
+    if(L)
+        lua_close(L);
 }
 
 nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script> source, const GUID& owner, std::shared_ptr<Scene> scene)
@@ -341,6 +344,9 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
                                     break;
                                 case AssetType::Script:
                                     res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Script>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::Audio:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<AudioSource>(assetId), (AssetType)assetType);
                                     break;
                                 
                                 default:
@@ -411,7 +417,10 @@ void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
                 break;
             case nimo::ScriptFieldType::Asset:
                 lua_getfield(L, -1, field.first.c_str());
-                lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str().c_str());
+                if(std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value)
+                    lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str().c_str());
+                else
+                    lua_pushstring(L, "");
                 lua_setfield(L, -2, "id");
                 lua_remove(L, -1);
                 break;

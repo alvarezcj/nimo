@@ -23,6 +23,7 @@ struct LogPanel : public EditorPanel
     }
 
 private:
+    ImGuiTextBuffer logBuffer;
     bool autoscroll = true;
     bool debug = true;
     bool info = true;
@@ -46,5 +47,4 @@ private:
             ImGui::SetScrollHereY(1.0f);
         ImGui::EndChildFrame();
     }
-    ImGuiTextBuffer logBuffer;
 };

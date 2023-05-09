@@ -23,8 +23,8 @@
 #include "imgui_impl_opengl3.h"
 #include "nfd.h"
 #include "UIHelpers.h"
+#include "LogPanel.h"
 
-class LogPanel;
 class StatisticsPanel;
 class GameViewPanel;
 class SceneContentsPanel;
@@ -50,7 +50,6 @@ public:
     }
     ~EditorLayer()
     {
-        delete logPanel;
         delete statisticsPanel;
         delete gameViewPanel;
         delete inspectorPanel;
@@ -58,6 +57,7 @@ public:
         delete assetExplorerPanel;
         delete sceneViewPanel;
         delete rendererDebugPanel;
+        delete logPanel;
     }
 private:
     friend class GameViewPanel;

@@ -1,7 +1,6 @@
 #include "EditorLayer.h"
 
 #include "shellapi.h"
-#include "LogPanel.h"
 #include "StatisticsPanel.h"
 #include "GameViewPanel.h"
 #include "SceneViewPanel.h"

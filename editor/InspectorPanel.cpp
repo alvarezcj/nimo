@@ -478,7 +478,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                                            if(info.id.valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Mesh>(info.id));
                                             }
@@ -500,7 +500,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                                            if(info.id.valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::AudioSource>(info.id));
                                             }
