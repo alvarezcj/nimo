@@ -129,6 +129,17 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         };
         jentity["PointLight"] = jpointlight;
     }
+    if(e.HasComponent<SpriteRendererComponent>())
+    {
+        SpriteRendererComponent c = e.GetComponent<SpriteRendererComponent>();
+        nlohmann::ordered_json jsr{
+            {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
+            {"Tiling",{c.tiling.r,c.tiling.g}},
+            {"Offset",{c.offset.r,c.offset.g}},
+            {"Texture",c.texture->id.str()}
+        };
+        jentity["SpriteRenderer"] = jsr;
+    }
     if(e.HasComponent<AudioSourceComponent>())
     {
         const AudioSourceComponent& a = e.GetComponent<AudioSourceComponent>();
@@ -249,6 +260,14 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             PointLightComponent& l = createdEntity.AddComponent<PointLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
             l.Intensity = (float)field.value()["Intensity"];
+        }
+        if(field.key() == "SpriteRenderer")
+        {
+            SpriteRendererComponent& c = createdEntity.AddComponent<SpriteRendererComponent>();
+            c.Color = glm::vec4((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2], (float)field.value()["Color"][3]);
+            c.tiling = glm::vec2((float)field.value()["Tiling"][0], (float)field.value()["Tiling"][1]);
+            c.offset = glm::vec2((float)field.value()["Offset"][0], (float)field.value()["Offset"][1]);
+            c.texture = AssetManager::Get<Texture>(AssetId((std::string)field.value()["Texture"]));
         }
         if(field.key() == "AudioSource")
         {
