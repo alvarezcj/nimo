@@ -262,19 +262,30 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Camera##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                static int item_current_2 = 0;
-                ImGui::Combo((std::string("Projection##") + (std::string("Camera##")+entityIdString)).c_str(), &item_current_2, "Perspective\0Orthographic\0\0");
-                if(item_current_2 == 0)
+                if (ImGui::BeginPopupContextItem())
                 {
-                    ent.GetComponent<nimo::CameraComponent>().Projection = nimo::CameraComponent::Projection::Perspective;
-                    ImGui::SliderFloat((std::string("FOV##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().FOV, 0.1f, 179.0f);
+                    if(ImGui::Selectable("Remove component"))
+                    {
+                        ent.RemoveComponent<nimo::CameraComponent>();
+                    }
+                    ImGui::EndPopup();
                 }
-                if(item_current_2 == 1)
+                if(ent.HasComponent<nimo::CameraComponent>())
                 {
-                    ent.GetComponent<nimo::CameraComponent>().Projection = nimo::CameraComponent::Projection::Orthographic;
+                    static int item_current_2 = 0;
+                    ImGui::Combo((std::string("Projection##") + (std::string("Camera##")+entityIdString)).c_str(), &item_current_2, "Perspective\0Orthographic\0\0");
+                    if(item_current_2 == 0)
+                    {
+                        ent.GetComponent<nimo::CameraComponent>().Projection = nimo::CameraComponent::Projection::Perspective;
+                        ImGui::SliderFloat((std::string("FOV##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().FOV, 0.1f, 179.0f);
+                    }
+                    if(item_current_2 == 1)
+                    {
+                        ent.GetComponent<nimo::CameraComponent>().Projection = nimo::CameraComponent::Projection::Orthographic;
+                    }
+                    ImGui::DragFloat((std::string("Clipping plane Far##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().ClippingPlanes.Far, 0.1f, 0.0f);
+                    ImGui::DragFloat((std::string("Clipping plane Near##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().ClippingPlanes.Near, 0.1f, 0.0f);
                 }
-                ImGui::DragFloat((std::string("Clipping plane Far##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().ClippingPlanes.Far, 0.1f, 0.0f);
-                ImGui::DragFloat((std::string("Clipping plane Near##") + (std::string("Camera##")+entityIdString)).c_str(), &ent.GetComponent<nimo::CameraComponent>().ClippingPlanes.Near, 0.1f, 0.0f);
             }
             ImGui::Spacing();
             ImGui::Separator();
@@ -283,27 +294,38 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Mesh Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Text("Material");
-                ImGui::SameLine();
-                auto material = ent.GetComponent<nimo::MeshRendererComponent>().material;
-                std::string filepath;
-                if (material)
-                    ImGui::InputTextWithHint(("##Asset##Material##" + entityIdString).c_str(), "Drag Material asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshRendererComponent>().material->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
-                else
-                    ImGui::InputTextWithHint(("##Asset##Material##" + entityIdString).c_str(), "Drag Material asset", &filepath, ImGuiInputTextFlags_ReadOnly);
-
-                if (ImGui::BeginDragDropTarget())
+                if (ImGui::BeginPopupContextItem())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                    if(ImGui::Selectable("Remove component"))
                     {
-                        std::filesystem::path payloadPath = std::string((char*)payload->Data);
-                        auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                        if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
-                        {
-                            ent.GetComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>(info.id);
-                        }
+                        ent.RemoveComponent<nimo::MeshRendererComponent>();
                     }
-                    ImGui::EndDragDropTarget();
+                    ImGui::EndPopup();
+                }
+                if(ent.HasComponent<nimo::MeshRendererComponent>())
+                {
+                    ImGui::Text("Material");
+                    ImGui::SameLine();
+                    auto material = ent.GetComponent<nimo::MeshRendererComponent>().material;
+                    std::string filepath;
+                    if (material)
+                        ImGui::InputTextWithHint(("##Asset##Material##" + entityIdString).c_str(), "Drag Material asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshRendererComponent>().material->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                    else
+                        ImGui::InputTextWithHint(("##Asset##Material##" + entityIdString).c_str(), "Drag Material asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                        {
+                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                            {
+                                ent.GetComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>(info.id);
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
                 }
             }
             ImGui::Spacing();
@@ -313,32 +335,43 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Mesh##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                // ImGui::Text((std::string("Mesh asset:").c_str()));
-                // ImGui::SameLine();
-                // ImGui::TextDisabled((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
-                ImGui::Text("Mesh");
-                ImGui::SameLine();
-                auto mesh = ent.GetComponent<nimo::MeshComponent>().source;
-                std::string filepath;
-                if (mesh)
-                    ImGui::InputTextWithHint(("##Asset##Mesh##"+entityIdString).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
-                else
-                    ImGui::InputTextWithHint(("##Asset##Mesh##" + entityIdString).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
-                if (ImGui::BeginDragDropTarget())
+                if (ImGui::BeginPopupContextItem())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                    if(ImGui::Selectable("Remove component"))
                     {
-                        std::filesystem::path payloadPath = std::string((char*)payload->Data);
-                        auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                        if(info.id.valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
-                        {
-                            ent.GetComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>(info.id);
-                        }
+                        ent.RemoveComponent<nimo::MeshComponent>();
                     }
-                    ImGui::EndDragDropTarget();
+                    ImGui::EndPopup();
                 }
-                if (mesh)
-                    ImGui::SliderInt(("Submesh##Asset##Mesh##"+entityIdString).c_str(), (int*)&ent.GetComponent<nimo::MeshComponent>().submeshIndex, 0, mesh->submeshes.size() -1, "%d", ImGuiSliderFlags_AlwaysClamp);
+                if(ent.HasComponent<nimo::MeshComponent>())
+                {
+                    // ImGui::Text((std::string("Mesh asset:").c_str()));
+                    // ImGui::SameLine();
+                    // ImGui::TextDisabled((std::string(nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string())).c_str());
+                    ImGui::Text("Mesh");
+                    ImGui::SameLine();
+                    auto mesh = ent.GetComponent<nimo::MeshComponent>().source;
+                    std::string filepath;
+                    if (mesh)
+                        ImGui::InputTextWithHint(("##Asset##Mesh##"+entityIdString).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::MeshComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                    else
+                        ImGui::InputTextWithHint(("##Asset##Mesh##" + entityIdString).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                        {
+                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                            if(info.id.valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
+                            {
+                                ent.GetComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>(info.id);
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    if (mesh)
+                        ImGui::SliderInt(("Submesh##Asset##Mesh##"+entityIdString).c_str(), (int*)&ent.GetComponent<nimo::MeshComponent>().submeshIndex, 0, mesh->submeshes.size() -1, "%d", ImGuiSliderFlags_AlwaysClamp);
+                }
             }
             ImGui::Spacing();
             ImGui::Separator();
@@ -347,8 +380,19 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Point Light##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::ColorEdit3(("Color##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Color, ImGuiColorEditFlags_Float);
-                ImGui::DragFloat(("Intesity##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Intensity, 0.1f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Remove component"))
+                    {
+                        ent.RemoveComponent<nimo::PointLightComponent>();
+                    }
+                    ImGui::EndPopup();
+                }
+                if(ent.HasComponent<nimo::PointLightComponent>())
+                {
+                    ImGui::ColorEdit3(("Color##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Color, ImGuiColorEditFlags_Float);
+                    ImGui::DragFloat(("Intesity##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::PointLightComponent>().Intensity, 0.1f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                }
             }
             ImGui::Spacing();
             ImGui::Separator();
@@ -357,43 +401,64 @@ void InspectorPanel::OnRender()
         {
             if (ImGui::CollapsingHeader((std::string("Audio Source##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Text("Audio source");
-                ImGui::SameLine();
-                auto audio = ent.GetComponent<nimo::AudioSourceComponent>().source;
-                std::string filepath;
-                if (audio)
-                    ImGui::InputTextWithHint(("##Asset##AudioSource##"+entityIdString).c_str(), "Drag audio asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::AudioSourceComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
-                else
-                    ImGui::InputTextWithHint(("##Asset##AudioSource##" + entityIdString).c_str(), "Drag audio asset", &filepath, ImGuiInputTextFlags_ReadOnly);
-                if (ImGui::BeginDragDropTarget())
+                if (ImGui::BeginPopupContextItem())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                    if(ImGui::Selectable("Remove component"))
                     {
-                        std::filesystem::path payloadPath = std::string((char*)payload->Data);
-                        auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                        if(info.id.valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
-                        {
-                            ent.GetComponent<nimo::AudioSourceComponent>().source = nimo::AssetManager::Get<nimo::AudioSource>(info.id);
-                        }
+                        ent.RemoveComponent<nimo::AudioSourceComponent>();
                     }
-                    ImGui::EndDragDropTarget();
+                    ImGui::EndPopup();
                 }
-                ImGui::SliderFloat(("Volume##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().volume, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-                ImGui::SliderFloat(("Pitch##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().pitch, 0.01f, 3.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-                ImGui::SliderFloat(("Pan##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().pan, -1.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-                ImGui::Checkbox(("Loop##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().loop);
-                ImGui::Checkbox(("Play on create##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().playOnCreate);
+                if(ent.HasComponent<nimo::AudioSourceComponent>())
+                {
+                    ImGui::Text("Audio source");
+                    ImGui::SameLine();
+                    auto audio = ent.GetComponent<nimo::AudioSourceComponent>().source;
+                    std::string filepath;
+                    if (audio)
+                        ImGui::InputTextWithHint(("##Asset##AudioSource##"+entityIdString).c_str(), "Drag audio asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::AudioSourceComponent>().source->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                    else
+                        ImGui::InputTextWithHint(("##Asset##AudioSource##" + entityIdString).c_str(), "Drag audio asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                        {
+                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                            if(info.id.valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
+                            {
+                                ent.GetComponent<nimo::AudioSourceComponent>().source = nimo::AssetManager::Get<nimo::AudioSource>(info.id);
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::SliderFloat(("Volume##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().volume, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                    ImGui::SliderFloat(("Pitch##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().pitch, 0.01f, 3.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                    ImGui::SliderFloat(("Pan##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().pan, -1.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                    ImGui::Checkbox(("Loop##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().loop);
+                    ImGui::Checkbox(("Play on create##AudioSource##"+ entityIdString).c_str(), &ent.GetComponent<nimo::AudioSourceComponent>().playOnCreate);
+                }
             }
             ImGui::Spacing();
             ImGui::Separator();
         }
         if(ent.HasComponent<nimo::ScriptComponent>())
         {
-            for(auto instance : ent.GetComponent<nimo::ScriptComponent>().instances)
+            for(auto& instance = ent.GetComponent<nimo::ScriptComponent>().instances.begin(); instance != ent.GetComponent<nimo::ScriptComponent>().instances.end();)
             {
-                if (ImGui::CollapsingHeader((std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+                if (ImGui::CollapsingHeader((std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    for(auto& field : instance.fields)
+                    if (ImGui::BeginPopupContextItem())
+                    {
+                        if(ImGui::Selectable("Remove component"))
+                        {
+                            instance = ent.GetComponent<nimo::ScriptComponent>().instances.erase(instance);
+                            ImGui::EndPopup();
+                            continue;
+                        }
+                        ImGui::EndPopup();
+                    }
+                    for(auto& field : instance->fields)
                     {
                         ImGui::Text(field.first.c_str());
                         ImGui::SameLine();
@@ -403,17 +468,17 @@ void InspectorPanel::OnRender()
                         {
                         case nimo::ScriptFieldType::Number:
                             ImGui::DragFloat(
-                                ("##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(),
+                                ("##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(),
                                 (float*)&std::static_pointer_cast<nimo::ScriptFieldNumber>(field.second)->value);
                             break;
                         case nimo::ScriptFieldType::Boolean:
                             ImGui::Checkbox(
-                                ("##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(),
+                                ("##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(),
                                 &std::static_pointer_cast<nimo::ScriptFieldBool>(field.second)->value);
                             break;
                         case nimo::ScriptFieldType::String:
                             ImGui::InputText(
-                                ("##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(),
+                                ("##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(),
                                 &std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value);
                             break;
                         case nimo::ScriptFieldType::Asset:
@@ -425,9 +490,9 @@ void InspectorPanel::OnRender()
                                 {
                                     std::string filepath;
                                     if (asset)
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag prefab asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag prefab asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
                                     else
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag prefab asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag prefab asset", &filepath, ImGuiInputTextFlags_ReadOnly);
                                     if (ImGui::BeginDragDropTarget())
                                     {
                                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
@@ -447,9 +512,9 @@ void InspectorPanel::OnRender()
                                 {
                                     std::string filepath;
                                     if (asset)
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag material asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag material asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
                                     else
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag material asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag material asset", &filepath, ImGuiInputTextFlags_ReadOnly);
                                     if (ImGui::BeginDragDropTarget())
                                     {
                                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
@@ -469,9 +534,9 @@ void InspectorPanel::OnRender()
                                 {
                                     std::string filepath;
                                     if (asset)
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag mesh asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
                                     else
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag mesh asset", &filepath, ImGuiInputTextFlags_ReadOnly);
                                     if (ImGui::BeginDragDropTarget())
                                     {
                                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
@@ -491,9 +556,9 @@ void InspectorPanel::OnRender()
                                 {
                                     std::string filepath;
                                     if (asset)
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag audio asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag audio asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
                                     else
-                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance.script->filepath).stem().string()+"##"+std::to_string(instance.stackReference)+entityIdString)).c_str(), "Drag audio asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag audio asset", &filepath, ImGuiInputTextFlags_ReadOnly);
                                     if (ImGui::BeginDragDropTarget())
                                     {
                                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
@@ -519,7 +584,10 @@ void InspectorPanel::OnRender()
                         }
                     }
                 }
+                ++instance;
             }
+            if(!ent.GetComponent<nimo::ScriptComponent>().instances.size())
+                ent.RemoveComponent<nimo::ScriptComponent>();
             ImGui::Spacing();
             ImGui::Separator();
         }
