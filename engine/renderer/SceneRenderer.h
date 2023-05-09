@@ -35,7 +35,11 @@ public:
     std::shared_ptr<Shader> m_hdrBrightFilterPass;
     std::shared_ptr<Shader> m_hdrBloomDownsamplePass;
     std::shared_ptr<Shader> m_hdrBloomUpsamplePass;
+    std::shared_ptr<Shader> m_shader2d;
     std::shared_ptr<EnvironmentMap> m_environmentMap;
     std::shared_ptr<Mesh> m_quadMesh;
+    VertexArray* m_vao = nullptr;
+    VertexBuffer* m_vbo = nullptr;
+    IndexBuffer* m_ibo = nullptr;
 };  
 } // namespace nimo

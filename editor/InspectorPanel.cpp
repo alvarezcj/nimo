@@ -397,6 +397,47 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::SpriteRendererComponent>())
+        {
+            if (ImGui::CollapsingHeader((std::string("Sprite Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Remove component"))
+                    {
+                        ent.RemoveComponent<nimo::PointLightComponent>();
+                    }
+                    ImGui::EndPopup();
+                }
+                if(ent.HasComponent<nimo::SpriteRendererComponent>())
+                {
+                    auto tex = ent.GetComponent<nimo::SpriteRendererComponent>().texture;
+                    std::string filepath;
+                    if (tex)
+                        ImGui::InputTextWithHint(("Texture##SpriteRendererComponent##"+entityIdString).c_str(), "Drag texture asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::SpriteRendererComponent>().texture->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                    else
+                        ImGui::InputTextWithHint(("Texture##SpriteRendererComponent##" + entityIdString).c_str(), "Drag texture asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                        {
+                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                            if(info.id.valid() && info.type == nimo::AssetType::Texture) // Found in asset manager
+                            {
+                                ent.GetComponent<nimo::SpriteRendererComponent>().texture = nimo::AssetManager::Get<nimo::Texture>(info.id);
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::ColorEdit4(("Color##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SpriteRendererComponent>().Color, ImGuiColorEditFlags_Float);
+                    ImGui::DragFloat2(("Tiling##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SpriteRendererComponent>().tiling, 0.02f);
+                    ImGui::DragFloat2(("Offset##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SpriteRendererComponent>().offset, 0.02f);
+                }
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         if(ent.HasComponent<nimo::AudioSourceComponent>())
         {
             if (ImGui::CollapsingHeader((std::string("Audio Source##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -617,6 +658,9 @@ void InspectorPanel::OnRender()
             }
             if (ImGui::MenuItem("Mesh Renderer")){
                 ent.AddComponent<nimo::MeshRendererComponent>();
+            }
+            if (ImGui::MenuItem("Sprite Renderer")){
+                ent.AddComponent<nimo::SpriteRendererComponent>();
             }
             if (ImGui::MenuItem("Point Light")){
                 ent.AddComponent<nimo::PointLightComponent>();

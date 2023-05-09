@@ -149,6 +149,8 @@ nimo::SceneRenderer::SceneRenderer()
     m_hdrBrightFilterPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bright_filter.nshader");
     m_hdrBloomDownsamplePass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bloom_downsample.nshader");
     m_hdrBloomUpsamplePass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bloom_upsample.nshader");
+    //2D
+    m_shader2d = nimo::AssetManager::Get<Shader>("Shaders/unlit_texture.nshader");
 
     // Full screen Quad mesh
     std::vector<Vertex> vertices ={
@@ -162,9 +164,33 @@ nimo::SceneRenderer::SceneRenderer()
         1,2,3
     };
     m_quadMesh = std::make_shared<Mesh>(vertices, indices);
+
+    std::vector<QuadVertex> m_vertices ={
+        {{1.0f,  1.0f, 0.0f}, {1.0f, 1.0f}},
+        {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{-1.0f,  -1.0f, 0.0f}, {0.0f, 0.0f}},
+        {{-1.0f,  1.0f, 0.0f}, {0.0f, 1.0f}},
+    };
+    m_vao = new VertexArray();
+    m_vbo = new VertexBuffer(
+        {
+            {"position", ShaderDataType::Float3},
+            {"uv", ShaderDataType::Float2},
+        },
+        m_vertices.data(), sizeof(QuadVertex) * m_vertices.size()
+    );
+    m_ibo = new IndexBuffer(indices.data(), indices.size());
+    m_vao->bind();
+    m_ibo->bind();
+    m_vbo->bind();
+    m_vbo->applyLayout();
 }
 nimo::SceneRenderer::~SceneRenderer()
-{}
+{
+    delete m_vao;
+    delete m_vbo;
+    delete m_ibo;
+}
 
 void nimo::SceneRenderer::SetScene(std::shared_ptr<Scene> scene)
 {
@@ -175,11 +201,13 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     Entity camera(*m_scene->m_registry.view<CameraComponent>().begin(), m_scene->m_registry);
     auto camTransform = camera.GetComponent<TransformComponent>();
     auto cam = camera.GetComponent<CameraComponent>();
-    glm::mat4 projection;
-    if(cam.Projection == CameraComponent::Projection::Perspective)
-        projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)Application::Instance().GetWindow().GetWidth() , (float)Application::Instance().GetWindow().GetHeight(), cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
-    else
-        projection = glm::ortho(-10.0f * 0.5f, 10.0f * 0.5f, -10.0f * 0.5f *9.0f/16.0f, 10.0f * 0.5f*9.0f/16.0f, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)Application::Instance().GetWindow().GetWidth() , (float)Application::Instance().GetWindow().GetHeight(), cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
+    glm::mat4 projectionOrtho = glm::ortho(
+        -(float)Application::Instance().GetWindow().GetWidth() * 0.5f,
+        (float)Application::Instance().GetWindow().GetWidth() * 0.5f,
+        -(float)Application::Instance().GetWindow().GetHeight() * 0.5f, 
+        (float)Application::Instance().GetWindow().GetHeight() * 0.5f, 
+        -0.1f, cam.ClippingPlanes.Far);
     glm::mat4 viewMatrix = camTransform.GetView();
     auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
     // Render scene into gbuffer
@@ -352,5 +380,27 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrFinalBloomBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
 
+    glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
+    glDisable(GL_DEPTH_TEST);  // disable depth-testing
+    glEnable(GL_BLEND); // enable blend
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    m_shader2d->use();
+    m_shader2d->set("view", viewMatrix);
+    m_shader2d->set("projection", projectionOrtho);
+    m_shader2d->set("mainTexture", 0);
+    m_scene->m_registry.view<ActiveComponent, TransformComponent, SpriteRendererComponent>().each([&](ActiveComponent active, TransformComponent& t, SpriteRendererComponent& r) {
+        if(!active.active) return;
+        if(!r.texture) return;
+        m_shader2d->set("transform", t.GetTransform());
+        r.texture->bind(0);
+        m_shader2d->set("color", r.Color);
+        m_shader2d->set("tiling", r.tiling);
+        m_shader2d->set("offset", r.offset);
+        m_vao->bind();
+        glDrawElements(GL_TRIANGLES, m_ibo->count(), GL_UNSIGNED_INT, 0);
+    });
+    glDepthMask(GL_TRUE);  // disable writes to Z-Buffer
+    glEnable(GL_DEPTH_TEST);  // disable depth-testing
+    glDisable(GL_BLEND);  // disable blend
     m_scene = {};
 }

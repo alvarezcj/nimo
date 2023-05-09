@@ -15,6 +15,10 @@ namespace nimo{
         glm::vec3 tangent;
         glm::vec3 bitangent;
     };
+    struct QuadVertex{
+        glm::vec3 position;
+        glm::vec2 uv;
+    };
     struct Submesh{
         Submesh();
         ~Submesh();

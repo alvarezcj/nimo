@@ -24,11 +24,11 @@ out vec4 FragColor;
 uniform sampler2D mainTexture;
 uniform vec2 tiling;
 uniform vec2 offset;
+uniform vec4 color;
 
 void main()
 {
    vec2 tiledCoords = vec2(oTexCoords.x * tiling.x + offset.x, oTexCoords.y * tiling.y + offset.y);
-   FragColor = texture(mainTexture, tiledCoords);   
-   // FragColor =vec4(oTexCoords,0.0,1.0);   
+   FragColor = texture(mainTexture, tiledCoords) * color; 
 }
 @FRAGMENTEND
