@@ -405,7 +405,7 @@ void InspectorPanel::OnRender()
                 {
                     if(ImGui::Selectable("Remove component"))
                     {
-                        ent.RemoveComponent<nimo::PointLightComponent>();
+                        ent.RemoveComponent<nimo::SpriteRendererComponent>();
                     }
                     ImGui::EndPopup();
                 }

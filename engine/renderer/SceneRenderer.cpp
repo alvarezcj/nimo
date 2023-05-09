@@ -152,6 +152,13 @@ nimo::SceneRenderer::SceneRenderer()
     //2D
     m_shader2d = nimo::AssetManager::Get<Shader>("Shaders/unlit_texture.nshader");
 
+    //White texture in memory
+    unsigned int whitePixel = 0xFFFFFFFF;
+    m_white = std::make_shared<Texture>(1, 1, &whitePixel);
+    //Black texture in memory
+    unsigned int blackPixel = 0x00000000;
+    m_black = std::make_shared<Texture>(1, 1, &blackPixel);
+
     // Full screen Quad mesh
     std::vector<Vertex> vertices ={
         {{1.0f,  1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}},
@@ -390,9 +397,15 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_shader2d->set("mainTexture", 0);
     m_scene->m_registry.view<ActiveComponent, TransformComponent, SpriteRendererComponent>().each([&](ActiveComponent active, TransformComponent& t, SpriteRendererComponent& r) {
         if(!active.active) return;
-        if(!r.texture) return;
         m_shader2d->set("transform", t.GetTransform());
-        r.texture->bind(0);
+        if(!r.texture)
+        {
+            m_white->bind(0);
+        }
+        else
+        {
+            r.texture->bind(0);
+        }
         m_shader2d->set("color", r.Color);
         m_shader2d->set("tiling", r.tiling);
         m_shader2d->set("offset", r.offset);
