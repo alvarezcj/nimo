@@ -26,6 +26,8 @@ std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::exte
     {".wav", AssetType::Audio},
     {".mp3", AssetType::Audio},
     {".ogg", AssetType::Audio},
+    // Font
+    {".ttf", AssetType::Font},
 
 };
 
