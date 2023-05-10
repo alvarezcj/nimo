@@ -438,6 +438,47 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::TextRendererComponent>())
+        {
+            if (ImGui::CollapsingHeader((std::string("Text Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Remove component"))
+                    {
+                        ent.RemoveComponent<nimo::TextRendererComponent>();
+                    }
+                    ImGui::EndPopup();
+                }
+                if(ent.HasComponent<nimo::TextRendererComponent>())
+                {
+                    ImGui::InputText(("Text##TextRenderer##" + entityIdString).c_str(), &ent.GetComponent<nimo::TextRendererComponent>().text);
+                    auto tex = ent.GetComponent<nimo::TextRendererComponent>().font;
+                    std::string filepath;
+                    if (tex)
+                        ImGui::InputTextWithHint(("Texture##TextRendererComponent##"+entityIdString).c_str(), "Drag font asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::TextRendererComponent>().font->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                    else
+                        ImGui::InputTextWithHint(("Texture##TextRendererComponent##" + entityIdString).c_str(), "Drag font asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                        {
+                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                            if(info.id.valid() && info.type == nimo::AssetType::Font) // Found in asset manager
+                            {
+                                ent.GetComponent<nimo::TextRendererComponent>().font = nimo::AssetManager::Get<nimo::Font>(info.id);
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::ColorEdit4(("Color##TextRenderer##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::TextRendererComponent>().Color, ImGuiColorEditFlags_Float);
+                    ImGui::DragFloat(("Character spacing##TextRenderer##" + entityIdString).c_str(), &ent.GetComponent<nimo::TextRendererComponent>().characterSpacing, 0.1f, 0.0f);
+                }
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         if(ent.HasComponent<nimo::AudioSourceComponent>())
         {
             if (ImGui::CollapsingHeader((std::string("Audio Source##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -661,6 +702,9 @@ void InspectorPanel::OnRender()
             }
             if (ImGui::MenuItem("Sprite Renderer")){
                 ent.AddComponent<nimo::SpriteRendererComponent>();
+            }
+            if (ImGui::MenuItem("Text Renderer")){
+                ent.AddComponent<nimo::TextRendererComponent>();
             }
             if (ImGui::MenuItem("Point Light")){
                 ent.AddComponent<nimo::PointLightComponent>();
