@@ -2,6 +2,11 @@
 #include "glad/glad.h"
 #include "core/Application.h"
 
+struct TextVertex
+{
+    glm::vec4 vertex;
+};
+
 unsigned int cubeVAO2 = 0;
 unsigned int cubeVBO2 = 0;
 void renderCube2()
@@ -152,6 +157,8 @@ nimo::SceneRenderer::SceneRenderer()
     //2D
     m_shader2d = nimo::AssetManager::Get<Shader>("Shaders/unlit_texture.nshader");
 
+    font = std::make_shared<Font>("fonts/Quicksand/static/Quicksand-Regular.ttf");
+
     //White texture in memory
     unsigned int whitePixel = 0xFFFFFFFF;
     m_white = std::make_shared<Texture>(1, 1, &whitePixel);
@@ -191,6 +198,27 @@ nimo::SceneRenderer::SceneRenderer()
     m_ibo->bind();
     m_vbo->bind();
     m_vbo->applyLayout();
+
+
+    
+    std::vector<TextVertex> m_textvertices ={
+        {{1.0f,  1.0f, 1.0f, 1.0f}},
+        {{1.0f,  -1.0f, 1.0f, 0.0f}},
+        {{-1.0f,  -1.0f, 0.0f, 0.0f}},
+        {{-1.0f,  1.0f, 0.0f, 1.0f}},
+    };
+    m_vaoText = new VertexArray();
+    m_vboText = new VertexBuffer(
+        {
+            {"vertex", ShaderDataType::Float4}
+        },
+        m_textvertices.data(), sizeof(TextVertex) * m_textvertices.size()
+    );
+    m_iboText = new IndexBuffer(indices.data(), indices.size());
+    m_vaoText->bind();
+    m_iboText->bind();
+    m_vboText->bind();
+    m_vboText->applyLayout();
 }
 nimo::SceneRenderer::~SceneRenderer()
 {
@@ -419,6 +447,29 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         m_vao->bind();
         glDrawElements(GL_TRIANGLES, m_ibo->count(), GL_UNSIGNED_INT, 0);
     });
+    auto shaderText = AssetManager::Get<Shader>("Shaders/text.nshader");
+    shaderText->use();
+    shaderText->set("projection", projectionOrtho);
+    shaderText->set("text", 0);
+    shaderText->set("color", glm::vec4(1.0f));
+    auto& glyph = font->m_glyphs['g'];
+    float scale = 5.0f;
+    float xpos = 0.0f + (float)glyph.bearing.x * scale;
+    float ypos = 0.0f - ((float)glyph.size.y - glyph.bearing.y) * scale;
+    float w = (float)glyph.size.x * scale;
+    float h = (float)glyph.size.y * scale;
+    std::vector<TextVertex> textvertices ={
+        {{xpos + w,  ypos, 1.0f, 1.0f}},
+        {{xpos + w,  ypos + h, 1.0f, 0.0f}},
+        {{xpos,  ypos + h, 0.0f, 0.0f}},
+        {{xpos,  ypos, 0.0f, 1.0f}},
+    };
+    glyph.texture->bind(0);
+    m_vaoText->bind();
+    m_vboText->bind();
+    m_vboText->setData(textvertices.data(), sizeof(TextVertex) * textvertices.size());
+    m_vboText->unbind();
+    glDrawElements(GL_TRIANGLES, m_iboText->count(), GL_UNSIGNED_INT, 0);
     glDepthMask(GL_TRUE);  // disable writes to Z-Buffer
     glEnable(GL_DEPTH_TEST);  // disable depth-testing
     glDisable(GL_BLEND);  // disable blend

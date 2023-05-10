@@ -7,7 +7,7 @@ namespace nimo{
 class Texture : public Asset
 {
 public:
-    Texture(unsigned int width, unsigned int height, void* data);
+    Texture(unsigned int width, unsigned int height, void* data, unsigned int channels = 4);
     Texture(const std::string& path);
     ~Texture();
     void bind(unsigned int slot);

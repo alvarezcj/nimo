@@ -5,8 +5,6 @@
 #include "events/EventManager.h"
 #include "input/Input.h"
 
-#include "miniaudio.h"
-
 nimo::Application* nimo::Application::instance = nullptr;
 
 nimo::Application::Application(const ApplicationDescription& description)
@@ -14,7 +12,6 @@ nimo::Application::Application(const ApplicationDescription& description)
     , m_appDescription(description)
 {
     instance = this;
-    
     NIMO_INFO("Created nimo::Application");
     EventManager::Subscribe(this, &Application::OnWindowClose);
     EventManager::Subscribe(this, &Application::OnWindowResize);

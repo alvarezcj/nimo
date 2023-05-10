@@ -2,6 +2,7 @@
 #include "scene/Scene.h"
 #include "EnvironmentMap.h"
 #include "core/Timer.h"
+#include "fonts/Font.h"
 
 namespace nimo
 {
@@ -18,6 +19,7 @@ public:
     Timer geometryFrameTimer;
     Timer geometry2DFrameTimer;
     Timer lightingFrameTimer;
+    std::shared_ptr<Font> font;
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<FrameBuffer> m_gBuffer;
     std::shared_ptr<FrameBuffer> m_hdrColorBuffer;
@@ -49,5 +51,8 @@ public:
     VertexArray* m_vao = nullptr;
     VertexBuffer* m_vbo = nullptr;
     IndexBuffer* m_ibo = nullptr;
+    VertexArray* m_vaoText = nullptr;
+    VertexBuffer* m_vboText = nullptr;
+    IndexBuffer* m_iboText = nullptr;
 };  
 } // namespace nimo

@@ -21,12 +21,12 @@ static uint32_t nimo::ShaderDataTypeUint(ShaderDataType type)
     return 0;
 }
 
-nimo::VertexBuffer::VertexBuffer(const Layout& layout, const void* data, unsigned int size) 
+nimo::VertexBuffer::VertexBuffer(const Layout& layout, const void* data, unsigned int size, bool dynamic) 
     : m_layout(layout)
 {
     glCreateBuffers(1, &m_id);
     glBindBuffer(GL_ARRAY_BUFFER, m_id);
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 }
 
 nimo::VertexBuffer::~VertexBuffer()
@@ -50,6 +50,12 @@ void nimo::VertexBuffer::applyLayout()
         glVertexAttribPointer(i, ShaderDataTypeCount(m_layout.m_attributes[i].type), ShaderDataTypeUint(m_layout.m_attributes[i].type), GL_FALSE, stride, (void*)offset);
         offset += m_layout.m_attributes[i].size;
     }
+}
+
+void nimo::VertexBuffer::setData(const void* data, unsigned int size)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, m_id);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
 
 void nimo::VertexBuffer::bind()

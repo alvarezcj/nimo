@@ -4,23 +4,50 @@
 #include "core/Log.h"
 #include "stb_image.h"
     
-nimo::Texture::Texture(unsigned int width, unsigned int height, void* data)
+nimo::Texture::Texture(unsigned int width, unsigned int height, void* data, unsigned int channels)
     : m_width(width)
     , m_height(height)
 {
-    m_internalFormat = GL_RGBA8;
-    m_dataFormat = GL_RGBA;
+    GLenum internalFormat = 0, dataFormat = 0;
+    switch (channels)
+    {
+    case 1:
+        internalFormat = GL_R8;
+        dataFormat = GL_RED;
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        break;
+    case 2:
+        internalFormat = GL_RG8;
+        dataFormat = GL_RG;
+        break;
+    case 3:
+        internalFormat = GL_RGB8;
+        dataFormat = GL_RGB;
+        break;
+    case 4:
+        internalFormat = GL_RGBA8;
+        dataFormat = GL_RGBA;
+        break;
+    
+    default:
+        internalFormat = GL_RGBA8;
+        dataFormat = GL_RGBA;
+        break;
+    }
+
+    m_internalFormat = internalFormat;
+    m_dataFormat = dataFormat;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
     glTextureStorage2D(m_id, 1, m_internalFormat, m_width, m_height);
-    glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
     glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
 nimo::Texture::Texture(const std::string& path)
@@ -45,6 +72,7 @@ nimo::Texture::Texture(const std::string& path)
         case 1:
             internalFormat = GL_RED;
             dataFormat = GL_RED;
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             break;
         case 2:
             internalFormat = GL_RG8;
@@ -79,6 +107,7 @@ nimo::Texture::Texture(const std::string& path)
         glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
         stbi_image_free(data);
     }
