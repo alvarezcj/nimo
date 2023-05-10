@@ -156,8 +156,7 @@ nimo::SceneRenderer::SceneRenderer()
     m_hdrBloomUpsamplePass = nimo::AssetManager::Get<Shader>("Shaders/hdr_bloom_upsample.nshader");
     //2D
     m_shader2d = nimo::AssetManager::Get<Shader>("Shaders/unlit_texture.nshader");
-
-    font = std::make_shared<Font>("fonts/Quicksand/static/Quicksand-Regular.ttf");
+    m_shaderText = AssetManager::Get<Shader>("Shaders/text.nshader");
 
     //White texture in memory
     unsigned int whitePixel = 0xFFFFFFFF;
@@ -447,36 +446,41 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         m_vao->bind();
         glDrawElements(GL_TRIANGLES, m_ibo->count(), GL_UNSIGNED_INT, 0);
     });
-    auto shaderText = AssetManager::Get<Shader>("Shaders/text.nshader");
-    shaderText->use();
-    shaderText->set("projection", projectionOrtho);
-    shaderText->set("text", 0);
-    shaderText->set("color", glm::vec4(1.0f));
-    static const std::string textString = "Text";
-    float x = .0f;
-    float y = .0f;
-    for(std::string::const_iterator c = textString.begin(); c != textString.end(); ++c)
-    {
-        auto& glyph = font->m_glyphs[*c];
-        float scale = 1.0f;
-        float xpos = x + (float)glyph.bearing.x * scale;
-        float ypos = y - ((float)glyph.size.y - glyph.bearing.y) * scale;
-        float w = (float)glyph.size.x * scale;
-        float h = (float)glyph.size.y * scale;
-        std::vector<TextVertex> textvertices ={
-            {{xpos + w,  ypos, 1.0f, 1.0f}},
-            {{xpos + w,  ypos + h, 1.0f, 0.0f}},
-            {{xpos,  ypos + h, 0.0f, 0.0f}},
-            {{xpos,  ypos, 0.0f, 1.0f}},
-        };
-        glyph.texture->bind(0);
-        m_vaoText->bind();
-        m_vboText->bind();
-        m_vboText->setData(textvertices.data(), sizeof(TextVertex) * textvertices.size());
-        m_vboText->unbind();
-        glDrawElements(GL_TRIANGLES, m_iboText->count(), GL_UNSIGNED_INT, 0);
-        x += (glyph.advance >> 6) * scale;
-    }
+    m_shaderText->use();
+    m_shaderText->set("projection", projectionOrtho);
+    m_shaderText->set("text", 0);
+    m_scene->m_registry.view<ActiveComponent, TransformComponent, TextRendererComponent>().each([&](ActiveComponent active, TransformComponent& t, TextRendererComponent& r) {
+        if(!active.active) return;
+        if(!r.font) return;
+        float x = .0f;
+        float y = .0f;
+        m_shaderText->set("transform", t.GetTransform());
+        m_shaderText->set("color", r.Color);
+        for(std::string::const_iterator c = r.text.begin(); c != r.text.end(); ++c)
+        {
+            auto& glyphIt = r.font->m_glyphs.find(*c);
+            if(glyphIt == r.font->m_glyphs.end()) continue;
+            auto& glyph = glyphIt->second;
+            float xpos = x + (float)glyph.bearing.x * t.Scale.x;
+            float ypos = y - ((float)glyph.size.y - glyph.bearing.y) * t.Scale.y;
+            float w = (float)glyph.size.x * t.Scale.x;
+            float h = (float)glyph.size.y * t.Scale.y;
+            std::vector<TextVertex> textvertices ={
+                {{xpos + w,  ypos, 1.0f, 1.0f}},
+                {{xpos + w,  ypos + h, 1.0f, 0.0f}},
+                {{xpos,  ypos + h, 0.0f, 0.0f}},
+                {{xpos,  ypos, 0.0f, 1.0f}},
+            };
+            glyph.texture->bind(0);
+            m_vaoText->bind();
+            m_vboText->bind();
+            m_vboText->setData(textvertices.data(), sizeof(TextVertex) * textvertices.size());
+            m_vboText->unbind();
+            glDrawElements(GL_TRIANGLES, m_iboText->count(), GL_UNSIGNED_INT, 0);
+            x += ((glyph.advance >> 6) + r.characterSpacing) * t.Scale.x;
+        }
+    });
+
     glDepthMask(GL_TRUE);  // disable writes to Z-Buffer
     glEnable(GL_DEPTH_TEST);  // disable depth-testing
     glDisable(GL_BLEND);  // disable blend
