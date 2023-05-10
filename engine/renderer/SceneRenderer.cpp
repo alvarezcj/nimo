@@ -452,24 +452,31 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     shaderText->set("projection", projectionOrtho);
     shaderText->set("text", 0);
     shaderText->set("color", glm::vec4(1.0f));
-    auto& glyph = font->m_glyphs['g'];
-    float scale = 5.0f;
-    float xpos = 0.0f + (float)glyph.bearing.x * scale;
-    float ypos = 0.0f - ((float)glyph.size.y - glyph.bearing.y) * scale;
-    float w = (float)glyph.size.x * scale;
-    float h = (float)glyph.size.y * scale;
-    std::vector<TextVertex> textvertices ={
-        {{xpos + w,  ypos, 1.0f, 1.0f}},
-        {{xpos + w,  ypos + h, 1.0f, 0.0f}},
-        {{xpos,  ypos + h, 0.0f, 0.0f}},
-        {{xpos,  ypos, 0.0f, 1.0f}},
-    };
-    glyph.texture->bind(0);
-    m_vaoText->bind();
-    m_vboText->bind();
-    m_vboText->setData(textvertices.data(), sizeof(TextVertex) * textvertices.size());
-    m_vboText->unbind();
-    glDrawElements(GL_TRIANGLES, m_iboText->count(), GL_UNSIGNED_INT, 0);
+    static const std::string textString = "Text";
+    float x = .0f;
+    float y = .0f;
+    for(std::string::const_iterator c = textString.begin(); c != textString.end(); ++c)
+    {
+        auto& glyph = font->m_glyphs[*c];
+        float scale = 1.0f;
+        float xpos = x + (float)glyph.bearing.x * scale;
+        float ypos = y - ((float)glyph.size.y - glyph.bearing.y) * scale;
+        float w = (float)glyph.size.x * scale;
+        float h = (float)glyph.size.y * scale;
+        std::vector<TextVertex> textvertices ={
+            {{xpos + w,  ypos, 1.0f, 1.0f}},
+            {{xpos + w,  ypos + h, 1.0f, 0.0f}},
+            {{xpos,  ypos + h, 0.0f, 0.0f}},
+            {{xpos,  ypos, 0.0f, 1.0f}},
+        };
+        glyph.texture->bind(0);
+        m_vaoText->bind();
+        m_vboText->bind();
+        m_vboText->setData(textvertices.data(), sizeof(TextVertex) * textvertices.size());
+        m_vboText->unbind();
+        glDrawElements(GL_TRIANGLES, m_iboText->count(), GL_UNSIGNED_INT, 0);
+        x += (glyph.advance >> 6) * scale;
+    }
     glDepthMask(GL_TRUE);  // disable writes to Z-Buffer
     glEnable(GL_DEPTH_TEST);  // disable depth-testing
     glDisable(GL_BLEND);  // disable blend
