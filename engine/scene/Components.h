@@ -11,6 +11,7 @@
 #include "core/GUID.h"
 #include "scripting/ScriptInstance.h"
 #include "audio/AudioSound.h"
+#include "fonts/Font.h"
 
 namespace nimo{
 struct IDComponent
@@ -124,5 +125,11 @@ struct SpriteRendererComponent{
     std::shared_ptr<Texture> texture;
     glm::vec2 tiling = {1.0f, 1.0f};
     glm::vec2 offset = {0.0f, 0.0f};
+};
+struct TextRendererComponent{
+    glm::vec4 Color{1.0f, 1.0f, 1.0f, 1.0f};
+    std::shared_ptr<Font> font;
+    std::string text = "New text";
+    float characterSpacing = 0.0f;
 };
 };

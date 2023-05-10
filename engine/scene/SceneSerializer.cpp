@@ -140,6 +140,17 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         };
         jentity["SpriteRenderer"] = jsr;
     }
+    if(e.HasComponent<TextRendererComponent>())
+    {
+        TextRendererComponent c = e.GetComponent<TextRendererComponent>();
+        nlohmann::ordered_json jtr{
+            {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
+            {"Text",c.text},
+            {"CharacterSpacing",c.characterSpacing},
+            {"Font",c.font->id.str()}
+        };
+        jentity["TextRenderer"] = jtr;
+    }
     if(e.HasComponent<AudioSourceComponent>())
     {
         const AudioSourceComponent& a = e.GetComponent<AudioSourceComponent>();
@@ -268,6 +279,14 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             c.tiling = glm::vec2((float)field.value()["Tiling"][0], (float)field.value()["Tiling"][1]);
             c.offset = glm::vec2((float)field.value()["Offset"][0], (float)field.value()["Offset"][1]);
             c.texture = AssetManager::Get<Texture>(AssetId((std::string)field.value()["Texture"]));
+        }
+        if(field.key() == "TextRenderer")
+        {
+            TextRendererComponent& c = createdEntity.AddComponent<TextRendererComponent>();
+            c.Color = glm::vec4((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2], (float)field.value()["Color"][3]);
+            c.text = field.value()["Text"];
+            c.characterSpacing = (float)field.value()["CharacterSpacing"];
+            c.font = AssetManager::Get<Font>(AssetId((std::string)field.value()["Font"]));
         }
         if(field.key() == "AudioSource")
         {
