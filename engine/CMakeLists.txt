@@ -45,6 +45,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/audio/miniaudio.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioEngine.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSource.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSound.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/fonts/Font.cpp 
 )
 set(LIBS
 glad
@@ -58,8 +59,10 @@ entt
 spdlog
 lua
 miniaudio
+freetype2
 )
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MT")
 add_library(nimo_engine STATIC ${SOURCES})
 target_include_directories(nimo_engine PUBLIC ${INCLUDES})
 target_link_libraries(nimo_engine PUBLIC ${LIBS})
