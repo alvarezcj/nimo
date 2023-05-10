@@ -5,18 +5,34 @@
 
 struct RendererDebugPanel : public EditorPanel
 {
-    RendererDebugPanel() : EditorPanel("Renderer Debug"){}
+    RendererDebugPanel() : EditorPanel("Renderer Debug"){
+        frameTimes.reserve(1500);
+    }
     void SetRenderer(std::shared_ptr<nimo::SceneRenderer> r) {renderer=r;}
 
 private:
+    std::vector<float> frameTimes;
     std::shared_ptr<nimo::SceneRenderer> renderer;
     void OnRender(){
         if(!renderer) return;
+        if(frameTimes.size() > 1499)
+        {
+            frameTimes.erase(frameTimes.begin());
+        }
+        frameTimes.push_back(renderer->totalFrameTimer.ElapsedMillis());
+        ImGui::Spacing();
+        ImGui::PlotLines("Frame Times", frameTimes.data(), frameTimes.size(),0,"Frame times",0.0f, 35.0f, ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/3.0f));
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
         ImGui::Text("Last frame time: %.3f ms", renderer->totalFrameTimer.ElapsedMillis());
         ImGui::TextDisabled("Geometry 3D: %.3f ms", renderer->geometryFrameTimer.ElapsedMillis());
         ImGui::TextDisabled("Lighting: %.3f ms", renderer->lightingFrameTimer.ElapsedMillis());
         ImGui::TextDisabled("Bloom: %.3f ms", renderer->bloomFrameTimer.ElapsedMillis());
         ImGui::TextDisabled("Geometry 2D: %.3f ms", renderer->geometry2DFrameTimer.ElapsedMillis());
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
         if(ImGui::TreeNode("GBuffer"))
         {
             ImGui::Image((ImTextureID)renderer->m_gBuffer->GetColorAttachmentId(2), ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/renderer->m_gBuffer->GetAspectRatio()), ImVec2(0, 1), ImVec2(1, 0));
