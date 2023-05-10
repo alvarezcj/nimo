@@ -205,6 +205,8 @@ void nimo::SceneRenderer::SetScene(std::shared_ptr<Scene> scene)
 }
 void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
 {
+    totalFrameTimer.Reset();
+    geometryFrameTimer.Reset();
     Entity camera(*m_scene->m_registry.view<CameraComponent>().begin(), m_scene->m_registry);
     auto camTransform = camera.GetComponent<TransformComponent>();
     auto cam = camera.GetComponent<CameraComponent>();
@@ -230,7 +232,9 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         r.material->shader->set("projection", projection);
         m.source->draw(m.submeshIndex);
     });
+    geometryFrameTimer.Stop();
 
+    lightingFrameTimer.Reset();
     // Lighting pass
     m_hdrColorBuffer->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -268,6 +272,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     }
     m_shaderLightingPass->set("viewPos", viewPosition);
     m_quadMesh->draw();
+    lightingFrameTimer.Stop();
 
     // Background pass
     glDepthFunc(GL_LEQUAL);
@@ -280,6 +285,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     renderCube2();
     glDepthFunc(GL_LESS);
 
+    bloomFrameTimer.Reset();
     // Bloom
     // Get bright pixels in buffer
     m_hdrBrightnessBuffer->bind(); //960x520
@@ -372,7 +378,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomUpsample1Buffer->BindColorTexture(0,1); //960x540
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(960.0f, 540.0f)); 
     m_quadMesh->draw();
-
+    bloomFrameTimer.Stop();
 
     // HDR tone mapping pass
     if(target)
@@ -387,6 +393,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrFinalBloomBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
 
+    geometry2DFrameTimer.Reset();
     glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
     glDisable(GL_DEPTH_TEST);  // disable depth-testing
     glEnable(GL_BLEND); // enable blend
@@ -415,5 +422,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     glDepthMask(GL_TRUE);  // disable writes to Z-Buffer
     glEnable(GL_DEPTH_TEST);  // disable depth-testing
     glDisable(GL_BLEND);  // disable blend
+    geometry2DFrameTimer.Stop();
+    totalFrameTimer.Stop();
     m_scene = {};
 }

@@ -141,6 +141,7 @@ nimo::Window::Window(const WindowDescription& description)
         pimpl->width = width;
         pimpl->height = height;
     }
+    VSync(pimpl->description.vsync);
 
     // // Set icon
     // {

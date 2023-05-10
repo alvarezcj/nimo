@@ -1,6 +1,7 @@
 #pragma once
 #include "scene/Scene.h"
 #include "EnvironmentMap.h"
+#include "core/Timer.h"
 
 namespace nimo
 {
@@ -12,6 +13,11 @@ public:
     void SetScene(std::shared_ptr<Scene> scene);
     void Render(std::shared_ptr<FrameBuffer> target = {});
 public:
+    Timer totalFrameTimer;
+    Timer bloomFrameTimer;
+    Timer geometryFrameTimer;
+    Timer geometry2DFrameTimer;
+    Timer lightingFrameTimer;
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<FrameBuffer> m_gBuffer;
     std::shared_ptr<FrameBuffer> m_hdrColorBuffer;

@@ -13,7 +13,7 @@ namespace nimo
         unsigned int windowHeight = 1080;
         bool windowDecorated = true;
         bool fullscreen = false;
-        bool vsync = true;
+        bool vsync = false;
         bool startMaximized = true;
 		bool resizable = true;
     };
