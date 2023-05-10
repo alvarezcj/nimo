@@ -159,3 +159,11 @@ std::shared_ptr<nimo::AudioSource> nimo::AssetSerializer<nimo::AudioSource>::Des
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
     return std::make_shared<AudioSource>((p/metadata.filepath).string());
 }
+void nimo::AssetSerializer<nimo::Font>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Font>& asset){}
+std::shared_ptr<nimo::Font> nimo::AssetSerializer<nimo::Font>::Deserialize(const nimo::AssetMetadata& metadata)
+{
+    std::filesystem::path p = ".";
+    if(nimo::Project::GetActiveProject())
+        p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
+    return std::make_shared<Font>((p/metadata.filepath).string());
+}

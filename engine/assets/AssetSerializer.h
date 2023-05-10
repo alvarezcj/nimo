@@ -51,4 +51,9 @@ namespace nimo
         void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::AudioSource>& asset);
         std::shared_ptr<nimo::AudioSource> Deserialize(const nimo::AssetMetadata& metadata);
     };
+    class Font;
+    template<> struct AssetSerializer<Font>{
+        void Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Font>& asset);
+        std::shared_ptr<nimo::Font> Deserialize(const nimo::AssetMetadata& metadata);
+    };
 } // namespace nimo
