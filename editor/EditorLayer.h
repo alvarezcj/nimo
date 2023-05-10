@@ -47,6 +47,7 @@ public:
         assetIcons[nimo::AssetType::Script] = std::make_shared<nimo::Texture>("icon_gears.png");
         assetIcons[nimo::AssetType::Prefab] = std::make_shared<nimo::Texture>("icon_box.png");
         assetIcons[nimo::AssetType::Audio] = std::make_shared<nimo::Texture>("icon_audio_wave.png");
+        assetIcons[nimo::AssetType::Font] = std::make_shared<nimo::Texture>("icon_signature.png");
     }
     ~EditorLayer()
     {
