@@ -1,7 +1,6 @@
 #include "EditorLayer.h"
 
 #include "shellapi.h"
-#include "StatisticsPanel.h"
 #include "GameViewPanel.h"
 #include "SceneViewPanel.h"
 #include "SceneContentsPanel.h"
@@ -23,7 +22,6 @@ void EditorLayer::OnAttach()
     d.colorAttachments.push_back({GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE});
     fb = std::make_shared<nimo::FrameBuffer>(d);
     logPanel = new LogPanel();
-    statisticsPanel = new StatisticsPanel();
     gameViewPanel = new GameViewPanel(this);
     sceneViewPanel = new SceneViewPanel(this);
     sceneContentsPanel = new SceneContentsPanel(this);
@@ -285,7 +283,6 @@ void EditorLayer::OnAttach()
                 ImGui::MenuItem("Inspector", NULL, &inspectorPanel->open);
                 ImGui::MenuItem("Asset Explorer", NULL, &assetExplorerPanel->open);
                 ImGui::MenuItem("Log", NULL, &logPanel->open);
-                ImGui::MenuItem("Statistics", NULL, &statisticsPanel->open);
                 ImGui::MenuItem("Renderer Debug", NULL, &rendererDebugPanel->open);
                 ImGui::EndMenu(); 
             }
@@ -376,9 +373,6 @@ void EditorLayer::OnAttach()
         gameViewPanel->Render();
         ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
         sceneViewPanel->Render();
-
-        ImGui::SetNextWindowSize(ImVec2(600, 100), ImGuiCond_FirstUseEver);
-        statisticsPanel->Render();
 
         ImGui::SetNextWindowSize(ImVec2(600, 100), ImGuiCond_FirstUseEver);
         logPanel->Render();

@@ -25,7 +25,6 @@
 #include "UIHelpers.h"
 #include "LogPanel.h"
 
-class StatisticsPanel;
 class GameViewPanel;
 class SceneContentsPanel;
 class InspectorPanel;
@@ -51,7 +50,6 @@ public:
     }
     ~EditorLayer()
     {
-        delete statisticsPanel;
         delete gameViewPanel;
         delete inspectorPanel;
         delete sceneContentsPanel;
@@ -72,7 +70,6 @@ private:
     std::shared_ptr<nimo::SceneRenderer> renderer;
 
     LogPanel* logPanel;
-    StatisticsPanel* statisticsPanel;
     GameViewPanel* gameViewPanel;
     SceneViewPanel* sceneViewPanel;
     InspectorPanel* inspectorPanel;
