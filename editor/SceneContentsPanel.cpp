@@ -3,6 +3,7 @@
 #include "EditorLayer.h"
 #include "core/Log.h"
 #include "InspectorPanel.h"
+#include "scene/Components.h"
 #include "scene/Prefab.h"
 
 void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, nimo::Entity& ent)
@@ -34,6 +35,50 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
         if (ImGui::Selectable("Create Empty")){
             scene->CreateEntityWithParent(ent);
         }
+        if (ImGui::MenuItem("Mesh")){
+            auto e = scene->CreateEntityWithParent(ent);
+            e.GetComponent<nimo::LabelComponent>().Label = "Mesh";
+            e.AddComponent<nimo::MeshComponent>();
+            e.AddComponent<nimo::MeshRendererComponent>();
+        }
+        if(ImGui::BeginMenu("Lighting"))
+        {
+            if (ImGui::MenuItem("Point Light")){
+                auto e = scene->CreateEntityWithParent(ent);
+                e.GetComponent<nimo::LabelComponent>().Label = "Point Light";
+                e.AddComponent<nimo::PointLightComponent>();
+            }
+            if (ImGui::MenuItem("Directional Light")){
+                auto e = scene->CreateEntityWithParent(ent);
+                e.GetComponent<nimo::LabelComponent>().Label = "Directional Light";
+            }
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("Audio"))
+        {
+            if (ImGui::MenuItem("Audio Source")){
+                auto e = scene->CreateEntityWithParent(ent);
+                e.GetComponent<nimo::LabelComponent>().Label = "Audio Source";
+                e.AddComponent<nimo::AudioSourceComponent>();
+            }
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("UI"))
+        {
+            if (ImGui::MenuItem("Text")){
+                auto e = scene->CreateEntityWithParent(ent);
+                e.GetComponent<nimo::LabelComponent>().Label = "Text";
+                e.AddComponent<nimo::TextRendererComponent>();
+            }
+            if (ImGui::MenuItem("Sprite")){
+                auto e = scene->CreateEntityWithParent(ent);
+                e.GetComponent<nimo::LabelComponent>().Label = "Sprite";
+                e.AddComponent<nimo::SpriteRendererComponent>();
+                e.GetComponent<nimo::TransformComponent>().Scale = {100.0f, 100.0f, 1.0f};
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::Separator();
         if (ImGui::Selectable("Delete")){
             mustDestroy = true;
         }
@@ -122,8 +167,51 @@ void SceneContentsPanel::OnRender()
         bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str(), ImGuiTreeNodeFlags_DefaultOpen);
         if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
         {
-            if (ImGui::Selectable("Create Empty")){
+            if (ImGui::MenuItem("Create Empty")){
                 scene->CreateEntity();
+            }
+            if (ImGui::MenuItem("Mesh")){
+                auto e = scene->CreateEntity();
+                e.GetComponent<nimo::LabelComponent>().Label = "Mesh";
+                e.AddComponent<nimo::MeshComponent>();
+                e.AddComponent<nimo::MeshRendererComponent>();
+            }
+            if(ImGui::BeginMenu("Lighting"))
+            {
+                if (ImGui::MenuItem("Point Light")){
+                    auto e = scene->CreateEntity();
+                    e.GetComponent<nimo::LabelComponent>().Label = "Point Light";
+                    e.AddComponent<nimo::PointLightComponent>();
+                }
+                if (ImGui::MenuItem("Directional Light")){
+                    auto e = scene->CreateEntity();
+                    e.GetComponent<nimo::LabelComponent>().Label = "Directional Light";
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Audio"))
+            {
+                if (ImGui::MenuItem("Audio Source")){
+                    auto e = scene->CreateEntity();
+                    e.GetComponent<nimo::LabelComponent>().Label = "Audio Source";
+                    e.AddComponent<nimo::AudioSourceComponent>();
+                }
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("UI"))
+            {
+                if (ImGui::MenuItem("Text")){
+                    auto e = scene->CreateEntity();
+                    e.GetComponent<nimo::LabelComponent>().Label = "Text";
+                    e.AddComponent<nimo::TextRendererComponent>();
+                }
+                if (ImGui::MenuItem("Sprite")){
+                    auto e = scene->CreateEntity();
+                    e.GetComponent<nimo::LabelComponent>().Label = "Sprite";
+                    e.AddComponent<nimo::SpriteRendererComponent>();
+                    e.GetComponent<nimo::TransformComponent>().Scale = {100.0f, 100.0f, 1.0f};
+                }
+                ImGui::EndMenu();
             }
             ImGui::EndPopup();
         }
