@@ -107,7 +107,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         MeshComponent m = e.GetComponent<MeshComponent>();
         nlohmann::ordered_json jmesh{
-            {"Source", m.source->id.str()},
+            {"Source", m.source ? m.source->id.str() : GUID().str()},
             {"SubmeshIndex", m.submeshIndex}
         };
         jentity["Mesh"] = jmesh;
@@ -116,7 +116,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         MeshRendererComponent m = e.GetComponent<MeshRendererComponent>();
         nlohmann::ordered_json jmesh{
-            {"Material", m.material->id.str()}
+            {"Material", m.material ? m.material->id.str() : GUID().str()}
         };
         jentity["MeshRenderer"] = jmesh;
     }
@@ -136,7 +136,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
             {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
             {"Tiling",{c.tiling.r,c.tiling.g}},
             {"Offset",{c.offset.r,c.offset.g}},
-            {"Texture",c.texture->id.str()}
+            {"Texture",c.texture ? c.texture->id.str() : GUID().str()}
         };
         jentity["SpriteRenderer"] = jsr;
     }
@@ -147,7 +147,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
             {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
             {"Text",c.text},
             {"CharacterSpacing",c.characterSpacing},
-            {"Font",c.font->id.str()}
+            {"Font",c.font ? c.font->id.str() : GUID().str()}
         };
         jentity["TextRenderer"] = jtr;
     }
@@ -155,7 +155,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         const AudioSourceComponent& a = e.GetComponent<AudioSourceComponent>();
         nlohmann::ordered_json jaudio{
-            {"Source", a.source->id.str()},
+            {"Source", a.source ? a.source->id.str() : GUID().str()},
             {"Loop", a.loop},
             {"Volume", a.volume},
             {"PlayOnCreate", a.playOnCreate},
@@ -188,7 +188,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
                 case nimo::ScriptFieldType::Asset:
                     fields.push_back({
                         {"Name",field.first},
-                        {"Value",std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value ? std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str() : ""},
+                        {"Value",std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value ? std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str() : GUID().str()},
                         {"Type","Asset"},
                         {"AssetType",AssetTypeToString(std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->type)}
                     });
