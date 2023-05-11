@@ -248,7 +248,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
     // Render scene into gbuffer
     m_gBuffer->bind();
-    m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, TransformComponent, MeshRendererComponent>().each([&](ActiveComponent active, IDComponent& id, MeshComponent& m, TransformComponent& t, MeshRendererComponent& r) {
+    m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
         if(!active.active) return;
         if(!r.material || !r.material->shader || !m.source) return;
         r.material->shader->use();
@@ -429,9 +429,9 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_shader2d->set("view", viewMatrix);
     m_shader2d->set("projection", projectionOrtho);
     m_shader2d->set("mainTexture", 0);
-    m_scene->m_registry.view<ActiveComponent, TransformComponent, SpriteRendererComponent>().each([&](ActiveComponent active, TransformComponent& t, SpriteRendererComponent& r) {
+    m_scene->m_registry.view<ActiveComponent, IDComponent, SpriteRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, SpriteRendererComponent& r) {
         if(!active.active) return;
-        m_shader2d->set("transform", t.GetTransform());
+        m_shader2d->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
         if(!r.texture)
         {
             m_white->bind(0);
@@ -449,12 +449,12 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_shaderText->use();
     m_shaderText->set("projection", projectionOrtho);
     m_shaderText->set("text", 0);
-    m_scene->m_registry.view<ActiveComponent, TransformComponent, TextRendererComponent>().each([&](ActiveComponent active, TransformComponent& t, TextRendererComponent& r) {
+    m_scene->m_registry.view<ActiveComponent, IDComponent, TransformComponent, TextRendererComponent>().each([&](ActiveComponent active, IDComponent& id, TransformComponent& t, TextRendererComponent& r) {
         if(!active.active) return;
         if(!r.font) return;
         float x = .0f;
         float y = .0f;
-        m_shaderText->set("transform", t.GetTransform());
+        m_shaderText->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
         m_shaderText->set("color", r.Color);
         for(std::string::const_iterator c = r.text.begin(); c != r.text.end(); ++c)
         {
