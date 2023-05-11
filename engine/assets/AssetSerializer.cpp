@@ -93,7 +93,7 @@ void nimo::AssetSerializer<nimo::Material>::Serialize(const AssetMetadata& metad
                     {"name", pt->name},
                     {"type", "texture"},
                     {"value", pt->GetValue()},
-                    {"asset", pt->GetTexture()->id.str()}
+                    {"asset", pt->GetTexture() ? pt->GetTexture()->id.str() : GUID().str()}
                 });
             }
             break;
