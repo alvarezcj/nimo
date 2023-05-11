@@ -87,6 +87,8 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "Prefab");
         lua_pushinteger(L, (unsigned int)AssetType::Audio);
         lua_setfield(L, -2, "Audio");
+        lua_pushinteger(L, (unsigned int)AssetType::Font);
+        lua_setfield(L, -2, "Font");
         lua_setfield(L, -2, "AssetType");
     }
     // Window
@@ -347,6 +349,9 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
                                     break;
                                 case AssetType::Audio:
                                     res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<AudioSource>(assetId), (AssetType)assetType);
+                                    break;
+                                case AssetType::Font:
+                                    res.fields[key] = std::make_shared<ScriptFieldAsset>(key, AssetManager::Get<Font>(assetId), (AssetType)assetType);
                                     break;
                                 
                                 default:

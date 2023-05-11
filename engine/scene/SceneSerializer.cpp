@@ -353,6 +353,10 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
                                     std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Script>(GUID(std::string(value))));
                                     std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
                                     break;
+                                case AssetType::Font:
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->value = std::static_pointer_cast<nimo::Asset>(AssetManager::Get<Font>(GUID(std::string(value))));
+                                    std::static_pointer_cast<nimo::ScriptFieldAsset>(instance.fields[field["Name"]])->type = AssetTypeFromString(field["AssetType"]);
+                                    break;
                                 default:
                                     break;
                                 }                                
