@@ -48,7 +48,15 @@ int nimo_luafn_HasEntityComponent(lua_State* L)
         }
         else if(componentType == "SpriteRenderer")
         {
-            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::AudioSource>());
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::SpriteRendererComponent>());
+        }
+        else if(componentType == "TextRenderer")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::TextRendererComponent>());
+        }
+        else
+        {
+            lua_pushboolean(L, false);
         }
     }
     return 1;
@@ -242,6 +250,35 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_setfield(L, -2, "Source");
             }
         }
+        else if(componentType == "TextRenderer")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::TextRendererComponent>();
+            lua_newtable(L);
+            lua_pushnumber(L, c.characterSpacing);
+            lua_setfield(L, -2, "CharacterSpacing");
+            lua_pushstring(L, c.text.c_str());
+            lua_setfield(L, -2, "Text");
+            // Font
+            {
+                lua_newtable(L);
+                lua_pushinteger(L, (int)c.font->Type());
+                lua_setfield(L, -2, "assetType");
+                lua_pushstring(L, c.font->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_setfield(L, -2, "Font");
+            }
+            // Color
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.Color.x);
+                lua_setfield(L, -2, "r");
+                lua_pushnumber(L, c.Color.y);
+                lua_setfield(L, -2, "g");
+                lua_pushnumber(L, c.Color.z);
+                lua_setfield(L, -2, "b");
+                lua_setfield(L, -2, "Color");
+            }
+        }
         else
         {
             lua_pushnil(L);
@@ -326,7 +363,7 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
             c.Color.b = lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-        if(componentType == "PointLight")
+        if(componentType == "SpriteRenderer")
         {
             auto& c = scene->GetEntity(*id).GetComponent<nimo::SpriteRendererComponent>();
             lua_getfield(L, 3, "Color");
@@ -355,6 +392,29 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
             lua_getfield(L, 3, "Texture");
             lua_getfield(L, -1, "id");
             c.texture = nimo::AssetManager::Get<nimo::Texture>(nimo::GUID(lua_tostring(L, -1)));
+            lua_pop(L, 1);
+        }
+        if(componentType == "TextRenderer")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::TextRendererComponent>();
+            lua_getfield(L, 3, "Color");
+            lua_getfield(L, 3, "CharacterSpacing");
+            c.characterSpacing = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, 3, "Text");
+            c.text = lua_tostring(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "r");
+            c.Color.r = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "g");
+            c.Color.g = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "b");
+            c.Color.b = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Font");
+            lua_getfield(L, -1, "id");
+            c.font = nimo::AssetManager::Get<nimo::Font>(nimo::GUID(lua_tostring(L, -1)));
             lua_pop(L, 1);
         }
         if(componentType == "Mesh")
