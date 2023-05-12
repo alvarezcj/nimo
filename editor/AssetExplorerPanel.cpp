@@ -7,6 +7,7 @@
 #include "InspectorPanel.h"
 #include "EditorLayer.h"
 #include "UIHelpers.h"
+#include "shellapi.h"
 
 const static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_FramePadding;
 void AssetExplorerPanel::OnRender()
@@ -118,7 +119,13 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                         ImGui::Text(entry.path().filename().string().c_str());
                         ImGui::EndDragDropSource();
                     }
+                    // Check if double clicked
                     // Check if selected
+                    if(ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen() && ImGui::IsMouseDoubleClicked(0))
+                    { 
+                        auto absolutePath = std::filesystem::canonical(entry.path());
+                        ShellExecuteA(NULL, "open", absolutePath.string().c_str(), NULL, NULL, SW_SHOWNORMAL);
+                    }
                     if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
                     {
                         selectedPath = entry.path();
