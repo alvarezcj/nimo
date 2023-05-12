@@ -10,6 +10,7 @@
 #include "project/Project.h"
 #include "scene/SceneSerializer.h"
 #include "nfd.h"
+#include "scripting/Script.h"
 
 void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& modal)
 {
@@ -20,7 +21,15 @@ void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& mo
             nimo::FileHandling::CreateDiretory(root/"NewFolder");
         }
         ImGui::Separator();
-        if(ImGui::MenuItem("Shader")){}
+        if(ImGui::MenuItem("Script"))
+        {
+            NIMO_INFO("Creating new script asset in {}", root.string());
+            if(nimo::FileHandling::Copy("NewScript.lua", root/"NewScript.lua"))
+            {
+                nimo::AssetManager::Import(root/"NewScript.lua");
+                nimo::AssetManager::WriteIndex();
+            }
+        }
         if(ImGui::MenuItem("Material"))
         {
             NIMO_INFO("Creating new material asset in {}", root.string());
