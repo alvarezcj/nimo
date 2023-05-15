@@ -5,6 +5,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 #include "renderer/Mesh.h"
 #include "renderer/Material.h"
@@ -55,8 +56,16 @@ struct TransformComponent
     }
     glm::mat4 GetView() const
     {
-        return glm::toMat4(glm::quat(glm::radians(Rotation))) 
-                * glm::translate(glm::mat4(1.0f), {Translation.x, Translation.y, Translation.z});
+        // glm::vec3 dir;
+        // dir.x = glm::cos(glm::radians(Rotation.x)) * glm::cos(glm::radians(Rotation.y + 90.0f));
+        // dir.y = glm::sin(glm::radians(Rotation.x));
+        // dir.z = glm::cos(glm::radians(Rotation.x)) * glm::sin(glm::radians(Rotation.y + 90.0f));
+        // dir = glm::normalize(dir);
+        // glm::quatLookAtLH()
+        // return glm::lookAt(Translation, Translation + dir, glm::vec3(0.0f, 1.0f, 0.0f));
+        // glm::rotate(glm::vec3(0.0f, 1.0f, 0.0f), glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, -1.0f))
+        return glm::toMat4(glm::conjugate(glm::quat(glm::radians(Rotation)))) 
+                * glm::translate(glm::mat4(1.0f), {Translation.x, Translation.y, -Translation.z});
     }
     glm::vec3 GetFront() const 
     {

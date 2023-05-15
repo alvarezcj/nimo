@@ -241,7 +241,6 @@ void nimo::SceneRenderer::SetScene(std::shared_ptr<Scene> scene)
 void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
 {
     totalFrameTimer.Reset();
-    geometryFrameTimer.Reset();
     Entity camera(*m_scene->m_registry.view<CameraComponent>().begin(), m_scene->m_registry);
     auto camTransform = camera.GetComponent<TransformComponent>();
     auto cam = camera.GetComponent<CameraComponent>();
@@ -253,25 +252,9 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         (float)Application::Instance().GetWindow().GetHeight() * 0.5f, 
         -0.1f, cam.ClippingPlanes.Far);
     glm::mat4 viewMatrix = camTransform.GetView();
-    auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
+    auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, -camTransform.Translation.z);
 
-    // Render scene into directional light depth buffer
-    glCullFace(GL_FRONT);
-    m_directionalLightDepthBuffer->bind();
-    m_shaderDepth->use();
-    auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -100.0f, 100.0f);
-    auto directionalLightPosition = glm::vec3(-2.0f, 4.0f, -1.0f);
-    auto directionalLightView = glm::lookAt(directionalLightPosition, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    m_shaderDepth->set("projection", directionalLightProjection);
-    m_shaderDepth->set("view", directionalLightView);
-    m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
-        if(!active.active) return;
-        if(!m.source) return;
-        m_shaderDepth->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
-        m.source->draw(m.submeshIndex);
-    });
-    glCullFace(GL_BACK);
-
+    geometryFrameTimer.Reset();
     // Render scene into gbuffer
     m_gBuffer->bind();
     m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
@@ -288,6 +271,27 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     geometryFrameTimer.Stop();
 
     lightingFrameTimer.Reset();
+    // Render scene into directional light depth buffer
+    auto directionalLightEntities = m_scene->m_registry.view<DirectionalLightComponent>();
+    if(directionalLightEntities.size())
+    {
+        Entity directionalLight(*directionalLightEntities.begin(), m_scene->m_registry);
+        glCullFace(GL_FRONT);
+        m_directionalLightDepthBuffer->bind();
+        m_shaderDepth->use();
+        auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -100.0f, 100.0f);
+        auto directionalLightPosition = directionalLight.GetComponent<TransformComponent>().Translation;
+        auto directionalLightView = directionalLight.GetComponent<TransformComponent>().GetView();
+        m_shaderDepth->set("projection", directionalLightProjection);
+        m_shaderDepth->set("view", directionalLightView);
+        m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
+            if(!active.active) return;
+            if(!m.source) return;
+            m_shaderDepth->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
+            m.source->draw(m.submeshIndex);
+        });
+        glCullFace(GL_BACK);
+    }
     // Lighting pass
     m_hdrColorBuffer->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -300,10 +304,19 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_gBuffer->BindColorTexture(1,1);
     m_gBuffer->BindColorTexture(2,2);
     m_gBuffer->BindColorTexture(3,3);
-    m_shaderLightingPass->set("directionalLightShadowMap", 4);
-    m_directionalLightDepthBuffer->BindDepthTexture(4);
-    m_shaderLightingPass->set("directionalLightSpaceMatrix", directionalLightProjection * directionalLightView);
-    m_shaderLightingPass->set("directionalLightPos", directionalLightPosition);
+    if(directionalLightEntities.size())
+    {
+        Entity directionalLight(*directionalLightEntities.begin(), m_scene->m_registry);
+        auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -100.0f, 100.0f);
+        auto directionalLightPosition = directionalLight.GetComponent<TransformComponent>().Translation;
+        auto directionalLightView = directionalLight.GetComponent<TransformComponent>().GetView();
+        m_shaderLightingPass->set("directionalLightShadowMap", 4);
+        m_directionalLightDepthBuffer->BindDepthTexture(4);
+        m_shaderLightingPass->set("directionalLightSpaceMatrix", directionalLightProjection * directionalLightView);
+        m_shaderLightingPass->set("directionalLightPos", directionalLightPosition);
+        m_shaderLightingPass->set("directionalLightColor", directionalLight.GetComponent<DirectionalLightComponent>().Color);
+        m_shaderLightingPass->set("directionalLightIntensity", directionalLight.GetComponent<DirectionalLightComponent>().Intensity);
+    }
     int currentLights = 0;
     m_scene->m_registry.view<ActiveComponent, PointLightComponent, TransformComponent>().each([&](ActiveComponent active,PointLightComponent& light, TransformComponent& lightTransform)
     {
