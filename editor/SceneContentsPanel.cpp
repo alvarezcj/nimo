@@ -186,6 +186,7 @@ void SceneContentsPanel::OnRender()
                 if (ImGui::MenuItem("Directional Light")){
                     auto e = scene->CreateEntity();
                     e.GetComponent<nimo::LabelComponent>().Label = "Directional Light";
+                    e.AddComponent<nimo::DirectionalLightComponent>();
                 }
                 ImGui::EndMenu();
             }
