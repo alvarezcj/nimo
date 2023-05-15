@@ -86,7 +86,11 @@ struct CameraComponent{
 
 struct PointLightComponent{
     glm::vec3 Color{1.0f, 1.0f, 1.0f};
-    float Intensity;
+    float Intensity = 3.0f;
+};
+struct DirectionalLightComponent{
+    glm::vec3 Color{1.0f, 1.0f, 1.0f};
+    float Intensity = 1.0f;
 };
 
 struct MeshComponent{

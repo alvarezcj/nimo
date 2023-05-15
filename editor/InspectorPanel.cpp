@@ -398,6 +398,27 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::DirectionalLightComponent>())
+        {
+            if (ImGui::CollapsingHeader((std::string("Directional Light##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Remove component"))
+                    {
+                        ent.RemoveComponent<nimo::DirectionalLightComponent>();
+                    }
+                    ImGui::EndPopup();
+                }
+                if(ent.HasComponent<nimo::DirectionalLightComponent>())
+                {
+                    ImGui::ColorEdit3(("Color##Directional Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::DirectionalLightComponent>().Color, ImGuiColorEditFlags_Float);
+                    ImGui::DragFloat(("Intesity##Directional Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::DirectionalLightComponent>().Intensity, 0.1f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                }
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         if(ent.HasComponent<nimo::SpriteRendererComponent>())
         {
             if (ImGui::CollapsingHeader((std::string("Sprite Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -731,6 +752,9 @@ void InspectorPanel::OnRender()
             }
             if (ImGui::MenuItem("Point Light")){
                 ent.AddComponent<nimo::PointLightComponent>();
+            }
+            if (ImGui::MenuItem("Directional Light")){
+                ent.AddComponent<nimo::DirectionalLightComponent>();
             }
             if (ImGui::MenuItem("Audio Source")){
                 ent.AddComponent<nimo::AudioSourceComponent>();

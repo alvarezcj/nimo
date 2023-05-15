@@ -129,6 +129,15 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         };
         jentity["PointLight"] = jpointlight;
     }
+    if(e.HasComponent<DirectionalLightComponent>())
+    {
+        DirectionalLightComponent l = e.GetComponent<DirectionalLightComponent>();
+        nlohmann::ordered_json jdl{
+            {"Color",{l.Color.r,l.Color.g,l.Color.b}},
+            {"Intensity",l.Intensity}
+        };
+        jentity["DirectionalLight"] = jdl;
+    }
     if(e.HasComponent<SpriteRendererComponent>())
     {
         SpriteRendererComponent c = e.GetComponent<SpriteRendererComponent>();
@@ -269,6 +278,12 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         if(field.key() == "PointLight")
         {
             PointLightComponent& l = createdEntity.AddComponent<PointLightComponent>();
+            l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
+            l.Intensity = (float)field.value()["Intensity"];
+        }
+        if(field.key() == "DirectionalLight")
+        {
+            DirectionalLightComponent& l = createdEntity.AddComponent<DirectionalLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
             l.Intensity = (float)field.value()["Intensity"];
         }
