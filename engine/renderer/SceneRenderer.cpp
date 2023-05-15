@@ -81,6 +81,12 @@ void renderCube2()
 }
 nimo::SceneRenderer::SceneRenderer()
 {
+    // Directional Light buffer
+    FrameBuffer::Details directionalLightBufferDetails;
+    directionalLightBufferDetails.width = 4096;
+    directionalLightBufferDetails.height = 4096;
+    directionalLightBufferDetails.clearDepthOnBind = true;
+    m_directionalLightDepthBuffer = std::make_shared<FrameBuffer>(directionalLightBufferDetails);
     // GBuffer
     FrameBuffer::Details gBufferDetails;
     gBufferDetails.width = 1920;
@@ -157,6 +163,8 @@ nimo::SceneRenderer::SceneRenderer()
     //2D
     m_shader2d = nimo::AssetManager::Get<Shader>("Shaders/unlit_texture.nshader");
     m_shaderText = AssetManager::Get<Shader>("Shaders/text.nshader");
+
+    m_shaderDepth = nimo::AssetManager::Get<Shader>("Shaders/depth.nshader");
 
     //White texture in memory
     unsigned int whitePixel = 0xFFFFFFFF;
@@ -246,6 +254,24 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         -0.1f, cam.ClippingPlanes.Far);
     glm::mat4 viewMatrix = camTransform.GetView();
     auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
+
+    // Render scene into directional light depth buffer
+    glCullFace(GL_FRONT);
+    m_directionalLightDepthBuffer->bind();
+    m_shaderDepth->use();
+    auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -100.0f, 100.0f);
+    auto directionalLightPosition = glm::vec3(-2.0f, 4.0f, -1.0f);
+    auto directionalLightView = glm::lookAt(directionalLightPosition, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    m_shaderDepth->set("projection", directionalLightProjection);
+    m_shaderDepth->set("view", directionalLightView);
+    m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
+        if(!active.active) return;
+        if(!m.source) return;
+        m_shaderDepth->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
+        m.source->draw(m.submeshIndex);
+    });
+    glCullFace(GL_BACK);
+
     // Render scene into gbuffer
     m_gBuffer->bind();
     m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
@@ -274,6 +300,10 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_gBuffer->BindColorTexture(1,1);
     m_gBuffer->BindColorTexture(2,2);
     m_gBuffer->BindColorTexture(3,3);
+    m_shaderLightingPass->set("directionalLightShadowMap", 4);
+    m_directionalLightDepthBuffer->BindDepthTexture(4);
+    m_shaderLightingPass->set("directionalLightSpaceMatrix", directionalLightProjection * directionalLightView);
+    m_shaderLightingPass->set("directionalLightPos", directionalLightPosition);
     int currentLights = 0;
     m_scene->m_registry.view<ActiveComponent, PointLightComponent, TransformComponent>().each([&](ActiveComponent active,PointLightComponent& light, TransformComponent& lightTransform)
     {
@@ -481,9 +511,9 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         }
     });
 
-    glDepthMask(GL_TRUE);  // disable writes to Z-Buffer
-    glEnable(GL_DEPTH_TEST);  // disable depth-testing
-    glDisable(GL_BLEND);  // disable blend
+    glDepthMask(GL_TRUE);  
+    glEnable(GL_DEPTH_TEST);  
+    glDisable(GL_BLEND);  
     geometry2DFrameTimer.Stop();
     totalFrameTimer.Stop();
     m_scene = {};

@@ -20,6 +20,7 @@ public:
     Timer geometry2DFrameTimer;
     Timer lightingFrameTimer;
     std::shared_ptr<Scene> m_scene;
+    std::shared_ptr<FrameBuffer> m_directionalLightDepthBuffer;
     std::shared_ptr<FrameBuffer> m_gBuffer;
     std::shared_ptr<FrameBuffer> m_hdrColorBuffer;
     std::shared_ptr<FrameBuffer> m_hdrBrightnessBuffer;
@@ -44,6 +45,7 @@ public:
     std::shared_ptr<Shader> m_hdrBloomUpsamplePass;
     std::shared_ptr<Shader> m_shader2d;
     std::shared_ptr<Shader> m_shaderText;
+    std::shared_ptr<Shader> m_shaderDepth;
     std::shared_ptr<EnvironmentMap> m_environmentMap;
     std::shared_ptr<Mesh> m_quadMesh;
     std::shared_ptr<Texture> m_white;
