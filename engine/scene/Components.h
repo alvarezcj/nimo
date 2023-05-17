@@ -37,6 +37,9 @@ struct FamilyComponent
     FamilyComponent(const FamilyComponent& other) = default;
 };
 
+
+static glm::vec3 defaultUpVector() { return glm::vec3(0.0f, 1.0f, 0.0f); }
+static glm::vec3 defaultForwardVector() { return glm::vec3(0.0f, 0.0f, -1.0f); }
 struct TransformComponent
 {
     glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
@@ -56,6 +59,14 @@ struct TransformComponent
     }
     glm::mat4 GetView() const
     {
+        auto orientation = 
+            glm::angleAxis(glm::radians(Rotation.x), glm::vec3(1, 0, 0)) *
+            glm::angleAxis(glm::radians(Rotation.y), glm::vec3(0, 1, 0)) *
+            glm::angleAxis(glm::radians(Rotation.z), glm::vec3(0, 0, 1));
+        auto pUpVector = defaultUpVector() * orientation;
+        auto pLookAt = Translation + (defaultForwardVector() * orientation);
+        auto pView = glm::lookAt(Translation, pLookAt, pUpVector);
+        return pView;
         // glm::vec3 dir;
         // dir.x = glm::cos(glm::radians(Rotation.x)) * glm::cos(glm::radians(Rotation.y + 90.0f));
         // dir.y = glm::sin(glm::radians(Rotation.x));

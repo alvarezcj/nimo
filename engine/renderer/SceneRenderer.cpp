@@ -1,6 +1,7 @@
 #include "SceneRenderer.h"
 #include "glad/glad.h"
 #include "core/Application.h"
+#include "glm/gtc/matrix_inverse.hpp"
 
 struct TextVertex
 {
@@ -85,7 +86,8 @@ nimo::SceneRenderer::SceneRenderer()
     FrameBuffer::Details directionalLightBufferDetails;
     directionalLightBufferDetails.width = 4096;
     directionalLightBufferDetails.height = 4096;
-    directionalLightBufferDetails.clearDepthOnBind = true;
+    directionalLightBufferDetails.clearColorOnBind = true;
+    directionalLightBufferDetails.colorAttachments.push_back({GL_RGB16F, GL_RGB, GL_FLOAT});
     m_directionalLightDepthBuffer = std::make_shared<FrameBuffer>(directionalLightBufferDetails);
     // GBuffer
     FrameBuffer::Details gBufferDetails;
@@ -97,6 +99,7 @@ nimo::SceneRenderer::SceneRenderer()
     gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
     gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
     gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
+    gBufferDetails.colorAttachments.push_back({GL_RGB16F, GL_RGB, GL_FLOAT});
     m_gBuffer = std::make_shared<FrameBuffer>(gBufferDetails);
     // HDR color buffer
     FrameBuffer::Details hdrColorBufferDetails;
@@ -252,10 +255,12 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         (float)Application::Instance().GetWindow().GetHeight() * 0.5f, 
         -0.1f, cam.ClippingPlanes.Far);
     glm::mat4 viewMatrix = camTransform.GetView();
-    auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, -camTransform.Translation.z);
+    auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
 
     geometryFrameTimer.Reset();
     // Render scene into gbuffer
+    glEnable(GL_DEPTH_TEST);  
+    glDepthMask(GL_TRUE);  
     m_gBuffer->bind();
     m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
         if(!active.active) return;
@@ -273,14 +278,13 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     lightingFrameTimer.Reset();
     // Render scene into directional light depth buffer
     auto directionalLightEntities = m_scene->m_registry.view<DirectionalLightComponent>();
+    auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
     if(directionalLightEntities.size())
     {
         Entity directionalLight(*directionalLightEntities.begin(), m_scene->m_registry);
         glCullFace(GL_FRONT);
         m_directionalLightDepthBuffer->bind();
         m_shaderDepth->use();
-        auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -100.0f, 100.0f);
-        auto directionalLightPosition = directionalLight.GetComponent<TransformComponent>().Translation;
         auto directionalLightView = directionalLight.GetComponent<TransformComponent>().GetView();
         m_shaderDepth->set("projection", directionalLightProjection);
         m_shaderDepth->set("view", directionalLightView);
@@ -294,24 +298,25 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     }
     // Lighting pass
     m_hdrColorBuffer->bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_shaderLightingPass->use();
     m_shaderLightingPass->set("gPosition", 0);
     m_shaderLightingPass->set("gNormal", 1);
     m_shaderLightingPass->set("gAlbedoSpec", 2);
     m_shaderLightingPass->set("gARM", 3);
+    m_shaderLightingPass->set("gDepth", 4);
+    m_shaderLightingPass->set("InvProjection", glm::inverse(projection));
     m_gBuffer->BindColorTexture(0,0);
     m_gBuffer->BindColorTexture(1,1);
     m_gBuffer->BindColorTexture(2,2);
     m_gBuffer->BindColorTexture(3,3);
+    m_gBuffer->BindColorTexture(4,4);
     if(directionalLightEntities.size())
     {
         Entity directionalLight(*directionalLightEntities.begin(), m_scene->m_registry);
-        auto directionalLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -100.0f, 100.0f);
         auto directionalLightPosition = directionalLight.GetComponent<TransformComponent>().Translation;
         auto directionalLightView = directionalLight.GetComponent<TransformComponent>().GetView();
-        m_shaderLightingPass->set("directionalLightShadowMap", 4);
-        m_directionalLightDepthBuffer->BindDepthTexture(4);
+        m_shaderLightingPass->set("directionalLightShadowMap", 5);
+        m_directionalLightDepthBuffer->BindDepthTexture(5);
         m_shaderLightingPass->set("directionalLightSpaceMatrix", directionalLightProjection * directionalLightView);
         m_shaderLightingPass->set("directionalLightPos", directionalLightPosition);
         m_shaderLightingPass->set("directionalLightColor", directionalLight.GetComponent<DirectionalLightComponent>().Color);
@@ -524,8 +529,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         }
     });
 
-    glDepthMask(GL_TRUE);  
     glEnable(GL_DEPTH_TEST);  
+    glDepthMask(GL_TRUE);  
     glDisable(GL_BLEND);  
     geometry2DFrameTimer.Stop();
     totalFrameTimer.Stop();

@@ -10,6 +10,7 @@ out vec3 FragPos;
 out vec2 TexCoords;
 out vec3 Normal;
 out mat3 TBN;
+out vec4 glPos;
 
 uniform mat4 transform;
 uniform mat4 view;
@@ -30,6 +31,7 @@ void main()
     //Normal = aNormal;
 
     gl_Position = projection * view * worldPos;
+	glPos = vec4(worldPos);
 }
 @VERTEXEND@FRAGMENT
 #version 330 core
@@ -37,11 +39,13 @@ layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec4 gNormal;
 layout (location = 2) out vec4 gAlbedoSpec;
 layout (location = 3) out vec4 gARM;
+layout (location = 4) out vec3 gDepth;
 
 in vec2 TexCoords;
 in vec3 FragPos;
 in vec3 Normal;
 in mat3 TBN;
+in vec4 glPos;
 
 uniform vec3 viewPos;
 uniform mat4 transform;
@@ -83,5 +87,6 @@ void main()
     gAlbedoSpec = vec4(texture(texture_diffuse1, texCoord).rgb, 1.0);
     
     gARM.rgb = texture(texture_arm1, texCoord).rgb;
+    gDepth = vec3(glPos.z);
 }
 @FRAGMENTEND
