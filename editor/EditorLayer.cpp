@@ -240,6 +240,7 @@ void EditorLayer::OnAttach()
                         nimo::ProjectSerializer projectSer(project);
                         projectSer.Deserialize(outPath);
                         nimo::Project::SetActiveProject(project);
+                        nimo::Application::Instance().GetWindow().SetTitle(nimo::Project::GetActiveProject()->GetSettings().name + " - Nimo Editor");                        
                         nimo::AssetId startingSceneId = nimo::AssetId(nimo::Project::GetActiveProject()->GetSettings().startScene);
                         NIMO_DEBUG(nimo::AssetManager::GetMetadata(startingSceneId).filepath.string());
                         nimo::SceneManager::LoadScene(startingSceneId);
@@ -427,6 +428,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         settings.startScene = "NewScene";
         std::shared_ptr<nimo::Project> project = std::make_shared<nimo::Project>(settings);
         nimo::Project::SetActiveProject(project);
+        nimo::Application::Instance().GetWindow().SetTitle(nimo::Project::GetActiveProject()->GetSettings().name + " - Nimo Editor");                        
 
 
         nimo::FileHandling::Copy("NewProjectAssets", projectFolderPath/"Assets");
