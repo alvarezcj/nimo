@@ -110,12 +110,12 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 fragPosWorldSpace, vec3 fra
     // calculate bias (based on depth map resolution and slope)
     vec3 normal = normalize(fragNormal);
     vec3 lightDir = normalize(directionalLightPos - fragPosWorldSpace);
-    float bias = max(0.0009 * (1.0 - dot(normal, lightDir)), 0.0002);
+    float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
     // PCF    
     float Pi = 6.28318530718; // Pi*2
-    float Directions = 19.0;
+    float Directions = 16.0;
     float Quality = 4.0;
-    float Size = 1.3;
+    float Size = 4.0;
     vec2 Radius = Size/textureSize(directionalLightShadowMap, 0);
     float shadow = texture(directionalLightShadowMap, projCoords.xy).r;
     // Blur calculations
