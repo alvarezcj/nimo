@@ -32,7 +32,7 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
     bool mustDestroy = false;
     if (ImGui::BeginPopupContextItem())
     {
-        if (ImGui::Selectable("Create Empty")){
+        if (ImGui::MenuItem("Create Empty")){
             scene->CreateEntityWithParent(ent);
         }
         if (ImGui::MenuItem("Mesh")){
@@ -79,11 +79,11 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
             ImGui::EndMenu();
         }
         ImGui::Separator();
-        if (ImGui::Selectable("Delete")){
+        if (ImGui::MenuItem("Delete")){
             mustDestroy = true;
         }
         ImGui::Separator();
-        if (ImGui::Selectable("Create Prefab")){
+        if (ImGui::MenuItem("Create Prefab")){
             auto prefab = std::make_shared<nimo::Prefab>();
             prefab->SetData(scene, ent);
             nimo::AssetManager::CreateAssetFromMemory<nimo::Prefab>(entityName + ".nprefab", prefab);

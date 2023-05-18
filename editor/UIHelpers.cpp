@@ -14,46 +14,49 @@
 
 void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& modal)
 {
-    if (ImGui::BeginMenu("Create"))
+    if(nimo::FileHandling::IsDirectory(root))
     {
-        if(ImGui::MenuItem("Folder"))
+        if (ImGui::BeginMenu("Create"))
         {
-            nimo::FileHandling::CreateDiretory(root/"NewFolder");
-        }
-        ImGui::Separator();
-        if(ImGui::MenuItem("Script"))
-        {
-            NIMO_INFO("Creating new script asset in {}", root.string());
-            if(nimo::FileHandling::Copy("NewScript.lua", root/"NewScript.lua"))
+            if(ImGui::MenuItem("Folder"))
             {
-                nimo::AssetManager::Import(root/"NewScript.lua");
+                nimo::FileHandling::CreateDiretory(root/"NewFolder");
+            }
+            ImGui::Separator();
+            if(ImGui::MenuItem("Script"))
+            {
+                NIMO_INFO("Creating new script asset in {}", root.string());
+                if(nimo::FileHandling::Copy("NewScript.lua", root/"NewScript.lua"))
+                {
+                    nimo::AssetManager::Import(root/"NewScript.lua");
+                    nimo::AssetManager::WriteIndex();
+                }
+            }
+            if(ImGui::MenuItem("Material"))
+            {
+                NIMO_INFO("Creating new material asset in {}", root.string());
+                std::shared_ptr<nimo::Material> newMaterial = std::make_shared<nimo::Material>(nimo::AssetManager::Get<nimo::Shader>(nimo::AssetManager::GetAllExisting<nimo::Shader>()[0].id), std::vector<nimo::IMaterialProperty*>());
+                nimo::AssetManager::CreateAssetFromMemory<nimo::Material>((nimo::AssetManager::GetRelativePath(root)/"NewMaterial.nmat").lexically_normal().string(), newMaterial);
                 nimo::AssetManager::WriteIndex();
             }
-        }
-        if(ImGui::MenuItem("Material"))
-        {
-            NIMO_INFO("Creating new material asset in {}", root.string());
-            std::shared_ptr<nimo::Material> newMaterial = std::make_shared<nimo::Material>(nimo::AssetManager::Get<nimo::Shader>(nimo::AssetManager::GetAllExisting<nimo::Shader>()[0].id), std::vector<nimo::IMaterialProperty*>());
-            nimo::AssetManager::CreateAssetFromMemory<nimo::Material>((nimo::AssetManager::GetRelativePath(root)/"NewMaterial.nmat").lexically_normal().string(), newMaterial);
-            nimo::AssetManager::WriteIndex();
+            ImGui::Separator();
+            if(ImGui::MenuItem("Scene")){   
+                std::shared_ptr<nimo::Scene> createdScene = std::make_shared<nimo::Scene>();
+                {
+                    auto e = createdScene->CreateEntity("MainCamera");
+                    e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -5.0f};
+                    e.AddComponent<nimo::CameraComponent>();
+                }
+                if(!nimo::FileHandling::Exists(nimo::Project::GetActiveProject()->GetAssetsFolderPath()/"NewScene.nscene"));
+                {
+                    nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("NewScene.nscene", createdScene);
+                    nimo::AssetManager::WriteIndex();    
+                }
+            }
+            ImGui::EndMenu(); 
         }
         ImGui::Separator();
-        if(ImGui::MenuItem("Scene")){   
-            std::shared_ptr<nimo::Scene> createdScene = std::make_shared<nimo::Scene>();
-            {
-                auto e = createdScene->CreateEntity("MainCamera");
-                e.GetComponent<nimo::TransformComponent>().Translation = {0.0f, 0.0f, -5.0f};
-                e.AddComponent<nimo::CameraComponent>();
-            }
-            if(!nimo::FileHandling::Exists(nimo::Project::GetActiveProject()->GetAssetsFolderPath()/"NewScene.nscene"));
-            {
-                nimo::AssetManager::CreateAssetFromMemory<nimo::Scene>("NewScene.nscene", createdScene);
-                nimo::AssetManager::WriteIndex();    
-            }
-        }
-        ImGui::EndMenu(); 
     }
-    ImGui::Separator();
     if(ImGui::MenuItem("Show in Explorer")){
         ShellExecuteA(NULL, "explore", root.string().c_str(), NULL, NULL, SW_RESTORE);
     }
@@ -81,7 +84,7 @@ void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& mo
     if(ImGui::MenuItem("Import New Asset..."))
     {
         nfdpathset_t pathSet;
-        nfdresult_t result = NFD_OpenDialogMultiple( NULL, NULL, &pathSet );
+        nfdresult_t result = NFD_OpenDialogMultiple( NULL, nimo::FileHandling::IsDirectory(root) ? root.string().c_str() : root.parent_path().string().c_str(), &pathSet );
             
         if ( result == NFD_OKAY ) {
             size_t i;
