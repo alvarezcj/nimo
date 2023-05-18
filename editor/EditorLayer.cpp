@@ -13,6 +13,7 @@
 #include "core/Application.h"
 #include "scene/SceneManager.h"
 #include "scene/Prefab.h"
+#include "scripting/ScriptManager.h"
 
 void EditorLayer::OnAttach()
 {

@@ -3,10 +3,6 @@
 #include <memory>
 #include <filesystem>
 
-#include "assets/AssetManager.h"
-#include "scripting/ScriptManager.h"
-#include "scene/SceneManager.h"
-
 namespace nimo
 {
     class ProjectSerializer;
@@ -27,19 +23,7 @@ namespace nimo
     public:
         Project(const ProjectSettings& settings);
         ~Project();
-        inline static void SetActiveProject(std::shared_ptr<Project> p ) 
-        { 
-            if(activeProject){
-                SceneManager::SetActiveScene({});
-                AssetManager::Cleanup();
-                ScriptManager::Cleanup();
-            }
-            activeProject = p;
-            if(activeProject){
-                ScriptManager::Initialize();
-                AssetManager::Initialize();
-            }
-        }
+        static void SetActiveProject(std::shared_ptr<Project> p);
         inline static std::shared_ptr<Project> GetActiveProject(){ return activeProject;}
         inline ProjectSettings& GetSettings(){return settings;}
         inline static const std::filesystem::path GetAssetsFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().assetDirectory;}
