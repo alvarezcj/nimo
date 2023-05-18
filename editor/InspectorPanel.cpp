@@ -556,6 +556,7 @@ void InspectorPanel::OnRender()
                     {
                         if(ImGui::Selectable("Remove component"))
                         {
+                            nimo::ScriptManager::DestroyInstance(*instance);
                             instance = ent.GetComponent<nimo::ScriptComponent>().instances.erase(instance);
                             ImGui::EndPopup();
                             continue;

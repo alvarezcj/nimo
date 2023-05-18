@@ -15,6 +15,8 @@
 #include "lua_hooks/LuaApplication.h"
 #include "lua_hooks/LuaWindow.h"
 #include "lua_hooks/LuaSceneManagement.h"
+#include "events/EventManager.h"
+#include "events/ScriptManagerEvents.h"
 
 lua_State* nimo::ScriptManager::L = nullptr;
 
@@ -396,6 +398,7 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
         }
     }
     ScriptUtils::PrintLuaStack(L);
+    EventManager::Publish(ScriptInstanceCreatedEvent(owner, source));
     return res;
 }
 void nimo::ScriptManager::DestroyInstance(const ScriptInstance& instance)
@@ -403,6 +406,7 @@ void nimo::ScriptManager::DestroyInstance(const ScriptInstance& instance)
     OnDestroy(instance);
     NIMO_INFO("Unregistering script instance for {} with reference {}", instance.script->filepath, instance.stackReference);
     luaL_unref(L, LUA_REGISTRYINDEX, instance.stackReference);
+    EventManager::Publish(ScriptInstanceCreatedEvent(instance.owner, instance.script));
 }
 void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
 {
