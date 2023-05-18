@@ -553,3 +553,72 @@ int nimo_luafn_EntitySetActive(lua_State* L)
     }
     return 0;
 }
+int nimo_luafn_EntityGetForward(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 1);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        auto e = scene->GetEntity(*id);
+        auto vec = e.GetComponent<nimo::TransformComponent>().GetFront();
+        lua_newtable(L);
+        lua_pushnumber(L, vec.x);
+        lua_setfield(L, -2, "x");
+        lua_pushnumber(L, vec.y);
+        lua_setfield(L, -2, "y");
+        lua_pushnumber(L, vec.z);
+        lua_setfield(L, -2, "z");
+    }
+    return 1;
+}
+int nimo_luafn_EntityGetRight(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 1);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        auto e = scene->GetEntity(*id);
+        auto vec = e.GetComponent<nimo::TransformComponent>().GetRight();
+        lua_newtable(L);
+        lua_pushnumber(L, vec.x);
+        lua_setfield(L, -2, "x");
+        lua_pushnumber(L, vec.y);
+        lua_setfield(L, -2, "y");
+        lua_pushnumber(L, vec.z);
+        lua_setfield(L, -2, "z");
+    }
+    return 1;
+}
+int nimo_luafn_EntityGetUp(lua_State* L)
+{
+    // discard any extra arguments passed in
+    lua_settop(L, 1);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    lua_getfield(L, 1, "id");
+    lua_getfield(L, 1, "scene");
+    if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
+    {
+        nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
+        nimo::Scene* scene = (nimo::Scene*)lua_touserdata(L, -1);
+        auto e = scene->GetEntity(*id);
+        auto vec = e.GetComponent<nimo::TransformComponent>().GetUp();
+        lua_newtable(L);
+        lua_pushnumber(L, vec.x);
+        lua_setfield(L, -2, "x");
+        lua_pushnumber(L, vec.y);
+        lua_setfield(L, -2, "y");
+        lua_pushnumber(L, vec.z);
+        lua_setfield(L, -2, "z");
+    }
+    return 1;
+}

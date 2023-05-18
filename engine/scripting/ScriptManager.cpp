@@ -54,6 +54,12 @@ void nimo::ScriptManager::Initialize()
         lua_setfield(L, -2, "Instantiate");
         lua_pushcfunction(L, nimo_luafn_EntitySetActive);
         lua_setfield(L, -2, "SetActive");
+        lua_pushcfunction(L, nimo_luafn_EntityGetForward);
+        lua_setfield(L, -2, "GetForward");
+        lua_pushcfunction(L, nimo_luafn_EntityGetRight);
+        lua_setfield(L, -2, "GetRight");
+        lua_pushcfunction(L, nimo_luafn_EntityGetUp);
+        lua_setfield(L, -2, "GetUp");
         lua_setfield(L, -2, "Entity");
     }
     // Application
