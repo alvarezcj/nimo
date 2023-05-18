@@ -20,12 +20,12 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
     // Paint as tree or leaf
     if(ent.GetComponent<nimo::FamilyComponent>().Children.size() != 0) // Has children
     {
-        open = ImGui::TreeNodeEx((entityName + "##" + scene->id.str()).c_str(), node_flags);
+        open = ImGui::TreeNodeEx((entityName + "##" + entityIdString + "##" + scene->id.str()).c_str(), node_flags);
     }
     else // No children, paint as leaf node
     {
         node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf; // ImGuiTreeNodeFlags_Bullet
-        ImGui::TreeNodeEx((entityName + "##" + scene->id.str()).c_str(), node_flags);
+        ImGui::TreeNodeEx((entityName + "##" + entityIdString + "##" + scene->id.str()).c_str(), node_flags);
     }
 
     // Popup right click

@@ -15,7 +15,7 @@ nimo::Prefab::Prefab(const std::string& filepath)
 nimo::GUID nimo::Prefab::Create(std::shared_ptr<nimo::Scene> where)
 {
     auto ser = AssetSerializer<Scene>();
-    return ser.DeserializeEntity(where, source);
+    return ser.DeserializeEntity(where, source, GUID());
 }
 
 void nimo::Prefab::SetData(std::shared_ptr<nimo::Scene> where, Entity e)

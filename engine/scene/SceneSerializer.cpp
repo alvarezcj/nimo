@@ -213,7 +213,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     }
     return jentity;
 }
-nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source, GUID desiredId)
+nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source, GUID desiredId, GUID parentId)
 {
     GUID id;
     if(desiredId.valid())
@@ -244,10 +244,10 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         if(field.key() == "Family")
         {
             FamilyComponent& f = createdEntity.GetComponent<FamilyComponent>();
-            f.Parent = GUID(std::string(field.value()["Parent"]));
+            f.Parent = desiredId.valid() ? GUID(std::string(field.value()["Parent"])) : parentId;
             for(auto child : field.value()["Children"])
             {
-                f.Children.push_back(DeserializeEntity(scene, child, GUID(std::string(child["GUID"]))));
+                f.Children.push_back(DeserializeEntity(scene, child, desiredId.valid() ? GUID(std::string(child["GUID"])) : GUID(), id));
             }
         }
         if(field.key() == "Camera")
