@@ -12,7 +12,7 @@ void InspectorPanel::OnRender()
     auto metadata = nimo::AssetManager::GetMetadata(selectedItem);
     if(metadata.id.valid())
     {
-        ImGui::Image((ImTextureID)m_editor->assetIcons[metadata.type]->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((ImTextureID)(uint64_t)m_editor->assetIcons[metadata.type]->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::SameLine();
         ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
         ImGui::Text((metadata.filepath.string()).c_str());
@@ -196,7 +196,7 @@ void InspectorPanel::OnRender()
                 float offset = 20.0f;
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset/2.0f);
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset/2.0f);
-                ImGui::Image((ImTextureID)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
+                ImGui::Image((ImTextureID)(uint64_t)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
             }
             break;
         case nimo::AssetType::EnvironmentMap:
@@ -209,7 +209,7 @@ void InspectorPanel::OnRender()
                 float offset = 20.0f;
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset/2.0f);
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset/2.0f);
-                ImGui::Image((ImTextureID)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
+                ImGui::Image((ImTextureID)(uint64_t)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));
             }
             break;
         case nimo::AssetType::Audio:
@@ -229,7 +229,7 @@ void InspectorPanel::OnRender()
     {
         auto ent = scene->GetEntity(selectedItem);
         auto entityIdString = ent.GetComponent<nimo::IDComponent>().Id.str();
-        ImGui::Image((ImTextureID)m_editor->entityIcon->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((ImTextureID)(uint64_t)m_editor->entityIcon->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::SameLine();
         ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
         static bool activeValue;

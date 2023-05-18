@@ -14,6 +14,7 @@
 #include "scene/SceneManager.h"
 #include "scene/Prefab.h"
 #include "scripting/ScriptManager.h"
+#include "input/Input.h"
 
 void EditorLayer::OnAttach()
 {
@@ -218,7 +219,7 @@ void EditorLayer::OnAttach()
                     }
                 }
                 ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
-                if (ImGui::MenuItem("Save"))
+                if (ImGui::MenuItem("Save", "Ctrl+S"))
                 {
                     if(lastModifiedScene.valid())
                     {
@@ -369,6 +370,14 @@ void EditorLayer::OnAttach()
                 ImGui::CloseCurrentPopup(); 
             }
             ImGui::EndPopup();
+        }
+
+        if(nimo::Input::GetKey(nimo::KeyCode::LeftControl) && nimo::Input::GetKeyPressed(nimo::KeyCode::S))
+        {
+            if(lastModifiedScene.valid())
+            {
+                nimo::AssetManager::Serialize<nimo::Scene>(lastModifiedScene);
+            }
         }
         
         ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);

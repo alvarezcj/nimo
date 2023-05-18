@@ -86,7 +86,7 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
         ImGui::EndDragDropTarget();
     }
     ImGui::SameLine();
-    ImGui::Image((ImTextureID)folderIcon->GetInternalId(), ImVec2(28,28), ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::Image((ImTextureID)(uint64_t)folderIcon->GetInternalId(), ImVec2(28,28), ImVec2(0, 1), ImVec2(1, 0));
     ImGui::SameLine();
     ImGui::Text(path.filename().string().c_str());
 
@@ -142,14 +142,14 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                         auto it = AssetExplorerPanel::mapExtensionIcon.find(entry.path().extension().string());
                         if (it != AssetExplorerPanel::mapExtensionIcon.end())
                         {
-                            ImGui::Image((ImTextureID)it->second->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
+                            ImGui::Image((ImTextureID)(uint64_t)it->second->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
                         }
                         else {
-                            ImGui::Image((ImTextureID)fileIcon->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
+                            ImGui::Image((ImTextureID)(uint64_t)fileIcon->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
                         }
                     }
                     else
-                        ImGui::Image((ImTextureID)fileIcon->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
+                        ImGui::Image((ImTextureID)(uint64_t)fileIcon->GetInternalId(), ImVec2(28, 28), ImVec2(0, 1), ImVec2(1, 0));
                     ImGui::SameLine();
                     ImGui::Text(entry.path().filename().string().c_str());
                 }
