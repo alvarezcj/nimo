@@ -510,7 +510,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
                 auto prop = new nimo::MaterialPropertyTexture();
                 prop->name = "texture_arm1";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
-                prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/wooden_crate_01_arm_4k.jpg"));
+                prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Crate/textures/wooden_crate_01_arm_4k.jpg"));
                 prop->SetValue(3);
                 props.push_back(prop);
             }
@@ -602,7 +602,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
                 text.Color = {1.000f, 0.800f, 0.000f, 0.700f};
             }
             {
-                nimo::Entity e = createdScene->CreateEntity("Instuctions 1");
+                nimo::Entity e = createdScene->CreateEntity("Instructions 1");
                 e.GetComponent<nimo::TransformComponent>().Translation = {-900.0f, -430.0f, 0.0f};
                 e.GetComponent<nimo::TransformComponent>().Scale = {0.7f, -0.7f, 0.7f};
                 auto& text = e.AddComponent<nimo::TextRendererComponent>();
@@ -610,7 +610,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
                 text.text = "Right click to look around";
             }
             {
-                nimo::Entity e = createdScene->CreateEntity("Instuctions 2");
+                nimo::Entity e = createdScene->CreateEntity("Instructions 2");
                 e.GetComponent<nimo::TransformComponent>().Translation = {-900.0f, -500.0f, 0.0f};
                 e.GetComponent<nimo::TransformComponent>().Scale = {0.7f, -0.7f, 0.7f};
                 auto& text = e.AddComponent<nimo::TextRendererComponent>();
