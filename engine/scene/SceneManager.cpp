@@ -2,6 +2,8 @@
 #include "assets/AssetManager.h"
 #include "scene/SceneSerializer.h"
 #include "scripting/ScriptManager.h"
+#include "events/EventManager.h"
+#include "events/SceneManagerEvents.h"
 
 std::shared_ptr<nimo::Scene> nimo::SceneManager::activeScene = {};
 std::vector<std::string> nimo::SceneManager::loadSceneRequests = {};
@@ -27,6 +29,7 @@ void nimo::SceneManager::LoadScene(const std::string& name)
 void nimo::SceneManager::LoadScene(GUID id)
 {
     auto loadedScene = AssetManager::Get<Scene>(id);
+    EventManager::Publish(SceneLoadedEvent(loadedScene));
     SetActiveScene(loadedScene);
     AssetManager::UnloadUnused();
 }
