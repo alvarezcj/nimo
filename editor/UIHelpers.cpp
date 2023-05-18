@@ -80,6 +80,11 @@ void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& mo
     if(ImGui::MenuItem("Rename")){
         modal.Open(root);
     }
+    if(ImGui::MenuItem("Duplicate")){
+        std::filesystem::path dest = (root.parent_path()/root.stem()).string() + "_copy" + (root.has_extension() ? root.extension().string() : "");
+        nimo::FileHandling::Copy(root, dest);
+        nimo::FileHandling::IsDirectory(dest) ? nimo::AssetManager::ImportDirectory(dest) : nimo::AssetManager::Import(dest);
+    }
     ImGui::Separator();
     if(ImGui::MenuItem("Import New Asset..."))
     {
@@ -116,8 +121,10 @@ void ChangeNameModalWindow::Show()
         ImGui::Spacing();
         ImGui::Separator();
 
+
         ImGui::InputTextWithHint("##CreateProject##Name", "New Name", &newName);
-        ImGui::SetItemDefaultFocus();
+        if (ImGui::IsWindowFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
+            ImGui::SetKeyboardFocusHere(-1);
 
         if (ImGui::Button("OK", ImVec2(120, 0))) 
         {
