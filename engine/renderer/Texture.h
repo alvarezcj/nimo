@@ -4,11 +4,28 @@
 #include "assets/Asset.h"
 
 namespace nimo{
+enum class TextureFiltering : unsigned char
+{
+    Nearest = 0,
+    Average
+};
+enum class TextureWrapping : unsigned char
+{
+    Repeat = 0,
+    RepeatMirrored,
+    Clamp,
+};
+struct TextureSpecification
+{
+    bool generateMipmaps = false;
+    TextureFiltering filtering = TextureFiltering::Average;
+    TextureWrapping wrapping = TextureWrapping::Repeat;
+};
 class Texture : public Asset
 {
 public:
-    Texture(unsigned int width, unsigned int height, void* data, unsigned int channels = 4);
-    Texture(const std::string& path);
+    Texture(unsigned int width, unsigned int height, void* data, unsigned int channels = 4, const TextureSpecification& spec = {});
+    Texture(const std::string& path, bool flip = true, const TextureSpecification& spec = {});
     ~Texture();
     void bind(unsigned int slot);
     unsigned int GetInternalId() {return m_id;}

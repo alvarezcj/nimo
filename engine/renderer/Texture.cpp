@@ -4,7 +4,7 @@
 #include "core/Log.h"
 #include "stb_image.h"
     
-nimo::Texture::Texture(unsigned int width, unsigned int height, void* data, unsigned int channels)
+nimo::Texture::Texture(unsigned int width, unsigned int height, void* data, unsigned int channels, const TextureSpecification& spec)
     : m_width(width)
     , m_height(height)
 {
@@ -50,12 +50,12 @@ nimo::Texture::Texture(unsigned int width, unsigned int height, void* data, unsi
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
-nimo::Texture::Texture(const std::string& path)
+nimo::Texture::Texture(const std::string& path, bool flip, const TextureSpecification& spec)
     : path(path)
 {
     NIMO_DEBUG("nimo::Texture::Texture({})", path);
     int width, height, channels;
-    stbi_set_flip_vertically_on_load(1);
+    stbi_set_flip_vertically_on_load(flip);
     stbi_uc* data = nullptr;
     data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         
@@ -98,24 +98,54 @@ nimo::Texture::Texture(const std::string& path)
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
         glTextureStorage2D(m_id, 1, internalFormat, m_width, m_height);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        if(spec.generateMipmaps)
+            glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        switch (spec.filtering)
+        {
+        case TextureFiltering::Average :
+            glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            break;
+        case TextureFiltering::Nearest :
+            glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            break;
+        
+        default:
+            break;
+        }
+        switch (spec.wrapping)
+        {
+        case TextureWrapping::Repeat:
+            glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            break;
+        case TextureWrapping::RepeatMirrored:
+            glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+            glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+            break;
+        case TextureWrapping::Clamp:
+            glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            break;
+        
+        default:
+            break;
+        }
 
-        glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
         stbi_image_free(data);
+        NIMO_DEBUG("nimo::Texture::Texture({}) - Id: {}", path, m_id);
     }
 }
 
 nimo::Texture::~Texture()
 {
-    NIMO_DEBUG("nimo::Texture::~Texture({})", path);
+    NIMO_DEBUG("nimo::Texture::~Texture({}) - Id: {}", path, m_id);
     glDeleteTextures(1, &m_id);
 }
 

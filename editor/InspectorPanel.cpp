@@ -5,12 +5,15 @@
 #include "misc/cpp/imgui_stdlib.h"
 #include "scripting/ScriptManager.h"
 #include "scene/Prefab.h"
-#include "assets/AssetSettings.h"
 
+void InspectorPanel::SetViewItem(nimo::GUID id)
+{
+    selectedItem=id;
+}
 void InspectorPanel::OnRender()
 {
     if(!selectedItem.valid()) return;
-    auto metadata = nimo::AssetManager::GetMetadata(selectedItem);
+    auto& metadata = nimo::AssetManager::GetMetadata(selectedItem);
     if(metadata.id.valid())
     {
         ImGui::Image((ImTextureID)(uint64_t)m_editor->assetIcons[metadata.type]->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
@@ -192,15 +195,79 @@ void InspectorPanel::OnRender()
             {
                 std::shared_ptr<nimo::Texture> textureAsset = nimo::AssetManager::Get<nimo::Texture>(metadata.id);
                 auto settings = std::static_pointer_cast<nimo::AssetSettings<nimo::Texture>>(metadata.serializerSettings);
+                ImGui::TextDisabled("Information");
+                ImGui::Text("Size: %dx%d", textureAsset->Width(), textureAsset->Height());
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                
                 ImGui::TextDisabled("Settings");
-                if(ImGui::Checkbox("GenerateMipMaps", &settings->generateMipMaps))
+                ImGui::Checkbox("GenerateMipmaps", &settings->generateMipMaps);
+                ImGui::Checkbox("Flip vertically", &settings->flip);
+                const char* filteringComboPreview = NULL;
+                switch(settings->filtering)
+                {
+                    case nimo::TextureFiltering::Average:
+                        filteringComboPreview = "Average";
+                        break;
+                    case nimo::TextureFiltering::Nearest:
+                        filteringComboPreview = "Nearest";
+                        break;
+                }
+
+                if(ImGui::BeginCombo("Filtering", filteringComboPreview))
+                {
+                    if(ImGui::Selectable("Average"))
+                    {
+                        settings->filtering = nimo::TextureFiltering::Average;
+                    }
+                    if(ImGui::Selectable("Nearest"))
+                    {
+                        settings->filtering = nimo::TextureFiltering::Nearest;
+                    }
+                    ImGui::EndCombo();
+                }
+                const char* wrappingComboPreview = NULL;
+                switch(settings->wrapping)
+                {
+                    case nimo::TextureWrapping::Repeat:
+                        wrappingComboPreview = "Repeat";
+                        break;
+                    case nimo::TextureWrapping::RepeatMirrored:
+                        wrappingComboPreview = "Repeat Mirrored";
+                        break;
+                    case nimo::TextureWrapping::Clamp:
+                        wrappingComboPreview = "Clamp";
+                        break;
+                }
+                if(ImGui::BeginCombo("Wrapping", wrappingComboPreview))
+                {
+                    if(ImGui::Selectable("Repeat"))
+                    {
+                        settings->wrapping = nimo::TextureWrapping::Repeat;
+                    }
+                    if(ImGui::Selectable("Repeat Mirrored"))
+                    {
+                        settings->wrapping = nimo::TextureWrapping::RepeatMirrored;
+                    }
+                    if(ImGui::Selectable("Clamp"))
+                    {
+                        settings->wrapping = nimo::TextureWrapping::Clamp;
+                    }
+                    ImGui::EndCombo();
+                }
+                if(ImGui::Button("Apply"))
                 {
                     nimo::AssetManager::WriteIndex();
                 }
-                ImGui::Text("Size: %dx%d", textureAsset->Width(), textureAsset->Height());
+                ImGui::SameLine();
+                ImGui::TextDisabled("Changes will take place after reloading project");
+
                 ImGui::Spacing();
-                ImGui::Text("Preview");
-                float offset = 20.0f;
+                ImGui::Separator();
+                ImGui::Spacing();
+                ImGui::TextDisabled("Preview");
+                float offset = 0.0f;
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset/2.0f);
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset/2.0f);
                 ImGui::Image((ImTextureID)(uint64_t)textureAsset->GetInternalId(), ImVec2(ImGui::GetContentRegionAvailWidth() - offset, (ImGui::GetContentRegionAvailWidth()- offset)*(float)textureAsset->Height()/(float)textureAsset->Width()), ImVec2(0, 1), ImVec2(1, 0));

@@ -10,6 +10,7 @@
 #include "scripting/Script.h"
 #include "scene/Prefab.h"
 #include "audio/AudioSource.h"
+#include "AssetSettings.h"
 
 #include <fstream>
 
@@ -20,7 +21,12 @@ std::shared_ptr<nimo::Texture> nimo::AssetSerializer<nimo::Texture>::Deserialize
     std::filesystem::path p = ".";
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
-    return std::make_shared<Texture>((p/metadata.filepath).string());
+    auto settings = std::static_pointer_cast<AssetSettings<Texture>>(metadata.serializerSettings);
+    TextureSpecification spec;
+    spec.generateMipmaps = settings->generateMipMaps;
+    spec.filtering = settings->filtering;
+    spec.wrapping = settings->wrapping;
+    return std::make_shared<Texture>((p/metadata.filepath).string(), settings->flip, spec);
 }
 
 //EnvironmentMap

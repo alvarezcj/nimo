@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "json.hpp"
+#include "renderer/Texture.h"
 
 namespace nimo
 {
@@ -12,6 +13,9 @@ namespace nimo
     class Texture;
     template<> struct AssetSettings<Texture> : public IAssetSettings{
         bool generateMipMaps = true;
+        bool flip = true;
+        TextureFiltering filtering = TextureFiltering::Average;
+        TextureWrapping wrapping = TextureWrapping::Repeat;
     };
     class Shader;
     template<> struct AssetSettings<Shader> : public IAssetSettings{

@@ -3,12 +3,15 @@
 
 nlohmann::json nimo::AssetSettingsSerializer<nimo::Texture>::Serialize(std::shared_ptr<nimo::AssetSettings<Texture>> settings)
 {
-    return {{"GenerateMipMaps", settings->generateMipMaps}};
+    return {{"GenerateMipMaps", settings->generateMipMaps}, {"Flip", settings->flip}, {"Wrapping", (int)settings->wrapping}, {"Filtering", (int)settings->filtering}};
 }
 std::shared_ptr<nimo::AssetSettings<nimo::Texture>> nimo::AssetSettingsSerializer<nimo::Texture>::Deserialize(const nlohmann::json& data)
 {
     auto settings = std::make_shared<nimo::AssetSettings<nimo::Texture>>();
     settings->generateMipMaps = data["GenerateMipMaps"];
+    settings->flip = data["Flip"];
+    settings->filtering = (TextureFiltering)(int)data["Filtering"];
+    settings->wrapping = (TextureWrapping)(int)data["Wrapping"];
     return settings;
 }
 
