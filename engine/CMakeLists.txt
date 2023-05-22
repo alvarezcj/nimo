@@ -11,6 +11,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/core/FileHandling.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetIndex.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetManager.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetSerializer.cpp 
+${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetSettingsSerializer.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/assets/AssetFileExtensions.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/stb_image.cpp 
 ${CMAKE_CURRENT_SOURCE_DIR}/renderer/Renderer.cpp 

@@ -1,6 +1,6 @@
 #include "AssetManager.h"
 #include "AssetFileExtensions.h"
-#include "json.hpp"
+#include "AssetSettingsSerializer.h"
 #include <fstream>
 #include <iostream>
 #include "core/Log.h"
@@ -34,6 +34,71 @@ void nimo::AssetManager::LoadAssetIndex(const std::string& filename)
             metadata.id = GUID(std::string(o["guid"]));
             metadata.filepath = std::string(o["filepath"]);
             metadata.type = AssetTypeFromString(std::string(o["type"]));
+            switch (metadata.type)
+            {
+            case AssetType::Texture:
+                {
+                    AssetSettingsSerializer<Texture> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Prefab:
+                {
+                    AssetSettingsSerializer<Prefab> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::EnvironmentMap:
+                {
+                    AssetSettingsSerializer<EnvironmentMap> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Shader:
+                {
+                    AssetSettingsSerializer<Shader> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Mesh:
+                {
+                    AssetSettingsSerializer<Mesh> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Material:
+                {
+                    AssetSettingsSerializer<Material> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Script:
+                {
+                    AssetSettingsSerializer<Script> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Scene:
+                {
+                    AssetSettingsSerializer<Scene> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Audio:
+                {
+                    AssetSettingsSerializer<AudioSource> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            case AssetType::Font:
+                {
+                    AssetSettingsSerializer<Font> settingsSerializer;
+                    metadata.serializerSettings = std::static_pointer_cast<IAssetSettings>(settingsSerializer.Deserialize(o["settings"]));
+                }
+                break;
+            default:
+                break;
+            }
             NIMO_DEBUG("\t- {}", o.dump());
             if(metadata.id.valid() && FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/metadata.filepath))
                 index[metadata.id] = metadata;
@@ -53,7 +118,73 @@ void nimo::AssetManager::WriteIndex()
     {
         if(!a.second.id.valid() || !FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/a.second.filepath))
             continue;
-        assetsjson[i] = {{"guid",a.second.id.str()}, {"filepath",a.second.filepath.lexically_normal().string()}, {"type", AssetTypeToString(a.second.type)}};
+        nlohmann::json settings;
+        switch (a.second.type)
+        {
+        case AssetType::Texture:
+            {
+                AssetSettingsSerializer<Texture> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Texture>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Prefab:
+            {
+                AssetSettingsSerializer<Prefab> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Prefab>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::EnvironmentMap:
+            {
+                AssetSettingsSerializer<EnvironmentMap> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<EnvironmentMap>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Shader:
+            {
+                AssetSettingsSerializer<Shader> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Shader>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Mesh:
+            {
+                AssetSettingsSerializer<Mesh> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Mesh>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Material:
+            {
+                AssetSettingsSerializer<Material> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Material>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Script:
+            {
+                AssetSettingsSerializer<Script> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Script>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Scene:
+            {
+                AssetSettingsSerializer<Scene> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Scene>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Audio:
+            {
+                AssetSettingsSerializer<AudioSource> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<AudioSource>>(a.second.serializerSettings));
+            }
+            break;
+        case AssetType::Font:
+            {
+                AssetSettingsSerializer<Font> settingsSerializer;
+                settings = settingsSerializer.Serialize(std::static_pointer_cast<AssetSettings<Font>>(a.second.serializerSettings));
+            }
+            break;
+        default:
+            break;
+        }
+        assetsjson[i] = {{"guid",a.second.id.str()}, {"filepath",a.second.filepath.lexically_normal().string()}, {"type", AssetTypeToString(a.second.type)}, {"settings", settings}};
         i++;
     }
     j["assets"] = assetsjson;
@@ -146,6 +277,7 @@ nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
     metadata.id = AssetId::Create();
     metadata.filepath = path;
     metadata.type = type;
+    metadata.serializerSettings = CreateAssetSettings(type);
     index[metadata.id] = metadata;
 
     return metadata.id;
@@ -196,5 +328,76 @@ void nimo::AssetManager::UnloadUnused()
         UnloadUnused();
     }
 }
+
+std::shared_ptr<nimo::IAssetSettings> nimo::AssetManager::CreateAssetSettings(AssetType type)
+{
+    switch (type)
+    {
+    case AssetType::Texture:
+        {
+            AssetSettingsSerializer<Texture> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Texture>>());
+        }
+        break;
+    case AssetType::Prefab:
+        {
+            AssetSettingsSerializer<Prefab> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Prefab>>());
+        }
+        break;
+    case AssetType::EnvironmentMap:
+        {
+            AssetSettingsSerializer<EnvironmentMap> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<EnvironmentMap>>());
+        }
+        break;
+    case AssetType::Shader:
+        {
+            AssetSettingsSerializer<Shader> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Shader>>());
+        }
+        break;
+    case AssetType::Mesh:
+        {
+            AssetSettingsSerializer<Mesh> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Mesh>>());
+        }
+        break;
+    case AssetType::Material:
+        {
+            AssetSettingsSerializer<Material> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Material>>());
+        }
+        break;
+    case AssetType::Script:
+        {
+            AssetSettingsSerializer<Script> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Script>>());
+        }
+        break;
+    case AssetType::Scene:
+        {
+            AssetSettingsSerializer<Scene> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Scene>>());
+        }
+        break;
+    case AssetType::Audio:
+        {
+            AssetSettingsSerializer<AudioSource> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<AudioSource>>());
+        }
+        break;
+    case AssetType::Font:
+        {
+            AssetSettingsSerializer<Font> settingsSerializer;
+            return std::static_pointer_cast<IAssetSettings>(std::make_shared<AssetSettings<Font>>());
+        }
+        break;
+    default:
+        break;
+    }
+    
+}
+
 
 

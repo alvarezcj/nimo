@@ -24,6 +24,7 @@ public:
 			metadata.id = GUID::Create();
 			metadata.filepath = filename;
 			metadata.type = T::StaticType();
+    		metadata.serializerSettings = CreateAssetSettings(T::StaticType());
 			index[metadata.id] = metadata;
 		}
 		AssetSerializer<T> assetSerializer;
@@ -42,6 +43,7 @@ public:
 			metadata.id = GUID::Create();
 			metadata.filepath = filename;
 			metadata.type = T::StaticType();
+    		metadata.serializerSettings = CreateAssetSettings(T::StaticType());
 			index[metadata.id] = metadata;
 		}
 		AssetSerializer<T> assetSerializer;
@@ -131,6 +133,7 @@ public:
 
 private:
 	static AssetMetadata& GetMetadataRef(AssetId handle);
+	static std::shared_ptr<IAssetSettings> CreateAssetSettings(AssetType type);
 
 	static AssetIndex index;
 	static std::unordered_map<std::type_index, std::unordered_map<AssetId, std::shared_ptr<Asset>>> m_loadedAssets;

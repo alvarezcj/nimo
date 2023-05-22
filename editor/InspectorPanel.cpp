@@ -5,6 +5,7 @@
 #include "misc/cpp/imgui_stdlib.h"
 #include "scripting/ScriptManager.h"
 #include "scene/Prefab.h"
+#include "assets/AssetSettings.h"
 
 void InspectorPanel::OnRender()
 {
@@ -190,6 +191,12 @@ void InspectorPanel::OnRender()
             // Show image, width, height,...
             {
                 std::shared_ptr<nimo::Texture> textureAsset = nimo::AssetManager::Get<nimo::Texture>(metadata.id);
+                auto settings = std::static_pointer_cast<nimo::AssetSettings<nimo::Texture>>(metadata.serializerSettings);
+                ImGui::TextDisabled("Settings");
+                if(ImGui::Checkbox("GenerateMipMaps", &settings->generateMipMaps))
+                {
+                    nimo::AssetManager::WriteIndex();
+                }
                 ImGui::Text("Size: %dx%d", textureAsset->Width(), textureAsset->Height());
                 ImGui::Spacing();
                 ImGui::Text("Preview");
