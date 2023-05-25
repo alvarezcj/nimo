@@ -116,7 +116,6 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path, unsigned int rende
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, renderResolution, renderResolution);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
     // pbr: setup cubemap to render to and attach to framebuffer
-    unsigned int m_cubemap;
     glGenTextures(1, &m_cubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
     for (unsigned int i = 0; i < 6; ++i)
