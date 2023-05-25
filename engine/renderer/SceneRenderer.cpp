@@ -156,7 +156,7 @@ nimo::SceneRenderer::SceneRenderer()
     m_shaderLightingPass = nimo::AssetManager::Get<Shader>("Shaders/deferred_shading_pbr.nshader");
     //Cubemap background shader
     m_backgroundPass = nimo::AssetManager::Get<Shader>("Shaders/background.nshader");
-    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("Environment/secluded_beach_4k.hdr");
+    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("Environment/old_room_4k.hdr");
     //Tone mapping shaderm_backgroundPass
     m_hdrToneMappingPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_tone_mapping.nshader");
     //Bloom
@@ -346,6 +346,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         m_shaderLightingPass->set("lights[" + std::to_string(i) + "].Active", false);
     }
     m_shaderLightingPass->set("viewPos", viewPosition);
+    m_shaderLightingPass->set("irradianceMap", 8);
+    m_environmentMap->bindIrradiance(8);
     m_quadMesh->draw();
     lightingFrameTimer.Stop();
 

@@ -10,6 +10,7 @@ public:
     EnvironmentMap(const std::string& path, unsigned int renderResolution);
     ~EnvironmentMap();
     void bind(unsigned int slot);
+    void bindIrradiance(unsigned int slot);
     unsigned int GetInternalId() {return m_id;}
 
     AssetType Type() const { return AssetType::EnvironmentMap; }
@@ -21,6 +22,7 @@ public:
 private:
     unsigned int m_id;
     unsigned int m_cubemap;
+    unsigned int m_irradianceMap;
     unsigned int m_width;
     unsigned int m_height;
 };

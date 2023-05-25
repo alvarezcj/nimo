@@ -151,8 +151,8 @@ nimo::Texture::~Texture()
 
 void nimo::Texture::bind(unsigned int slot)
 {
-    glBindTextureUnit(slot, m_id);
-    // glActiveTexture(GL_TEXTURE0 + slot);
-    // glBindTexture(GL_TEXTURE_2D, m_id);
+    // glBindTextureUnit(slot, m_id);
+    glActiveTexture(GL_TEXTURE0 + slot);
+    glBindTexture(GL_TEXTURE_2D, m_id);
     // glBindTextureUnit(slot, m_id);
 }
