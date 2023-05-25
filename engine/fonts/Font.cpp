@@ -3,7 +3,7 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
-nimo::Font::Font(const std::string& file)
+nimo::Font::Font(const std::string& file, unsigned int pixelSize)
 {
     NIMO_DEBUG("nimo::Font::Font({})", file );
     FT_Library  library;
@@ -17,7 +17,7 @@ nimo::Font::Font(const std::string& file)
         NIMO_ERROR("Error loading font file: {}", file );
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 128);
+    FT_Set_Pixel_Sizes(face, 0, pixelSize);
     for(unsigned char c = 0; c < 128; c++)
     {
         error = FT_Load_Char( face, c, FT_LOAD_RENDER);

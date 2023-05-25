@@ -35,20 +35,22 @@ std::shared_ptr<nimo::AssetSettings<nimo::Material>> nimo::AssetSettingsSerializ
 }
 nlohmann::json nimo::AssetSettingsSerializer<nimo::Mesh>::Serialize(std::shared_ptr<nimo::AssetSettings<Mesh>> settings)
 {
-    return {};
+    return {{"MergeMeshesByMaterial", settings->mergeMeshesByMaterial}};
 }
 std::shared_ptr<nimo::AssetSettings<nimo::Mesh>> nimo::AssetSettingsSerializer<nimo::Mesh>::Deserialize(const nlohmann::json& data)
 {
     auto settings = std::make_shared<nimo::AssetSettings<nimo::Mesh>>();
+    settings->mergeMeshesByMaterial = data["MergeMeshesByMaterial"];
     return settings;
 }
 nlohmann::json nimo::AssetSettingsSerializer<nimo::EnvironmentMap>::Serialize(std::shared_ptr<nimo::AssetSettings<EnvironmentMap>> settings)
 {
-    return {};
+    return {{"RenderingResolution", settings->renderingResolution}};
 }
 std::shared_ptr<nimo::AssetSettings<nimo::EnvironmentMap>> nimo::AssetSettingsSerializer<nimo::EnvironmentMap>::Deserialize(const nlohmann::json& data)
 {
     auto settings = std::make_shared<nimo::AssetSettings<nimo::EnvironmentMap>>();
+    settings->renderingResolution = data["RenderingResolution"];
     return settings;
 }
 nlohmann::json nimo::AssetSettingsSerializer<nimo::Script>::Serialize(std::shared_ptr<nimo::AssetSettings<Script>> settings)
@@ -80,11 +82,12 @@ std::shared_ptr<nimo::AssetSettings<nimo::AudioSource>> nimo::AssetSettingsSeria
 }
 nlohmann::json nimo::AssetSettingsSerializer<nimo::Font>::Serialize(std::shared_ptr<nimo::AssetSettings<Font>> settings)
 {
-    return {};
+    return {{"PixelSize", settings->pixelSize}};
 }
 std::shared_ptr<nimo::AssetSettings<nimo::Font>> nimo::AssetSettingsSerializer<nimo::Font>::Deserialize(const nlohmann::json& data)
 {
     auto settings = std::make_shared<nimo::AssetSettings<nimo::Font>>();
+    settings->pixelSize = data["PixelSize"];
     return settings;
 }
 nlohmann::json nimo::AssetSettingsSerializer<nimo::Scene>::Serialize(std::shared_ptr<nimo::AssetSettings<Scene>> settings)

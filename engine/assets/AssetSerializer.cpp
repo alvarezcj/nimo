@@ -36,7 +36,8 @@ std::shared_ptr<nimo::EnvironmentMap> nimo::AssetSerializer<nimo::EnvironmentMap
     std::filesystem::path p = ".";
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
-    return std::make_shared<EnvironmentMap>((p/metadata.filepath).string());
+    auto settings = std::static_pointer_cast<AssetSettings<EnvironmentMap>>(metadata.serializerSettings);
+    return std::make_shared<EnvironmentMap>((p/metadata.filepath).string(), settings->renderingResolution);
 }
 
 //Shader
@@ -127,7 +128,8 @@ std::shared_ptr<nimo::Mesh> nimo::AssetSerializer<nimo::Mesh>::Deserialize(const
     std::filesystem::path p = ".";
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
-    return std::make_shared<Mesh>((p/metadata.filepath).string());
+    auto settings = std::static_pointer_cast<AssetSettings<Mesh>>(metadata.serializerSettings);
+    return std::make_shared<Mesh>((p/metadata.filepath).string(), settings->mergeMeshesByMaterial);
 }
 
 // Script
@@ -171,5 +173,6 @@ std::shared_ptr<nimo::Font> nimo::AssetSerializer<nimo::Font>::Deserialize(const
     std::filesystem::path p = ".";
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
-    return std::make_shared<Font>((p/metadata.filepath).string());
+    auto settings = std::static_pointer_cast<AssetSettings<Font>>(metadata.serializerSettings);
+    return std::make_shared<Font>((p/metadata.filepath).string(), settings->pixelSize);
 }

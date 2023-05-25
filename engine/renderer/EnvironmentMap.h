@@ -7,7 +7,7 @@ namespace nimo{
 class EnvironmentMap : public Asset
 {
 public:
-    EnvironmentMap(const std::string& path);
+    EnvironmentMap(const std::string& path, unsigned int renderResolution);
     ~EnvironmentMap();
     void bind(unsigned int slot);
     unsigned int GetInternalId() {return m_id;}

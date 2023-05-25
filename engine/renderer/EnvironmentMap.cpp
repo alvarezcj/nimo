@@ -81,7 +81,7 @@ void renderCube()
     glBindVertexArray(0);
 }
 
-nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
+nimo::EnvironmentMap::EnvironmentMap(const std::string& path, unsigned int renderResolution)
 {
     NIMO_DEBUG("nimo::EnvironmentMap::EnvironmentMap({})",path);
     stbi_set_flip_vertically_on_load(true);
@@ -113,7 +113,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 1024);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, renderResolution, renderResolution);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
     // pbr: setup cubemap to render to and attach to framebuffer
     unsigned int m_cubemap;
@@ -121,7 +121,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 1024, 1024, 0, GL_RGB, GL_FLOAT, 0);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, renderResolution, renderResolution, 0, GL_RGB, GL_FLOAT, 0);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -149,7 +149,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    glViewport(0, 0, 1024, 1024); // don't forget to configure the viewport to the capture dimensions.
+    glViewport(0, 0, renderResolution, renderResolution); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {

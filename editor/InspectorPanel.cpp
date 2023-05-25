@@ -142,7 +142,10 @@ void InspectorPanel::OnRender()
             // Show vertices, submeshes, indices,...
             {
                 std::shared_ptr<nimo::Mesh> meshAsset = nimo::AssetManager::Get<nimo::Mesh>(metadata.id);
+                auto settings = std::static_pointer_cast<nimo::AssetSettings<nimo::Mesh>>(metadata.serializerSettings);
+                ImGui::TextDisabled("Information");
                 ImGui::Text("Submeshes: %d", meshAsset->submeshes.size());
+                ImGui::Spacing();
                 ImGui::Separator();
                 for(auto submesh : meshAsset->submeshes)
                 {
@@ -150,6 +153,18 @@ void InspectorPanel::OnRender()
                     ImGui::TextDisabled("\tVertices: %d", submesh->m_vertices.size());
                     ImGui::TextDisabled("\tIndices: %d", submesh->m_indices.size());
                 }
+                ImGui::Spacing();
+                ImGui::Separator();
+                
+                ImGui::TextDisabled("Settings");
+                ImGui::Checkbox("Merge meshes with shared material", &settings->mergeMeshesByMaterial);
+                if(ImGui::Button("Apply"))
+                {
+                    nimo::AssetManager::WriteIndex();
+                }
+                ImGui::SameLine();
+                ImGui::TextDisabled("Changes will take place after reloading project");
+                ImGui::Spacing();
                 ImGui::Separator();
             }
             break;
@@ -202,7 +217,7 @@ void InspectorPanel::OnRender()
                 ImGui::Spacing();
                 
                 ImGui::TextDisabled("Settings");
-                ImGui::Checkbox("GenerateMipmaps", &settings->generateMipMaps);
+                ImGui::Checkbox("Generate Mipmaps", &settings->generateMipMaps);
                 ImGui::Checkbox("Flip vertically", &settings->flip);
                 const char* filteringComboPreview = NULL;
                 switch(settings->filtering)
@@ -277,9 +292,42 @@ void InspectorPanel::OnRender()
             // Show nothing
             {
                 std::shared_ptr<nimo::EnvironmentMap> textureAsset = nimo::AssetManager::Get<nimo::EnvironmentMap>(metadata.id);
+                auto settings = std::static_pointer_cast<nimo::AssetSettings<nimo::EnvironmentMap>>(metadata.serializerSettings);
+                ImGui::TextDisabled("Information");
                 ImGui::Text("Size: %dx%d", textureAsset->Width(), textureAsset->Height());
                 ImGui::Spacing();
-                ImGui::Text("Preview");
+                ImGui::Separator();
+                ImGui::Spacing();
+                ImGui::TextDisabled("Settings");
+                if(ImGui::BeginCombo("Render resolution", std::to_string(settings->renderingResolution).c_str()))
+                {
+                    if(ImGui::Selectable("128"))
+                    {
+                        settings->renderingResolution = 128;
+                    }
+                    if(ImGui::Selectable("256"))
+                    {
+                        settings->renderingResolution = 256;
+                    }
+                    if(ImGui::Selectable("512"))
+                    {
+                        settings->renderingResolution = 512;
+                    }
+                    if(ImGui::Selectable("1024"))
+                    {
+                        settings->renderingResolution = 1024;
+                    }
+                    ImGui::EndCombo();
+                }
+                if(ImGui::Button("Apply"))
+                {
+                    nimo::AssetManager::WriteIndex();
+                }
+                ImGui::SameLine();
+                ImGui::TextDisabled("Changes will take place after reloading project");
+                ImGui::Separator();
+                ImGui::Spacing();
+                ImGui::TextDisabled("Preview");
                 float offset = 20.0f;
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset/2.0f);
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset/2.0f);
@@ -292,6 +340,23 @@ void InspectorPanel::OnRender()
                 std::shared_ptr<nimo::AudioSource> audio = nimo::AssetManager::Get<nimo::AudioSource>(metadata.id);
                 ImGui::Text("Duration: %.3f seconds", audio->GetDuration());
                 ImGui::Spacing();
+            }
+            break;
+        case nimo::AssetType::Font:
+            // Show nothing
+            {
+                std::shared_ptr<nimo::Font> font = nimo::AssetManager::Get<nimo::Font>(metadata.id);
+                auto settings = std::static_pointer_cast<nimo::AssetSettings<nimo::Font>>(metadata.serializerSettings);
+                ImGui::TextDisabled("Settings");
+                ImGui::DragInt("Pixel size", (int*)&settings->pixelSize, 1.0f, 0, 128, "%d", ImGuiSliderFlags_AlwaysClamp);
+                if(ImGui::Button("Apply"))
+                {
+                    nimo::AssetManager::WriteIndex();
+                }
+                ImGui::SameLine();
+                ImGui::TextDisabled("Changes will take place after reloading project");
+                ImGui::Spacing();
+                ImGui::Separator();
             }
             break;
         default:

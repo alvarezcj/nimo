@@ -6,7 +6,7 @@
 #include "assimp/postprocess.h"
 #include "core/Log.h"
 
-nimo::Mesh::Mesh(const std::string& file)
+nimo::Mesh::Mesh(const std::string& file, bool mergeMeshesByMaterial)
 {
     NIMO_DEBUG("nimo::Mesh::Mesh({})", file);
     // Create an instance of the Importer class
@@ -14,8 +14,7 @@ nimo::Mesh::Mesh(const std::string& file)
     // And have it read the given file with some example postprocessing
     // Usually - if speed is not the most important aspect for you - you'll 
     // propably to request more postprocessing than we do in this example.
-    const aiScene* scene = importer.ReadFile( file, 
-    aiProcess_JoinIdenticalVertices |
+    unsigned int flags = aiProcess_JoinIdenticalVertices |
     aiProcess_Triangulate |
     aiProcess_GenSmoothNormals |
     aiProcess_CalcTangentSpace |
@@ -29,8 +28,10 @@ nimo::Mesh::Mesh(const std::string& file)
     aiProcess_FindInstances |
     aiProcess_ValidateDataStructure |
     aiProcess_OptimizeMeshes |
-    aiProcess_OptimizeGraph |
-    aiProcess_Debone);
+    aiProcess_Debone;
+    if(mergeMeshesByMaterial)
+        flags |= aiProcess_OptimizeGraph;
+    const aiScene* scene = importer.ReadFile( file, flags);
     
     // If the import failed, report it
     if( !scene)

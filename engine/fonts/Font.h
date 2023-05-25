@@ -15,7 +15,7 @@ namespace nimo
     };
     class Font : public Asset{
     public:
-        Font(const std::string& file);
+        Font(const std::string& file, unsigned int pixelSize = 32);
         ~Font();
         inline AssetType Type() const { return AssetType::Font; }
         inline static AssetType StaticType(){return AssetType::Font;}

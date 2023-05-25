@@ -25,9 +25,11 @@ namespace nimo
     };
     class Mesh;
     template<> struct AssetSettings<Mesh> : public IAssetSettings{
+        bool mergeMeshesByMaterial = true;
     };
     class EnvironmentMap;
     template<> struct AssetSettings<EnvironmentMap> : public IAssetSettings{
+        unsigned int renderingResolution = 512;
     };
     class Script;
     template<> struct AssetSettings<Script> : public IAssetSettings{
@@ -40,6 +42,7 @@ namespace nimo
     };
     class Font;
     template<> struct AssetSettings<Font> : public IAssetSettings{
+        unsigned int pixelSize = 64;
     };
     class Scene;
     template<> struct AssetSettings<Scene> : public IAssetSettings{

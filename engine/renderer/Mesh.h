@@ -33,7 +33,7 @@ namespace nimo{
     };
     class Mesh : public Asset{
     public:
-        Mesh(const std::string& file);
+        Mesh(const std::string& file, bool mergeMeshesByMaterial = true);
         Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
         ~Mesh();
         AssetType Type() const { return AssetType::Mesh; }
