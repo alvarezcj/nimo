@@ -211,6 +211,12 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
                         {"Type","Asset"},
                         {"AssetType",AssetTypeToString(std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->type)}
                     });
+                case nimo::ScriptFieldType::Entity:
+                    fields.push_back({
+                        {"Name",field.first},
+                        {"Value",std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.valid() ? std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.str() : GUID().str()},
+                        {"Type","Entity"},
+                    });
                     break;
                 default:
                     break;
@@ -354,6 +360,10 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
                         if(type == "String" && it->second->GetType() == ScriptFieldType::String)
                         {
                             std::static_pointer_cast<nimo::ScriptFieldString>(instance.fields[field["Name"]])->value = value;
+                        }
+                        if(type == "Entity" && it->second->GetType() == ScriptFieldType::Entity)
+                        {
+                            std::static_pointer_cast<nimo::ScriptFieldEntity>(instance.fields[field["Name"]])->entity = GUID(std::string(value));
                         }
                         if(type == "Asset" && it->second->GetType() == ScriptFieldType::Asset)
                         {

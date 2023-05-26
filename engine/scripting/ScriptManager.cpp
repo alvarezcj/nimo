@@ -373,6 +373,20 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
                             lua_pop(L, 1);
                         }
                         lua_pop(L, 1);
+                        // Assethandle
+                        if(lua_getfield(L, -2, "entity") != LUA_TNIL)
+                        {
+                            std::string entityIdString = lua_tostring(L, -1);
+                            if(entityIdString != "")
+                            {
+                                res.fields[key] = std::make_shared<ScriptFieldEntity>(key, GUID(entityIdString));
+                            }
+                            else
+                            {
+                                res.fields[key] = std::make_shared<ScriptFieldEntity>(key);
+                            }
+                        }
+                        lua_pop(L, 1);
                         break;
                     default:
                         break;
@@ -437,6 +451,20 @@ void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
                 else
                     lua_pushstring(L, "");
                 lua_setfield(L, -2, "id");
+                lua_remove(L, -1);
+                break;
+            case nimo::ScriptFieldType::Entity:
+                lua_getfield(L, -1, field.first.c_str());
+                if(std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.valid())
+                {
+                    lua_pushlightuserdata(L, (void*)&(std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second))->entity);
+                    lua_setfield(L, -2, "entity");
+                }
+                else
+                {
+                    lua_pushlightuserdata(L, (void*)0);
+                    lua_setfield(L, -2, "entity");
+                }
                 lua_remove(L, -1);
                 break;
             default:

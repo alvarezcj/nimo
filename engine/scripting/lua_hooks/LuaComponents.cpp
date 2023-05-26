@@ -5,6 +5,7 @@
 #include "assets/AssetManager.h"
 #include "scene/SceneManager.h"
 #include "scene/Prefab.h"
+#include "scripting/ScriptUtils.h"
 
 int nimo_luafn_HasEntityComponent(lua_State* L)
 {
@@ -12,8 +13,16 @@ int nimo_luafn_HasEntityComponent(lua_State* L)
     lua_settop(L, 2);
     luaL_checktype(L, 1, LUA_TTABLE);
     std::string componentType = luaL_checkstring(L, 2);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -75,8 +84,18 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
     lua_settop(L, 2);
     luaL_checktype(L, 1, LUA_TTABLE);
     std::string componentType = luaL_checkstring(L, 2);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    nimo::ScriptUtils::PrintLuaStack(L);
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
+    nimo::ScriptUtils::PrintLuaStack(L);
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -346,8 +365,16 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
     luaL_checktype(L, 1, LUA_TTABLE);
     std::string componentType = luaL_checkstring(L, 2);
     luaL_checktype(L, 3, LUA_TTABLE);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -551,8 +578,16 @@ int nimo_luafn_EntityDestroy(lua_State* L)
     // discard any extra arguments passed in
     lua_settop(L, 1);
     luaL_checktype(L, 1, LUA_TTABLE);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -589,8 +624,16 @@ int nimo_luafn_EntitySetActive(lua_State* L)
     lua_settop(L, 2);
     luaL_checktype(L, 1, LUA_TTABLE);
     bool active = lua_toboolean(L, 2);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -609,8 +652,16 @@ int nimo_luafn_EntityGetForward(lua_State* L)
     // discard any extra arguments passed in
     lua_settop(L, 1);
     luaL_checktype(L, 1, LUA_TTABLE);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -632,8 +683,16 @@ int nimo_luafn_EntityGetRight(lua_State* L)
     // discard any extra arguments passed in
     lua_settop(L, 1);
     luaL_checktype(L, 1, LUA_TTABLE);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
@@ -655,8 +714,16 @@ int nimo_luafn_EntityGetUp(lua_State* L)
     // discard any extra arguments passed in
     lua_settop(L, 1);
     luaL_checktype(L, 1, LUA_TTABLE);
-    lua_getfield(L, 1, "id");
-    lua_getfield(L, 1, "scene");
+    if(lua_getfield(L, 1, "id") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_getfield(L, 1, "entity");
+    }
+    if(lua_getfield(L, 1, "scene") == LUA_TNIL)
+    {
+        lua_pop(L, 1);
+        lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
+    }
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);

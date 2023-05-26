@@ -765,6 +765,28 @@ void InspectorPanel::OnRender()
                                 ("##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(),
                                 &std::static_pointer_cast<nimo::ScriptFieldString>(field.second)->value);
                             break;
+                        case nimo::ScriptFieldType::Entity:
+                        {
+                            auto fieldEntityId = std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity;
+                            std::string fieldEntityIdString;
+                            if (fieldEntityId.valid())
+                                ImGui::InputTextWithHint(("##Entity##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag entity", &scene->GetEntity(fieldEntityId).GetComponent<nimo::LabelComponent>().Label, ImGuiInputTextFlags_ReadOnly);
+                            else
+                                ImGui::InputTextWithHint(("##Entity##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag entity", &fieldEntityIdString, ImGuiInputTextFlags_ReadOnly);
+                          
+                            if (ImGui::BeginDragDropTarget())
+                            {
+                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ENTITY_ID"))
+                                {
+                                    IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
+                                    nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
+                                    NIMO_DEBUG("Received drag drop entity: {}", payload_n.str());
+                                    std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity = payload_n;
+                                }
+                                ImGui::EndDragDropTarget();
+                            }
+                        }
+                        break;
                         case nimo::ScriptFieldType::Asset:
                         {
                             auto asset = std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value;

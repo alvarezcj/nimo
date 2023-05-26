@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include "assets/Asset.h"
 #include "assets/AssetType.h"
 
 namespace nimo
@@ -10,6 +11,7 @@ enum class ScriptFieldType{
     String,
     Boolean,
     Asset,
+    Entity,
 };
 struct ScriptField
 {
@@ -48,5 +50,14 @@ struct ScriptFieldAsset : public ScriptField
     ScriptFieldType GetType() { return ScriptFieldType::Asset;};
     std::shared_ptr<Asset> value;
     AssetType type;
+};
+struct ScriptFieldEntity : public ScriptField
+{
+    ScriptFieldEntity(const std::string& name) 
+        : ScriptField(name), entity(){}
+    ScriptFieldEntity(const std::string& name, GUID entity) 
+        : ScriptField(name), entity(entity){}
+    ScriptFieldType GetType() { return ScriptFieldType::Entity;};
+    GUID entity;
 };
 } // namespace nimo
