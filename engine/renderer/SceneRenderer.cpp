@@ -156,7 +156,6 @@ nimo::SceneRenderer::SceneRenderer()
     m_shaderLightingPass = nimo::AssetManager::Get<Shader>("Shaders/deferred_shading_pbr.nshader");
     //Cubemap background shader
     m_backgroundPass = nimo::AssetManager::Get<Shader>("Shaders/background.nshader");
-    m_environmentMap = nimo::AssetManager::Get<EnvironmentMap>("Environment/old_room_4k.hdr");
     //Tone mapping shaderm_backgroundPass
     m_hdrToneMappingPass = nimo::AssetManager::Get<Shader>("Shaders/hdr_tone_mapping.nshader");
     //Bloom
@@ -346,8 +345,16 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         m_shaderLightingPass->set("lights[" + std::to_string(i) + "].Active", false);
     }
     m_shaderLightingPass->set("viewPos", viewPosition);
-    m_shaderLightingPass->set("irradianceMap", 8);
-    m_environmentMap->bindIrradiance(8);
+    auto skyLightEntities = m_scene->m_registry.view<SkyLightComponent>();
+    if(skyLightEntities.size())
+    {
+        Entity skyLight(*skyLightEntities.begin(), m_scene->m_registry);
+        if(skyLight.GetComponent<SkyLightComponent>().environment)
+        {
+            m_shaderLightingPass->set("irradianceMap", 8);
+            skyLight.GetComponent<SkyLightComponent>().environment->bindIrradiance(8);
+        }
+    }
     m_quadMesh->draw();
     lightingFrameTimer.Stop();
 
@@ -357,8 +364,15 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_backgroundPass->use();
     m_backgroundPass->set("view", viewMatrix);
     m_backgroundPass->set("projection", projection);
-    m_backgroundPass->set("environmentMap", 0);
-    m_environmentMap->bind(0);
+    if(skyLightEntities.size())
+    {
+        Entity skyLight(*skyLightEntities.begin(), m_scene->m_registry);
+        if(skyLight.GetComponent<SkyLightComponent>().environment)
+        {
+            m_backgroundPass->set("environmentMap", 0);
+            skyLight.GetComponent<SkyLightComponent>().environment->bind(0);
+        }
+    }
     renderCube2();
     glDepthFunc(GL_LESS);
 

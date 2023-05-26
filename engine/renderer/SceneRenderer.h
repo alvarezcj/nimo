@@ -46,7 +46,6 @@ public:
     std::shared_ptr<Shader> m_shader2d;
     std::shared_ptr<Shader> m_shaderText;
     std::shared_ptr<Shader> m_shaderDepth;
-    std::shared_ptr<EnvironmentMap> m_environmentMap;
     std::shared_ptr<Mesh> m_quadMesh;
     std::shared_ptr<Texture> m_white;
     std::shared_ptr<Texture> m_black;

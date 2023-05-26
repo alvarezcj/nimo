@@ -558,6 +558,46 @@ void InspectorPanel::OnRender()
             ImGui::Spacing();
             ImGui::Separator();
         }
+        if(ent.HasComponent<nimo::SkyLightComponent>())
+        {
+            if (ImGui::CollapsingHeader((std::string("Sky Light##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Remove component"))
+                    {
+                        ent.RemoveComponent<nimo::SkyLightComponent>();
+                    }
+                    ImGui::EndPopup();
+                }
+                if(ent.HasComponent<nimo::SkyLightComponent>())
+                {
+                    auto env = ent.GetComponent<nimo::SkyLightComponent>().environment;
+                    std::string filepath;
+                    if (env)
+                        ImGui::InputTextWithHint(("Environment map##SkyLightComponent##"+entityIdString).c_str(), "Drag environment map asset", &nimo::AssetManager::GetMetadata(ent.GetComponent<nimo::SkyLightComponent>().environment->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                    else
+                        ImGui::InputTextWithHint(("Environment map##SkyLightComponent##" + entityIdString).c_str(), "Drag environment map asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                        {
+                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                            if(info.id.valid() && info.type == nimo::AssetType::EnvironmentMap) // Found in asset manager
+                            {
+                                ent.GetComponent<nimo::SkyLightComponent>().environment = nimo::AssetManager::Get<nimo::EnvironmentMap>(info.id);
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::ColorEdit3(("Color##Sky Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SkyLightComponent>().Color, ImGuiColorEditFlags_Float);
+                    ImGui::DragFloat(("Intesity##Sky Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SkyLightComponent>().Intensity, 0.1f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                }
+            }
+            ImGui::Spacing();
+            ImGui::Separator();
+        }
         if(ent.HasComponent<nimo::SpriteRendererComponent>())
         {
             if (ImGui::CollapsingHeader((std::string("Sprite Renderer##")+entityIdString).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -895,6 +935,9 @@ void InspectorPanel::OnRender()
             }
             if (ImGui::MenuItem("Directional Light")){
                 ent.AddComponent<nimo::DirectionalLightComponent>();
+            }
+            if (ImGui::MenuItem("Sky Light")){
+                ent.AddComponent<nimo::SkyLightComponent>();
             }
             if (ImGui::MenuItem("Audio Source")){
                 ent.AddComponent<nimo::AudioSourceComponent>();

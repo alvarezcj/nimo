@@ -598,6 +598,11 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
                 light.Intensity = 10.0f;
             }
             {
+                nimo::Entity e = createdScene->CreateEntity("Sky Light");
+                auto& light = e.AddComponent<nimo::SkyLightComponent>();
+                light.environment = nimo::AssetManager::Get<nimo::EnvironmentMap>("Environment/old_room_4k.hdr");
+            }
+            {
                 nimo::Entity e = createdScene->CreateEntity("Music");
                 auto& audio = e.AddComponent<nimo::AudioSourceComponent>();
                 audio.volume = 0.5f;

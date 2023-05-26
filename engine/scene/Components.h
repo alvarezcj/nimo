@@ -112,6 +112,11 @@ struct DirectionalLightComponent{
     glm::vec3 Color{1.0f, 1.0f, 1.0f};
     float Intensity = 1.0f;
 };
+struct SkyLightComponent{
+    glm::vec3 Color{1.0f, 1.0f, 1.0f};
+    float Intensity = 1.0f;
+    std::shared_ptr<EnvironmentMap> environment;
+};
 
 struct MeshComponent{
     std::shared_ptr<Mesh> source;

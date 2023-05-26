@@ -138,6 +138,16 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         };
         jentity["DirectionalLight"] = jdl;
     }
+    if(e.HasComponent<SkyLightComponent>())
+    {
+        SkyLightComponent l = e.GetComponent<SkyLightComponent>();
+        nlohmann::ordered_json jdl{
+            {"Color",{l.Color.r,l.Color.g,l.Color.b}},
+            {"Intensity",l.Intensity},
+            {"Environment", l.environment ?  l.environment->id.str() : GUID().str()}
+        };
+        jentity["SkyLight"] = jdl;
+    }
     if(e.HasComponent<SpriteRendererComponent>())
     {
         SpriteRendererComponent c = e.GetComponent<SpriteRendererComponent>();
@@ -286,6 +296,13 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             DirectionalLightComponent& l = createdEntity.AddComponent<DirectionalLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
             l.Intensity = (float)field.value()["Intensity"];
+        }
+        if(field.key() == "SkyLight")
+        {
+            SkyLightComponent& l = createdEntity.AddComponent<SkyLightComponent>();
+            l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
+            l.Intensity = (float)field.value()["Intensity"];
+            l.environment = AssetManager::Get<EnvironmentMap>(AssetId((std::string)field.value()["Environment"]));
         }
         if(field.key() == "SpriteRenderer")
         {
