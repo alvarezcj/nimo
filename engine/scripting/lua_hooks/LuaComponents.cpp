@@ -42,6 +42,10 @@ int nimo_luafn_HasEntityComponent(lua_State* L)
         {
             lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::DirectionalLightComponent>());
         }
+        else if(componentType == "SkyLight")
+        {
+            lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::SkyLightComponent>());
+        }
         else if(componentType == "Camera")
         {
             lua_pushboolean(L, scene->GetEntity(*id).HasComponent<nimo::CameraComponent>());
@@ -157,6 +161,33 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_pushnumber(L, c.Color.z);
                 lua_setfield(L, -2, "b");
                 lua_setfield(L, -2, "Color");
+            }
+        }
+        else if(componentType == "SkyLight")
+        {
+            auto c = scene->GetEntity(*id).GetComponent<nimo::SkyLightComponent>();
+            lua_newtable(L);
+            lua_pushnumber(L, c.Intensity);
+            lua_setfield(L, -2, "Intensity");
+            // Color
+            {
+                lua_newtable(L);
+                lua_pushnumber(L, c.Color.x);
+                lua_setfield(L, -2, "r");
+                lua_pushnumber(L, c.Color.y);
+                lua_setfield(L, -2, "g");
+                lua_pushnumber(L, c.Color.z);
+                lua_setfield(L, -2, "b");
+                lua_setfield(L, -2, "Color");
+            }
+            // Environment
+            {
+                lua_newtable(L);
+                lua_pushinteger(L, (int)c.environment->Type());
+                lua_setfield(L, -2, "assetType");
+                lua_pushstring(L, c.environment->id.str().c_str());
+                lua_setfield(L, -2, "id");
+                lua_setfield(L, -2, "Environment");
             }
         }
         else if(componentType == "Camera")
@@ -399,6 +430,26 @@ int nimo_luafn_SetEntityComponent(lua_State* L)
             lua_pop(L, 1);
             lua_getfield(L, -1, "b");
             c.Color.b = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+        if(componentType == "SkyLight")
+        {
+            auto& c = scene->GetEntity(*id).GetComponent<nimo::SkyLightComponent>();
+            lua_getfield(L, 3, "Intensity");
+            c.Intensity = lua_tonumber(L, -1);
+            lua_getfield(L, 3, "Color");
+            lua_getfield(L, -1, "r");
+            c.Color.r = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "g");
+            c.Color.g = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, -1, "b");
+            c.Color.b = lua_tonumber(L, -1);
+            lua_pop(L, 1);
+            lua_getfield(L, 3, "Environment");
+            lua_getfield(L, -1, "id");
+            c.environment = nimo::AssetManager::Get<nimo::EnvironmentMap>(nimo::GUID(lua_tostring(L, -1)));
             lua_pop(L, 1);
         }
         if(componentType == "SpriteRenderer")

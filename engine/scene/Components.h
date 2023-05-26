@@ -9,6 +9,7 @@
 
 #include "renderer/Mesh.h"
 #include "renderer/Material.h"
+#include "renderer/EnvironmentMap.h"
 #include "core/GUID.h"
 #include "scripting/ScriptInstance.h"
 #include "audio/AudioSound.h"

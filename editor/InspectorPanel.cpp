@@ -880,6 +880,28 @@ void InspectorPanel::OnRender()
                                     }
                                 }
                                 break;
+                            case nimo::AssetType::EnvironmentMap:
+                                {
+                                    std::string filepath;
+                                    if (asset)
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag environment map asset", &nimo::AssetManager::GetMetadata(asset->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                    else
+                                        ImGui::InputTextWithHint(("##Asset##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag environment map asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                    if (ImGui::BeginDragDropTarget())
+                                    {
+                                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NIMO_ASSET_FILE"))
+                                        {
+                                            std::filesystem::path payloadPath = std::string((char*)payload->Data);
+                                            auto info = nimo::AssetManager::GetMetadata(payloadPath);
+                                            if(info.id.valid() && info.type == nimo::AssetType::EnvironmentMap) // Found in asset manager
+                                            {
+                                                std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::EnvironmentMap>(info.id));
+                                            }
+                                        }
+                                        ImGui::EndDragDropTarget();
+                                    }
+                                }
+                                break;
                             default:
                                 break;
                             }
