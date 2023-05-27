@@ -653,7 +653,7 @@ void InspectorPanel::OnRender()
                 }
                 if(ent.HasComponent<nimo::TextRendererComponent>())
                 {
-                    ImGui::InputText(("Text##TextRenderer##" + entityIdString).c_str(), &ent.GetComponent<nimo::TextRendererComponent>().text);
+                    ImGui::InputTextMultiline(("Text##TextRenderer##" + entityIdString).c_str(), &ent.GetComponent<nimo::TextRendererComponent>().text);
                     auto tex = ent.GetComponent<nimo::TextRendererComponent>().font;
                     std::string filepath;
                     if (tex)

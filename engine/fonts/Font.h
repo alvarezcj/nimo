@@ -11,7 +11,7 @@ namespace nimo
         std::unique_ptr<Texture> texture;
         glm::ivec2 size;
         glm::ivec2 bearing;
-        int advance;
+        glm::ivec2 advance;
     };
     class Font : public Asset{
     public:
@@ -20,6 +20,7 @@ namespace nimo
         inline AssetType Type() const { return AssetType::Font; }
         inline static AssetType StaticType(){return AssetType::Font;}
         std::map<char, FontGlyph> m_glyphs;
+        int lineSpacing;
     private:
     };
 } // namespace nimo

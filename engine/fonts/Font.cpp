@@ -31,9 +31,10 @@ nimo::Font::Font(const std::string& file, unsigned int pixelSize)
             std::make_unique<Texture>(face->glyph->bitmap.width,face->glyph->bitmap.rows, face->glyph->bitmap.buffer, 1),
             glm::ivec2(face->glyph->bitmap.width,face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left,face->glyph->bitmap_top),
-            face->glyph->advance.x
+            glm::ivec2(face->glyph->advance.x, face->glyph->advance.y)
         };
     }
+    lineSpacing = face->size->metrics.height;
     FT_Done_Face(face);
     FT_Done_FreeType(library);
 }

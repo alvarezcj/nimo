@@ -541,7 +541,12 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
             m_vboText->setData(textvertices.data(), sizeof(TextVertex) * textvertices.size());
             m_vboText->unbind();
             glDrawElements(GL_TRIANGLES, m_iboText->count(), GL_UNSIGNED_INT, 0);
-            x += ((glyph.advance >> 6) + r.characterSpacing) * t.Scale.x;
+            x += ((glyph.advance.x >> 6) + r.characterSpacing) * t.Scale.x;
+            if(*c == '\n')
+            {
+                y -= (r.font->lineSpacing >> 6) * t.Scale.y;
+                x = 0.0f;
+            }
         }
     });
 
