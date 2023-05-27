@@ -22,6 +22,7 @@ public:
     static void OnDisable(const ScriptInstance& instance);
     static void OnUpdate(const ScriptInstance& instance);
     static void OnLateUpdate(const ScriptInstance& instance);
+    static void ExecuteCoroutines(const ScriptInstance& instance);
 
 private: 
     static lua_State* L;

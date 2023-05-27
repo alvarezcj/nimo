@@ -284,6 +284,7 @@ void nimo::ScriptManager::Initialize()
     }
     ScriptUtils::PrintLuaStack(L);
     lua_setglobal(L, "nimo");
+    luaL_dostring(L, "require \"CoroutineManagement\"");
 }
 void nimo::ScriptManager::Cleanup()
 {
@@ -529,6 +530,11 @@ void nimo::ScriptManager::OnUpdate(const ScriptInstance& instance)
         lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
         lua_pcall(L, 1, 0, 0);
     }
+    else
+    {
+        lua_pop(L, 1); // pop unused nil
+    }
+    // Still entity table on the stack
     lua_pop(L, 1);
 }
 void nimo::ScriptManager::OnLateUpdate(const ScriptInstance& instance)
@@ -540,6 +546,25 @@ void nimo::ScriptManager::OnLateUpdate(const ScriptInstance& instance)
     {
         lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
         lua_pcall(L, 1, 0, 0);
+    }
+    lua_pop(L, 1);
+}
+void nimo::ScriptManager::ExecuteCoroutines(const ScriptInstance& instance)
+{
+    lua_getglobal(L, "nimo");
+    lua_getfield(L, -1, "Entity");
+    lua_remove(L, -2);
+    lua_getfield(L, -1, "Coroutine");
+    lua_remove(L, -2);
+    lua_getfield(L, -1, "Internal");
+    lua_remove(L, -2);
+    lua_getfield(L, -1, "Run");
+    if(!lua_isnil(L, -1))
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, instance.stackReference);
+        lua_getfield(L, -1, "entity");
+        lua_remove(L, -2);
+        lua_call(L, 1, 0);
     }
     lua_pop(L, 1);
 }

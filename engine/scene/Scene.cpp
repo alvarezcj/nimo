@@ -82,6 +82,14 @@ void nimo::Scene::Update()
             ScriptManager::OnUpdate(instance);
         }
     });
+    m_registry.view<ActiveComponent, ScriptComponent>().each([&](ActiveComponent& active, ScriptComponent& script)
+    {
+        if(!active.active) return;
+        for(auto& instance : script.instances)
+        {
+            ScriptManager::ExecuteCoroutines(instance);
+        }
+    });
 }
 void nimo::Scene::LateUpdate()
 {

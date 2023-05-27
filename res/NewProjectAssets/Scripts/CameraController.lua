@@ -6,10 +6,18 @@ local CameraController = {
         sensivity = 30
     }
 }
+function CameraController:f()
+    nimo.Debug.Log("Print this and wait 1 sec...")
+    coroutine.yield(1)
+    nimo.Debug.Log("Print this and wait 2 secs...")
+    coroutine.yield(2)
+    nimo.Debug.Log("Print this and exit")
+end
 
 function CameraController:OnCreate()
     nimo.Debug.Log("CameraController OnCreate")
     lastMousePositionX, lastMousePositionY = nimo.Input.GetMousePosition()
+    nimo.Entity.Coroutine.Start(self.entity, self.f)
 end
 
 function CameraController:OnUpdate()

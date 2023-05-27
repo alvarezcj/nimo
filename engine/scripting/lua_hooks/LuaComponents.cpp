@@ -84,7 +84,6 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
     lua_settop(L, 2);
     luaL_checktype(L, 1, LUA_TTABLE);
     std::string componentType = luaL_checkstring(L, 2);
-    nimo::ScriptUtils::PrintLuaStack(L);
     if(lua_getfield(L, 1, "id") == LUA_TNIL)
     {
         lua_pop(L, 1);
@@ -95,7 +94,6 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
         lua_pop(L, 1);
         lua_pushlightuserdata(L, (void*)nimo::SceneManager::GetActiveScene().get());
     }
-    nimo::ScriptUtils::PrintLuaStack(L);
     if((lua_islightuserdata(L, -2) && lua_islightuserdata(L, -1)))
     {
         nimo::GUID* id = (nimo::GUID*)lua_touserdata(L, -2);
