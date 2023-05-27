@@ -286,7 +286,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         auto directionalLightView = directionalLight.GetComponent<TransformComponent>().GetView();
         m_shaderDepth->set("projection", directionalLightProjection);
         m_shaderDepth->set("view", directionalLightView);
-        m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
+        m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m) {
             if(!active.active) return;
             if(!m.source) return;
             m_shaderDepth->set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));

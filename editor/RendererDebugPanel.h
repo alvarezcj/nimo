@@ -39,7 +39,6 @@ private:
             ImGui::Image((ImTextureID)(uint64_t)renderer->m_gBuffer->GetColorAttachmentId(1), ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/renderer->m_gBuffer->GetAspectRatio()), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::Image((ImTextureID)(uint64_t)renderer->m_gBuffer->GetColorAttachmentId(2), ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/renderer->m_gBuffer->GetAspectRatio()), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::Image((ImTextureID)(uint64_t)renderer->m_gBuffer->GetColorAttachmentId(3), ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/renderer->m_gBuffer->GetAspectRatio()), ImVec2(0, 1), ImVec2(1, 0));
-            ImGui::Image((ImTextureID)(uint64_t)renderer->m_gBuffer->GetColorAttachmentId(4), ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/renderer->m_gBuffer->GetAspectRatio()), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::TreePop();
         }
         if(ImGui::TreeNode("Directional Lighting"))

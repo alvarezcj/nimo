@@ -33,8 +33,6 @@ void InspectorPanel::OnRender()
             // Show associated shader and properties
             {
                 std::shared_ptr<nimo::Material> materialAsset = nimo::AssetManager::Get<nimo::Material>(metadata.id);
-
-                auto shaders = nimo::AssetManager::GetAllExisting<nimo::Shader>();
                 static nimo::AssetMetadata selectedShader;
                 ImGui::Spacing();
                 ImGui::Text("Shader");
@@ -44,13 +42,15 @@ void InspectorPanel::OnRender()
                 static bool shaderChanged = false;
                 if (ImGui::BeginCombo("##Inspector##Asset##Material", selectedShader.filepath.string().c_str(), ImGuiComboFlags_None))
                 {
-                    for (int n = 0; n < shaders.size(); n++)
+                    if (ImGui::Selectable("PBR"))
                     {
-                        if (ImGui::Selectable(shaders[n].filepath.string().c_str()))
-                        {
-                            selectedShader = shaders[n];
-                            shaderChanged = true;
-                        }
+                        selectedShader = nimo::AssetManager::GetMetadata(nimo::AssetManager::Get<nimo::Shader>("Shaders/gBuffer.nshader"));
+                        shaderChanged = true;
+                    }
+                    if (ImGui::Selectable("Unlit color"))
+                    {
+                        selectedShader = nimo::AssetManager::GetMetadata(nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_color.nshader"));
+                        shaderChanged = true;
                     }
                     ImGui::EndCombo();
                 }
@@ -99,6 +99,11 @@ void InspectorPanel::OnRender()
                     case nimo::ShaderUniformDataType::Float2:
                         {
                             ImGui::DragFloat2((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
+                        }
+                        break;
+                    case nimo::ShaderUniformDataType::Float3:
+                        {
+                            ImGui::DragFloat3((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
                         }
                         break;
                     case nimo::ShaderUniformDataType::Float4:

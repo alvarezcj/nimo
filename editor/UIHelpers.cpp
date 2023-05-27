@@ -35,7 +35,12 @@ void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& mo
             if(ImGui::MenuItem("Material"))
             {
                 NIMO_INFO("Creating new material asset in {}", root.string());
-                std::shared_ptr<nimo::Material> newMaterial = std::make_shared<nimo::Material>(nimo::AssetManager::Get<nimo::Shader>(nimo::AssetManager::GetAllExisting<nimo::Shader>()[0].id), std::vector<nimo::IMaterialProperty*>());
+                std::shared_ptr<nimo::Material> newMaterial = std::make_shared<nimo::Material>(nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_color.nshader"), std::vector<nimo::IMaterialProperty*>());
+                for(auto uniform : nimo::AssetManager::Get<nimo::Shader>("Shaders/unlit_color.nshader")->GetUniforms())
+                {
+                    if(uniform.name == "transform" || uniform.name == "view" || uniform.name == "projection") continue;
+                    newMaterial->AddProperty(uniform.name, uniform.type);
+                }
                 nimo::AssetManager::CreateAssetFromMemory<nimo::Material>((nimo::AssetManager::GetRelativePath(root)/"NewMaterial.nmat").lexically_normal().string(), newMaterial);
                 nimo::AssetManager::WriteIndex();
             }

@@ -33,6 +33,14 @@ namespace nimo{
                     p->SetValue({o["value"][0], o["value"][1]});
                     properties.push_back(p);
                 }
+                if(o["type"] == "vector3")
+                {
+                    auto p = new MaterialProperty<glm::vec3>();
+                    p->name = o["name"];
+                    p->type = ShaderUniformDataType::Float3;
+                    p->SetValue({o["value"][0], o["value"][1], o["value"][2]});
+                    properties.push_back(p);
+                }
                 if(o["type"] == "vector4")
                 {
                     auto p = new MaterialProperty<glm::vec4>();
@@ -84,6 +92,14 @@ namespace nimo{
             case ShaderUniformDataType::Float2 :
                 {
                     auto p = new MaterialProperty<glm::vec2>();
+                    p->name = name;
+                    p->type = type;
+                    properties.push_back(p);
+                }
+                break;
+            case ShaderUniformDataType::Float3:
+                {
+                    auto p = new MaterialProperty<glm::vec3>();
                     p->name = name;
                     p->type = type;
                     properties.push_back(p);

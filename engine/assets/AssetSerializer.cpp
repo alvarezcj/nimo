@@ -83,6 +83,16 @@ void nimo::AssetSerializer<nimo::Material>::Serialize(const AssetMetadata& metad
                 });
             }
             break;
+            case ShaderUniformDataType::Float3:
+            {
+                auto pv3 = static_cast<MaterialProperty<glm::vec3>*>(p);
+                jprops.push_back({
+                    {"name", pv3->name},
+                    {"type", "vector3"},
+                    {"value", {((glm::vec3*)pv3->GetDataPtr())->x, ((glm::vec3*)pv3->GetDataPtr())->y, ((glm::vec3*)pv3->GetDataPtr())->z}}
+                });
+            }
+            break;
             case ShaderUniformDataType::Float4:
             {
                 auto pv2 = static_cast<MaterialProperty<glm::vec4>*>(p);
