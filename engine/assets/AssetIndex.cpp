@@ -2,17 +2,17 @@
 
 nimo::AssetMetadata& nimo::AssetIndex::operator[](const AssetId id)
 {
-    return db[id];
+    return m_db[id];
 }
 
 const nimo::AssetMetadata& nimo::AssetIndex::get(const AssetId id) const
 {
-    return db.at(id);
+    return m_db.at(id);
 }
 
 const nimo::AssetMetadata& nimo::AssetIndex::get(const std::filesystem::path& path) const
 {
-    for (auto& [id, metadata] : db)
+    for (auto& [id, metadata] : m_db)
     {
         if (metadata.filepath == path)
             return metadata;
@@ -22,15 +22,15 @@ const nimo::AssetMetadata& nimo::AssetIndex::get(const std::filesystem::path& pa
 
 bool nimo::AssetIndex::contains(const AssetId id) const
 {
-    return db.find(id) != db.end();
+    return m_db.find(id) != m_db.end();
 }
 
 size_t nimo::AssetIndex::remove(const AssetId id)
 {
-    return db.erase(id);
+    return m_db.erase(id);
 }
 
 void nimo::AssetIndex::clear()
 {
-    db.clear();
+    m_db.clear();
 }

@@ -62,7 +62,7 @@ nimo::FrameBuffer::~FrameBuffer()
     glDeleteTextures(m_textureAttachments.size(), m_textureAttachments.data());
     glDeleteTextures(1, &m_renderBuffer);
 }
-void nimo::FrameBuffer::bind()
+void nimo::FrameBuffer::Bind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_id);
 	glViewport(0, 0, m_details.width, m_details.height);
@@ -77,7 +77,7 @@ void nimo::FrameBuffer::bind()
         glClearDepthf(m_details.depthClearValue); 
     }
 }
-void nimo::FrameBuffer::unbind()
+void nimo::FrameBuffer::Unbind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }

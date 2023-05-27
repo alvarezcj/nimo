@@ -202,7 +202,7 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_newtable(L);
                 lua_pushinteger(L, (int)c.environment->Type());
                 lua_setfield(L, -2, "assetType");
-                lua_pushstring(L, c.environment->id.str().c_str());
+                lua_pushstring(L, c.environment->id.Str().c_str());
                 lua_setfield(L, -2, "id");
                 lua_setfield(L, -2, "Environment");
             }
@@ -234,7 +234,7 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_newtable(L);
                 lua_pushinteger(L, (int)c.source->Type());
                 lua_setfield(L, -2, "assetType");
-                lua_pushstring(L, c.source->id.str().c_str());
+                lua_pushstring(L, c.source->id.Str().c_str());
                 lua_setfield(L, -2, "id");
                 lua_setfield(L, -2, "Mesh");
             }
@@ -248,7 +248,7 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_newtable(L);
                 lua_pushinteger(L, (int)c.material->Type());
                 lua_setfield(L, -2, "assetType");
-                lua_pushstring(L, c.material->id.str().c_str());
+                lua_pushstring(L, c.material->id.Str().c_str());
                 lua_setfield(L, -2, "id");
                 lua_setfield(L, -2, "Material");
             }
@@ -291,7 +291,7 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_newtable(L);
                 lua_pushinteger(L, (int)c.texture->Type());
                 lua_setfield(L, -2, "assetType");
-                lua_pushstring(L, c.texture->id.str().c_str());
+                lua_pushstring(L, c.texture->id.Str().c_str());
                 lua_setfield(L, -2, "id");
                 lua_setfield(L, -2, "Texture");
             }
@@ -315,7 +315,7 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_newtable(L);
                 lua_pushinteger(L, (int)c.source->Type());
                 lua_setfield(L, -2, "assetType");
-                lua_pushstring(L, c.source->id.str().c_str());
+                lua_pushstring(L, c.source->id.Str().c_str());
                 lua_setfield(L, -2, "id");
                 lua_setfield(L, -2, "Source");
             }
@@ -333,7 +333,7 @@ int nimo_luafn_GetEntityComponent(lua_State* L)
                 lua_newtable(L);
                 lua_pushinteger(L, (int)c.font->Type());
                 lua_setfield(L, -2, "assetType");
-                lua_pushstring(L, c.font->id.str().c_str());
+                lua_pushstring(L, c.font->id.Str().c_str());
                 lua_setfield(L, -2, "id");
                 lua_setfield(L, -2, "Font");
             }

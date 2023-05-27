@@ -11,11 +11,11 @@ public:
     AudioSource(const std::string& filepath);
     ~AudioSource();
     float GetDuration();
-    inline ma_sound* GetSound() {return &sound;}
+    inline ma_sound* GetSound() {return &m_sound;}
     std::string filepath;
 
     static AssetType StaticType(){return AssetType::Audio;}
 private:
-    ma_sound sound;
+    ma_sound m_sound;
 };
 }

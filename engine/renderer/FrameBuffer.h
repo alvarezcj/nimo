@@ -30,8 +30,8 @@ public:
     };
     FrameBuffer(const Details& details);
     ~FrameBuffer();
-    void bind();
-    static void unbind();
+    void Bind();
+    static void Unbind();
     void BindColorTexture(int id, unsigned int slot);
     void BindDepthTexture(unsigned int slot);
     unsigned int GetColorAttachmentId(int id) {return m_textureAttachments[id];}

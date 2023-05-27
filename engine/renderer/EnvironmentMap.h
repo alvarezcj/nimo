@@ -9,8 +9,8 @@ class EnvironmentMap : public Asset
 public:
     EnvironmentMap(const std::string& path, unsigned int renderResolution);
     ~EnvironmentMap();
-    void bind(unsigned int slot);
-    void bindIrradiance(unsigned int slot);
+    void Bind(unsigned int slot);
+    void BindIrradiance(unsigned int slot);
     unsigned int GetInternalId() {return m_id;}
 
     AssetType Type() const { return AssetType::EnvironmentMap; }

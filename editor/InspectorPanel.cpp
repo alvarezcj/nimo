@@ -12,15 +12,15 @@ void InspectorPanel::SetViewItem(nimo::GUID id)
 }
 void InspectorPanel::OnRender()
 {
-    if(!selectedItem.valid()) return;
+    if(!selectedItem.Valid()) return;
     auto& metadata = nimo::AssetManager::GetMetadata(selectedItem);
-    if(metadata.id.valid())
+    if(metadata.id.Valid())
     {
         ImGui::Image((ImTextureID)(uint64_t)m_editor->assetIcons[metadata.type]->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::SameLine();
         ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
         ImGui::Text((metadata.filepath.string()).c_str());
-        ImGui::TextDisabled(metadata.id.str().c_str());
+        ImGui::TextDisabled(metadata.id.Str().c_str());
 
         ImGui::Spacing();
         ImGui::Separator();
@@ -73,7 +73,7 @@ void InspectorPanel::OnRender()
                 {
                     shaderChanged = false;
                     nimo::AssetMetadata selectedShaderInfo = nimo::AssetManager::GetMetadata(selectedShader.id);
-                    if(selectedShaderInfo.id.valid())
+                    if(selectedShaderInfo.id.Valid())
                     {
                         materialAsset->ClearProperties();
                         for(auto uniform : nimo::AssetManager::Get<nimo::Shader>(selectedShaderInfo.id)->GetUniforms())
@@ -98,28 +98,28 @@ void InspectorPanel::OnRender()
                     {
                     case nimo::ShaderUniformDataType::Float2:
                         {
-                            ImGui::DragFloat2((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
+                            ImGui::DragFloat2((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.Str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
                         }
                         break;
                     case nimo::ShaderUniformDataType::Float3:
                         {
-                            ImGui::DragFloat3((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
+                            ImGui::DragFloat3((p->name + "##Inspector##Asset##Material1##" +materialAsset->id.Str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
                         }
                         break;
                     case nimo::ShaderUniformDataType::Float4:
                         {
-                            ImGui::DragFloat4((p->name + "##Inspector##Asset##Material2##" +materialAsset->id.str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
+                            ImGui::DragFloat4((p->name + "##Inspector##Asset##Material2##" +materialAsset->id.Str()).c_str(), (float*)p->GetDataPtr(), 0.01f);
                         }
                         break;
                     case nimo::ShaderUniformDataType::Sampler2D:
                         {
-                            ImGui::InputInt((p->name + "##Inspector##Asset##Material3##TextureSlot##" +materialAsset->id.str()).c_str(), (int*)p->GetDataPtr());
+                            ImGui::InputInt((p->name + "##Inspector##Asset##Material3##TextureSlot##" +materialAsset->id.Str()).c_str(), (int*)p->GetDataPtr());
 
                             static std::string filepath;
                             if (((nimo::MaterialPropertyTexture*)p)->GetTexture())
-                                ImGui::InputTextWithHint((p->name + "##Inspector##Asset##Material4##TextureAsset##" + materialAsset->id.str()).c_str(), "Drag Texture asset", &nimo::AssetManager::GetMetadata(((nimo::MaterialPropertyTexture*)p)->GetTexture()->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
+                                ImGui::InputTextWithHint((p->name + "##Inspector##Asset##Material4##TextureAsset##" + materialAsset->id.Str()).c_str(), "Drag Texture asset", &nimo::AssetManager::GetMetadata(((nimo::MaterialPropertyTexture*)p)->GetTexture()->id).filepath.string(), ImGuiInputTextFlags_ReadOnly);
                             else
-                                ImGui::InputTextWithHint((p->name + "##Inspector##Asset##Material4##TextureAsset##" + materialAsset->id.str()).c_str(), "Drag Texture asset", &filepath, ImGuiInputTextFlags_ReadOnly);
+                                ImGui::InputTextWithHint((p->name + "##Inspector##Asset##Material4##TextureAsset##" + materialAsset->id.Str()).c_str(), "Drag Texture asset", &filepath, ImGuiInputTextFlags_ReadOnly);
 
                             if (ImGui::BeginDragDropTarget())
                             {
@@ -127,7 +127,7 @@ void InspectorPanel::OnRender()
                                 {
                                     std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                     auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                    if(info.id.valid() && info.type == nimo::AssetType::Texture) // Found in asset manager
+                                    if(info.id.Valid() && info.type == nimo::AssetType::Texture) // Found in asset manager
                                     {
                                         ((nimo::MaterialPropertyTexture*)p)->SetTexture(nimo::AssetManager::Get<nimo::Texture>(info.id));
                                     }
@@ -372,7 +372,7 @@ void InspectorPanel::OnRender()
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
         auto ent = scene->GetEntity(selectedItem);
-        auto entityIdString = ent.GetComponent<nimo::IDComponent>().Id.str();
+        auto entityIdString = ent.GetComponent<nimo::IDComponent>().Id.Str();
         ImGui::Image((ImTextureID)(uint64_t)m_editor->entityIcon->GetInternalId(), ImVec2(48, 48), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::SameLine();
         ImGui::SetCursorPos({ImGui::GetCursorPos().x, ImGui::GetCursorPos().y +12 });
@@ -464,7 +464,7 @@ void InspectorPanel::OnRender()
                         {
                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                            if(info.id.Valid() && info.type == nimo::AssetType::Material) // Found in asset manager
                             {
                                 ent.GetComponent<nimo::MeshRendererComponent>().material = nimo::AssetManager::Get<nimo::Material>(info.id);
                             }
@@ -507,7 +507,7 @@ void InspectorPanel::OnRender()
                         {
                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                            if(info.id.valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
+                            if(info.id.Valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
                             {
                                 ent.GetComponent<nimo::MeshComponent>().source = nimo::AssetManager::Get<nimo::Mesh>(info.id);
                             }
@@ -589,7 +589,7 @@ void InspectorPanel::OnRender()
                         {
                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                            if(info.id.valid() && info.type == nimo::AssetType::EnvironmentMap) // Found in asset manager
+                            if(info.id.Valid() && info.type == nimo::AssetType::EnvironmentMap) // Found in asset manager
                             {
                                 ent.GetComponent<nimo::SkyLightComponent>().environment = nimo::AssetManager::Get<nimo::EnvironmentMap>(info.id);
                             }
@@ -629,7 +629,7 @@ void InspectorPanel::OnRender()
                         {
                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                            if(info.id.valid() && info.type == nimo::AssetType::Texture) // Found in asset manager
+                            if(info.id.Valid() && info.type == nimo::AssetType::Texture) // Found in asset manager
                             {
                                 ent.GetComponent<nimo::SpriteRendererComponent>().texture = nimo::AssetManager::Get<nimo::Texture>(info.id);
                             }
@@ -671,7 +671,7 @@ void InspectorPanel::OnRender()
                         {
                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                            if(info.id.valid() && info.type == nimo::AssetType::Font) // Found in asset manager
+                            if(info.id.Valid() && info.type == nimo::AssetType::Font) // Found in asset manager
                             {
                                 ent.GetComponent<nimo::TextRendererComponent>().font = nimo::AssetManager::Get<nimo::Font>(info.id);
                             }
@@ -713,7 +713,7 @@ void InspectorPanel::OnRender()
                         {
                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                            if(info.id.valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
+                            if(info.id.Valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
                             {
                                 ent.GetComponent<nimo::AudioSourceComponent>().source = nimo::AssetManager::Get<nimo::AudioSource>(info.id);
                             }
@@ -774,7 +774,7 @@ void InspectorPanel::OnRender()
                         {
                             auto fieldEntityId = std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity;
                             std::string fieldEntityIdString;
-                            if (fieldEntityId.valid())
+                            if (fieldEntityId.Valid())
                                 ImGui::InputTextWithHint(("##Entity##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag entity", &scene->GetEntity(fieldEntityId).GetComponent<nimo::LabelComponent>().Label, ImGuiInputTextFlags_ReadOnly);
                             else
                                 ImGui::InputTextWithHint(("##Entity##" + field.first + "##" + (std::filesystem::path(instance->script->filepath).stem().string()+"##"+std::to_string(instance->stackReference)+entityIdString)).c_str(), "Drag entity", &fieldEntityIdString, ImGuiInputTextFlags_ReadOnly);
@@ -785,7 +785,7 @@ void InspectorPanel::OnRender()
                                 {
                                     IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
                                     nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
-                                    NIMO_DEBUG("Received drag drop entity: {}", payload_n.str());
+                                    NIMO_DEBUG("Received drag drop entity: {}", payload_n.Str());
                                     std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity = payload_n;
                                 }
                                 ImGui::EndDragDropTarget();
@@ -810,7 +810,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Prefab) // Found in asset manager
+                                            if(info.id.Valid() && info.type == nimo::AssetType::Prefab) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Prefab>(info.id));
                                             }
@@ -832,7 +832,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Material) // Found in asset manager
+                                            if(info.id.Valid() && info.type == nimo::AssetType::Material) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Material>(info.id));
                                             }
@@ -854,7 +854,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
+                                            if(info.id.Valid() && info.type == nimo::AssetType::Mesh) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Mesh>(info.id));
                                             }
@@ -876,7 +876,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
+                                            if(info.id.Valid() && info.type == nimo::AssetType::Audio) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::AudioSource>(info.id));
                                             }
@@ -898,7 +898,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::Font) // Found in asset manager
+                                            if(info.id.Valid() && info.type == nimo::AssetType::Font) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::Font>(info.id));
                                             }
@@ -920,7 +920,7 @@ void InspectorPanel::OnRender()
                                         {
                                             std::filesystem::path payloadPath = std::string((char*)payload->Data);
                                             auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                                            if(info.id.valid() && info.type == nimo::AssetType::EnvironmentMap) // Found in asset manager
+                                            if(info.id.Valid() && info.type == nimo::AssetType::EnvironmentMap) // Found in asset manager
                                             {
                                                 std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value = std::static_pointer_cast<nimo::Asset>(nimo::AssetManager::Get<nimo::EnvironmentMap>(info.id));
                                             }

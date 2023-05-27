@@ -68,7 +68,7 @@ bool nimo::GUID::operator!=(const GUID &other) const
 {
     return !((*this) == other);
 }
-std::string nimo::GUID::str() const
+std::string nimo::GUID::Str() const
 {
     char tmp[37];
     sprintf_s(tmp, 37, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
@@ -78,7 +78,7 @@ std::string nimo::GUID::str() const
 }
 nimo::GUID::operator std::string() const
 {
-    return str();
+    return Str();
 }
 const std::array<unsigned char, 16>& nimo::GUID::bytes() const
 {
@@ -88,7 +88,7 @@ void nimo::GUID::swap(GUID &other)
 {
     m_bytes.swap(other.m_bytes);
 }
-bool nimo::GUID::valid() const
+bool nimo::GUID::Valid() const
 {
     GUID empty;
     return *this != empty;

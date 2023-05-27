@@ -113,7 +113,7 @@ nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
     auto e = Entity(id, m_registry);
     e.AddComponent<IDComponent>().Id = GUID::Create();
     if(name == "")
-        e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.str();
+        e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.Str();
     else
         e.AddComponent<LabelComponent>().Label = name;
     e.AddComponent<FamilyComponent>();
@@ -128,7 +128,7 @@ nimo::Entity nimo::Scene::CreateEntityWithID(GUID desiredId)
     auto e = Entity(id, m_registry);
     e.AddComponent<IDComponent>().Id = desiredId;
     if(name == "")
-        e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.str();
+        e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.Str();
     else
         e.AddComponent<LabelComponent>().Label = name;
     e.AddComponent<FamilyComponent>();
@@ -167,7 +167,7 @@ void nimo::Scene::SetEntityActive(Entity e, bool active)
 
 void nimo::Scene::DestroyEntity(Entity entity)
 {
-    if(entity.Parent().valid())
+    if(entity.Parent().Valid())
     {
         auto parent = GetEntity(entity.Parent());
         parent.GetComponent<FamilyComponent>().Children.erase(
@@ -203,10 +203,10 @@ glm::mat4 nimo::Scene::GetWorldSpaceTransformMatrix(Entity entity)
 {
     glm::mat4 transform(1.0f);
 
-    if (entity.GetComponent<FamilyComponent>().Parent.valid())
+    if (entity.GetComponent<FamilyComponent>().Parent.Valid())
     {
         Entity parent = GetEntity(entity.GetComponent<FamilyComponent>().Parent);
-        if (parent.GetComponent<IDComponent>().Id.valid())
+        if (parent.GetComponent<IDComponent>().Id.Valid())
             transform = GetWorldSpaceTransformMatrix(parent);
     }
 

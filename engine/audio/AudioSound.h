@@ -21,6 +21,6 @@ public:
     void Resume();
 
 private:
-    ma_sound sound;
+    ma_sound m_sound;
 };
 }

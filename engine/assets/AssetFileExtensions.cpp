@@ -1,6 +1,6 @@
 #include "AssetFileExtensions.h"
 
-std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::extensions = 
+std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::m_extensions = 
 {
     //Scene
     {".nscene", AssetType::Scene},
@@ -34,5 +34,5 @@ std::unordered_map<std::string, nimo::AssetType> nimo::AssetFileExtensions::exte
 
 nimo::AssetType nimo::AssetFileExtensions::GetTypeFromExtension(std::string_view extension)
 {
-    return extensions[extension.data()];
+    return m_extensions[extension.data()];
 }

@@ -19,13 +19,13 @@ public:
 	static void CreateNewAsset(const std::string& filename)
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
-		AssetMetadata metadata = index.get(filename);
-		if(!metadata.id.valid()){
+		AssetMetadata metadata = m_index.get(filename);
+		if(!metadata.id.Valid()){
 			metadata.id = GUID::Create();
 			metadata.filepath = filename;
 			metadata.type = T::StaticType();
     		metadata.serializerSettings = CreateAssetSettings(T::StaticType());
-			index[metadata.id] = metadata;
+			m_index[metadata.id] = metadata;
 		}
 		AssetSerializer<T> assetSerializer;
 		std::shared_ptr<T> asset = assetSerializer.Deserialize(metadata);
@@ -38,13 +38,13 @@ public:
 	static void CreateAssetFromMemory(const std::string& filename, const std::shared_ptr<T>& asset)
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
-		AssetMetadata metadata = index.get(filename);
-		if(!metadata.id.valid()){
+		AssetMetadata metadata = m_index.get(filename);
+		if(!metadata.id.Valid()){
 			metadata.id = GUID::Create();
 			metadata.filepath = filename;
 			metadata.type = T::StaticType();
     		metadata.serializerSettings = CreateAssetSettings(T::StaticType());
-			index[metadata.id] = metadata;
+			m_index[metadata.id] = metadata;
 		}
 		AssetSerializer<T> assetSerializer;
 		assetSerializer.Serialize(metadata, asset);
@@ -56,7 +56,7 @@ public:
 	static void Serialize(AssetId id)
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
-		AssetMetadata metadata = index.get(id);
+		AssetMetadata metadata = m_index.get(id);
 		NIMO_INFO("Serializing {} {}", AssetTypeToString(metadata.type), metadata.filepath.string());
 		AssetSerializer<T> assetSerializer;
 		assetSerializer.Serialize(metadata, std::static_pointer_cast<T, Asset>(m_loadedAssets[typeid(T)][id]));
@@ -73,11 +73,11 @@ public:
 			return std::static_pointer_cast<T, Asset>(m_loadedAssets[typeid(T)][id]);
 		}
 		// Not loaded
-		NIMO_WARN("NOT found loaded asset {}", id.str());
+		NIMO_WARN("NOT found loaded asset {}", id.Str());
 		AssetSerializer<T> assetSerializer;
-		std::shared_ptr<T> asset = assetSerializer.Deserialize(index[id]);
-		asset->id = index[id].id;
-		m_loadedAssets[typeid(T)][index[id].id] = asset;
+		std::shared_ptr<T> asset = assetSerializer.Deserialize(m_index[id]);
+		asset->id = m_index[id].id;
+		m_loadedAssets[typeid(T)][m_index[id].id] = asset;
 		return asset;
 	}
 
@@ -85,8 +85,8 @@ public:
 	static std::shared_ptr<T> Get(const std::string& filepath)
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
-		if(index.get(std::filesystem::path(filepath)).id.valid())
-			return Get<T>(index.get(std::filesystem::path(filepath)).id);
+		if(m_index.get(std::filesystem::path(filepath)).id.Valid())
+			return Get<T>(m_index.get(std::filesystem::path(filepath)).id);
 		else
 			return nullptr;
 	}
@@ -109,7 +109,7 @@ public:
 	{
 		static_assert(std::is_base_of<Asset, T>::value, "T must derive from Asset class");
 		std::vector<AssetMetadata> res;
-		for(auto [id, metadata] : index)
+		for(auto [id, metadata] : m_index)
 		{
 			if(metadata.type == T::StaticType())
 				res.push_back(metadata);
@@ -135,7 +135,7 @@ private:
 	static AssetMetadata& GetMetadataRef(AssetId handle);
 	static std::shared_ptr<IAssetSettings> CreateAssetSettings(AssetType type);
 
-	static AssetIndex index;
+	static AssetIndex m_index;
 	static std::unordered_map<std::type_index, std::unordered_map<AssetId, std::shared_ptr<Asset>>> m_loadedAssets;
 };
 } // namespace nimo

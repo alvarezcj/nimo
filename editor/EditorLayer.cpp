@@ -206,7 +206,7 @@ void EditorLayer::OnAttach()
                             
                             std::shared_ptr<nimo::Scene> scene = std::make_shared<nimo::Scene>();
                             scene->SetName(sceneName);
-                            if(!scene->id.valid())
+                            if(!scene->id.Valid())
                             {
                                 scene->id = nimo::GUID::Create();
                             }
@@ -221,7 +221,7 @@ void EditorLayer::OnAttach()
                 ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
                 if (ImGui::MenuItem("Save", "Ctrl+S"))
                 {
-                    if(lastModifiedScene.valid())
+                    if(lastModifiedScene.Valid())
                     {
                         nimo::AssetManager::Serialize<nimo::Scene>(lastModifiedScene);
                     }
@@ -374,7 +374,7 @@ void EditorLayer::OnAttach()
 
         if(nimo::Input::GetKey(nimo::KeyCode::LeftControl) && nimo::Input::GetKeyPressed(nimo::KeyCode::S))
         {
-            if(lastModifiedScene.valid())
+            if(lastModifiedScene.Valid())
             {
                 nimo::AssetManager::Serialize<nimo::Scene>(lastModifiedScene);
             }
@@ -641,7 +641,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
         }
 
         nimo::AssetManager::UnloadUnused();
-        nimo::Project::GetActiveProject()->GetSettings().startScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id.str();
+        nimo::Project::GetActiveProject()->GetSettings().startScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id.Str();
         nimo::ProjectSerializer projectSer(project);
         projectSer.Serialize((projectFolderPath/settings.name).replace_extension(".nproj"));
         lastModifiedScene = nimo::AssetManager::Get<nimo::Scene>("Scenes/NewScene.nscene")->id;

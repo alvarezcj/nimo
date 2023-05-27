@@ -448,7 +448,7 @@ void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
             case nimo::ScriptFieldType::Asset:
                 lua_getfield(L, -1, field.first.c_str());
                 if(std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value)
-                    lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str().c_str());
+                    lua_pushstring(L, std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.Str().c_str());
                 else
                     lua_pushstring(L, "");
                 lua_setfield(L, -2, "id");
@@ -456,7 +456,7 @@ void nimo::ScriptManager::ApplyFields(const ScriptInstance& instance)
                 break;
             case nimo::ScriptFieldType::Entity:
                 lua_getfield(L, -1, field.first.c_str());
-                if(std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.valid())
+                if(std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.Valid())
                 {
                     lua_pushlightuserdata(L, (void*)&(std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second))->entity);
                     lua_setfield(L, -2, "entity");

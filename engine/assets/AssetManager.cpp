@@ -8,7 +8,7 @@
 
 #include "project/Project.h"
 
-nimo::AssetIndex nimo::AssetManager::index = nimo::AssetIndex();
+nimo::AssetIndex nimo::AssetManager::m_index = nimo::AssetIndex();
 std::unordered_map<std::type_index, std::unordered_map<nimo::AssetId, std::shared_ptr<nimo::Asset>>> nimo::AssetManager::m_loadedAssets = {};
 
 void nimo::AssetManager::Initialize()
@@ -17,7 +17,7 @@ void nimo::AssetManager::Initialize()
 }
 void nimo::AssetManager::Cleanup()
 {
-    index.clear();
+    m_index.clear();
     m_loadedAssets.clear();
 }
 
@@ -100,8 +100,8 @@ void nimo::AssetManager::LoadAssetIndex(const std::string& filename)
                 break;
             }
             NIMO_DEBUG("\t- {}", o.dump());
-            if(metadata.id.valid() && FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/metadata.filepath))
-                index[metadata.id] = metadata;
+            if(metadata.id.Valid() && FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/metadata.filepath))
+                m_index[metadata.id] = metadata;
         }
     }
     else{
@@ -114,9 +114,9 @@ void nimo::AssetManager::WriteIndex()
     nlohmann::json assetsjson = nlohmann::json::array();
 
     int i = 0;
-    for(auto a : index)
+    for(auto a : m_index)
     {
-        if(!a.second.id.valid() || !FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/a.second.filepath))
+        if(!a.second.id.Valid() || !FileHandling::Exists(Project::GetActiveProject()->GetAssetsFolderPath()/a.second.filepath))
             continue;
         nlohmann::json settings;
         switch (a.second.type)
@@ -184,7 +184,7 @@ void nimo::AssetManager::WriteIndex()
         default:
             break;
         }
-        assetsjson[i] = {{"guid",a.second.id.str()}, {"filepath",a.second.filepath.lexically_normal().string()}, {"type", AssetTypeToString(a.second.type)}, {"settings", settings}};
+        assetsjson[i] = {{"guid",a.second.id.Str()}, {"filepath",a.second.filepath.lexically_normal().string()}, {"type", AssetTypeToString(a.second.type)}, {"settings", settings}};
         i++;
     }
     j["assets"] = assetsjson;
@@ -194,14 +194,14 @@ void nimo::AssetManager::WriteIndex()
 
 const nimo::AssetMetadata& nimo::AssetManager::GetMetadata(nimo::AssetId id)
 {
-    return index[id];
+    return m_index[id];
 }
 
 const nimo::AssetMetadata& nimo::AssetManager::GetMetadata(const std::filesystem::path& path)
 {
     const auto relativePath = GetRelativePath(path);
 
-    for (auto& [id, metadata] : index)
+    for (auto& [id, metadata] : m_index)
     {
         if (metadata.filepath == relativePath)
             return metadata;
@@ -228,7 +228,7 @@ std::filesystem::path nimo::AssetManager::GetRelativePath(const std::filesystem:
 void nimo::AssetManager::UpdatePath(AssetId id, const std::filesystem::path& newPath)
 {
     AssetMetadata& metadata = GetMetadataRef(id);
-    if (!metadata.id.valid())
+    if (!metadata.id.Valid())
         return;
     metadata.filepath = GetRelativePath(newPath);
     WriteIndex();
@@ -236,21 +236,21 @@ void nimo::AssetManager::UpdatePath(AssetId id, const std::filesystem::path& new
 
 nimo::AssetMetadata& nimo::AssetManager::GetMetadataRef(AssetId id)
 {
-    return index[id];
+    return m_index[id];
 }
 
 void nimo::AssetManager::Unregister(AssetId id)
 {
     AssetMetadata info = GetMetadata(id);
-    if (!info.id.valid())
+    if (!info.id.Valid())
         return;
 
-    index.remove(id);
+    m_index.remove(id);
     for(auto [type,map] : m_loadedAssets)
     {
         map.erase(id);
     }
-    NIMO_INFO("Unregistering {} with id {} from AssetIndex", info.filepath.string(), info.id.str());
+    NIMO_INFO("Unregistering {} with id {} from AssetIndex", info.filepath.string(), info.id.Str());
     WriteIndex();
 }
 
@@ -259,9 +259,9 @@ nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
     std::filesystem::path path = GetRelativePath(filepath);
     auto info = GetMetadata(path);
 
-    if(info.id.valid())
+    if(info.id.Valid())
     {
-        NIMO_INFO("Asset {}({}) already imported with id: {}", info.filepath.string(), AssetTypeToString(info.type), info.id.str());
+        NIMO_INFO("Asset {}({}) already imported with id: {}", info.filepath.string(), AssetTypeToString(info.type), info.id.Str());
         return info.id;
     }
 
@@ -278,7 +278,7 @@ nimo::AssetId nimo::AssetManager::Import(const std::filesystem::path& filepath)
     metadata.filepath = path;
     metadata.type = type;
     metadata.serializerSettings = CreateAssetSettings(type);
-    index[metadata.id] = metadata;
+    m_index[metadata.id] = metadata;
 
     return metadata.id;
 }
@@ -311,7 +311,7 @@ void nimo::AssetManager::UnloadUnused()
         std::vector<GUID> toUnload;
         for(auto& [id, asset] : map)
         {
-            NIMO_DEBUG("Asset loaded {} - ref count: {}", id.str(), asset.use_count());
+            NIMO_DEBUG("Asset loaded {} - ref count: {}", id.Str(), asset.use_count());
             if(asset.use_count() == 1)
             {
                 toUnload.push_back(id);

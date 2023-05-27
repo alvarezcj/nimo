@@ -67,7 +67,7 @@ std::shared_ptr<nimo::Shader> nimo::AssetSerializer<nimo::Shader>::Deserialize(c
 void nimo::AssetSerializer<nimo::Material>::Serialize(const AssetMetadata& metadata, const std::shared_ptr<nimo::Material>& asset)
 {
     nlohmann::json j;
-    j["shader"] = asset->shader->id.str();
+    j["shader"] = asset->shader->id.Str();
     nlohmann::json jprops = nlohmann::json::array();
     for(auto p : asset->properties)
     {
@@ -110,7 +110,7 @@ void nimo::AssetSerializer<nimo::Material>::Serialize(const AssetMetadata& metad
                     {"name", pt->name},
                     {"type", "texture"},
                     {"value", pt->GetValue()},
-                    {"asset", pt->GetTexture() ? pt->GetTexture()->id.str() : GUID().str()}
+                    {"asset", pt->GetTexture() ? pt->GetTexture()->id.Str() : GUID().Str()}
                 });
             }
             break;

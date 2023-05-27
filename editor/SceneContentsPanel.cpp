@@ -14,18 +14,18 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
         node_flags |= ImGuiTreeNodeFlags_Selected;
 
     std::string entityName =  ent.GetComponent<nimo::LabelComponent>().Label;
-    std::string entityIdString =  ent.GetComponent<nimo::IDComponent>().Id.str();
+    std::string entityIdString =  ent.GetComponent<nimo::IDComponent>().Id.Str();
     bool open = false;
 
     // Paint as tree or leaf
     if(ent.GetComponent<nimo::FamilyComponent>().Children.size() != 0) // Has children
     {
-        open = ImGui::TreeNodeEx((entityName + "##" + entityIdString + "##" + scene->id.str()).c_str(), node_flags);
+        open = ImGui::TreeNodeEx((entityName + "##" + entityIdString + "##" + scene->id.Str()).c_str(), node_flags);
     }
     else // No children, paint as leaf node
     {
         node_flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf; // ImGuiTreeNodeFlags_Bullet
-        ImGui::TreeNodeEx((entityName + "##" + entityIdString + "##" + scene->id.str()).c_str(), node_flags);
+        ImGui::TreeNodeEx((entityName + "##" + entityIdString + "##" + scene->id.Str()).c_str(), node_flags);
     }
 
     // Popup right click
@@ -120,9 +120,9 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
         {
             IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
             nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
-            NIMO_DEBUG("Received drag drop entity: {}", payload_n.str());
+            NIMO_DEBUG("Received drag drop entity: {}", payload_n.Str());
             auto payloadEntity = scene->GetEntity(payload_n);
-            if(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent.valid())
+            if(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent.Valid())
             {
                 auto payloadParent = scene->GetEntity(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent);
                 NIMO_DEBUG("Removing {} as child from {}", payloadEntity.GetComponent<nimo::LabelComponent>().Label, payloadParent.GetComponent<nimo::LabelComponent>().Label);
@@ -164,7 +164,7 @@ void SceneContentsPanel::OnRender()
         ImVec2 rectMin;
         ImVec2 rectMax;
         bool res;
-        bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.str()).c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+        bool openHeader = ImGui::CollapsingHeader((scene->GetName() + "##" + scene->id.Str()).c_str(), ImGuiTreeNodeFlags_DefaultOpen);
         if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
         {
             if (ImGui::MenuItem("Create Empty")){
@@ -222,9 +222,9 @@ void SceneContentsPanel::OnRender()
             {
                 IM_ASSERT(payload->DataSize == sizeof(nimo::GUID));
                 nimo::GUID payload_n = *(const nimo::GUID*)payload->Data;
-                NIMO_DEBUG("Received drag drop entity: {}", payload_n.str());
+                NIMO_DEBUG("Received drag drop entity: {}", payload_n.Str());
                 auto payloadEntity = scene->GetEntity(payload_n);
-                if(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent.valid())
+                if(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent.Valid())
                 {
                     auto payloadParent = scene->GetEntity(payloadEntity.GetComponent<nimo::FamilyComponent>().Parent);
                     NIMO_DEBUG("Removing {} as child from {}", payloadEntity.GetComponent<nimo::LabelComponent>().Label, payloadParent.GetComponent<nimo::LabelComponent>().Label);
@@ -244,7 +244,7 @@ void SceneContentsPanel::OnRender()
             {
                 std::filesystem::path payloadPath = std::string((char*)payload->Data);
                 auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                if(info.id.valid() && info.type == nimo::AssetType::Prefab) // Found in asset manager
+                if(info.id.Valid() && info.type == nimo::AssetType::Prefab) // Found in asset manager
                 {
                     nimo::AssetManager::Get<nimo::Prefab>(info.id)->Create(scene);
                 }
@@ -258,7 +258,7 @@ void SceneContentsPanel::OnRender()
             totalHeight += ImGui::GetItemRectSize().y;
             scene->ForEachEntity([&](nimo::Entity& ent)
             {
-                if(!ent.GetComponent<nimo::FamilyComponent>().Parent.valid())
+                if(!ent.GetComponent<nimo::FamilyComponent>().Parent.Valid())
                     this->PaintEntity(scene, ent);
             });
         }

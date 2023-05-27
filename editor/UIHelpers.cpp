@@ -101,7 +101,7 @@ void ShowAssetsMenu(const std::filesystem::path& root, ChangeNameModalWindow& mo
             for ( i = 0; i < NFD_PathSet_GetCount(&pathSet); ++i )
             {
                 nfdchar_t *path = NFD_PathSet_GetPath(&pathSet, i);
-                if(nimo::AssetManager::Import(path).valid())
+                if(nimo::AssetManager::Import(path).Valid())
                     nimo::AssetManager::WriteIndex();
             }
             NFD_PathSet_Free(&pathSet);
@@ -143,7 +143,7 @@ void ChangeNameModalWindow::Show()
                     for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(oldNamePath))
                     {
                         auto info = nimo::AssetManager::GetMetadata(dir_entry.path());
-                        if(info.id.valid()) // Found in asset manager
+                        if(info.id.Valid()) // Found in asset manager
                         {
                             toUpdate.push_back(std::make_pair(dir_entry.path().lexically_relative(oldNamePath), info.id));
                         }
@@ -164,7 +164,7 @@ void ChangeNameModalWindow::Show()
                     if(nimo::FileHandling::Move(oldNamePath, newPath))
                     {
                         auto info = nimo::AssetManager::GetMetadata(oldNamePath);
-                        if(info.id.valid()) // Found in asset manager
+                        if(info.id.Valid()) // Found in asset manager
                         {
                             nimo::AssetManager::UpdatePath(info.id, newPath);
                             info = nimo::AssetManager::GetMetadata(info.id);

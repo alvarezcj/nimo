@@ -259,7 +259,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     // Render scene into gbuffer
     glEnable(GL_DEPTH_TEST);  
     glDepthMask(GL_TRUE);  
-    m_gBuffer->bind();
+    m_gBuffer->Bind();
     m_scene->m_registry.view<ActiveComponent, IDComponent, MeshComponent, MeshRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, MeshComponent& m, MeshRendererComponent& r) {
         if(!active.active) return;
         if(!r.material || !r.material->shader || !m.source) return;
@@ -281,7 +281,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     {
         Entity directionalLight(*directionalLightEntities.begin(), m_scene->m_registry);
         glCullFace(GL_FRONT);
-        m_directionalLightDepthBuffer->bind();
+        m_directionalLightDepthBuffer->Bind();
         m_shaderDepth->use();
         auto directionalLightView = directionalLight.GetComponent<TransformComponent>().GetView();
         m_shaderDepth->set("projection", directionalLightProjection);
@@ -295,7 +295,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         glCullFace(GL_BACK);
     }
     // Lighting pass
-    m_hdrColorBuffer->bind();
+    m_hdrColorBuffer->Bind();
     m_shaderLightingPass->use();
     m_shaderLightingPass->set("gPosition", 0);
     m_shaderLightingPass->set("gNormal", 1);
@@ -351,7 +351,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         if(skyLight.GetComponent<SkyLightComponent>().environment)
         {
             m_shaderLightingPass->set("irradianceMap", 8);
-            skyLight.GetComponent<SkyLightComponent>().environment->bindIrradiance(8);
+            skyLight.GetComponent<SkyLightComponent>().environment->BindIrradiance(8);
         }
     }
     m_quadMesh->draw();
@@ -369,7 +369,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         if(skyLight.GetComponent<SkyLightComponent>().environment)
         {
             m_backgroundPass->set("environmentMap", 0);
-            skyLight.GetComponent<SkyLightComponent>().environment->bind(0);
+            skyLight.GetComponent<SkyLightComponent>().environment->Bind(0);
         }
     }
     renderCube2();
@@ -378,41 +378,41 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     bloomFrameTimer.Reset();
     // Bloom
     // Get bright pixels in buffer
-    m_hdrBrightnessBuffer->bind(); //960x520
+    m_hdrBrightnessBuffer->Bind(); //960x520
     m_hdrBrightFilterPass->use();
     m_hdrBrightFilterPass->set("bloomThreshold", 1.2f);
     m_hdrBrightFilterPass->set("hdrBuffer", 0);
     m_hdrColorBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
     // Downsample
-    m_hdrBloomDownsample1Buffer->bind(); //480x270
+    m_hdrBloomDownsample1Buffer->Bind(); //480x270
     m_hdrBloomDownsamplePass->use();
     m_hdrBloomDownsamplePass->set("hdrBuffer", 0);
     m_hdrBrightnessBuffer->BindColorTexture(0,0); //960x540
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(960.0f, 540.0f));
     m_quadMesh->draw();
-    m_hdrBloomDownsample2Buffer->bind(); //240x135
+    m_hdrBloomDownsample2Buffer->Bind(); //240x135
     m_hdrBloomDownsample1Buffer->BindColorTexture(0,0); //480x270
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(480.0f, 270.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomDownsample3Buffer->bind(); //120x67
+    m_hdrBloomDownsample3Buffer->Bind(); //120x67
     m_hdrBloomDownsample2Buffer->BindColorTexture(0,0); //240x135
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(240.0f, 135.0f));
     m_quadMesh->draw();
-    m_hdrBloomDownsample4Buffer->bind(); //60x33
+    m_hdrBloomDownsample4Buffer->Bind(); //60x33
     m_hdrBloomDownsample3Buffer->BindColorTexture(0,0); //120x67
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(120.0f, 67.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomDownsample5Buffer->bind(); //30x16
+    m_hdrBloomDownsample5Buffer->Bind(); //30x16
     m_hdrBloomDownsample4Buffer->BindColorTexture(0,0); //60x33
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(60.0f, 33.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomDownsample6Buffer->bind(); //15x8
+    m_hdrBloomDownsample6Buffer->Bind(); //15x8
     m_hdrBloomDownsample5Buffer->BindColorTexture(0,0); //30x16
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(30.0f, 16.0f)); 
     m_quadMesh->draw();
     //Upsample
-    m_hdrBloomUpsample6Buffer->bind(); //30x16
+    m_hdrBloomUpsample6Buffer->Bind(); //30x16
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrBloomDownsample5Buffer->BindColorTexture(0,0); //30x16
@@ -420,7 +420,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsample6Buffer->BindColorTexture(0,1); //15x8
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(15.0f, 8.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomUpsample5Buffer->bind(); //60x33
+    m_hdrBloomUpsample5Buffer->Bind(); //60x33
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrBloomDownsample4Buffer->BindColorTexture(0,0); //60x33
@@ -428,7 +428,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomUpsample6Buffer->BindColorTexture(0,1); //30x16
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(30.0f, 16.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomUpsample4Buffer->bind(); //120x67
+    m_hdrBloomUpsample4Buffer->Bind(); //120x67
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrBloomDownsample3Buffer->BindColorTexture(0,0); //120x67
@@ -436,7 +436,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomUpsample5Buffer->BindColorTexture(0,1); //60x33
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(60.0f, 33.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomUpsample3Buffer->bind(); //240x135
+    m_hdrBloomUpsample3Buffer->Bind(); //240x135
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrBloomDownsample2Buffer->BindColorTexture(0,0); //240x135
@@ -444,7 +444,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomUpsample4Buffer->BindColorTexture(0,1); //120x67
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(120.0f, 67.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomUpsample2Buffer->bind(); //480x270
+    m_hdrBloomUpsample2Buffer->Bind(); //480x270
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrBloomDownsample1Buffer->BindColorTexture(0,0); //480x270
@@ -452,7 +452,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomUpsample3Buffer->BindColorTexture(0,1); //240x135
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(240.0f, 135.0f)); 
     m_quadMesh->draw();
-    m_hdrBloomUpsample1Buffer->bind(); //960x540
+    m_hdrBloomUpsample1Buffer->Bind(); //960x540
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrBrightnessBuffer->BindColorTexture(0,0); //960x540
@@ -461,7 +461,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_hdrBloomDownsamplePass->set("textureResolution", glm::vec2(480.0f, 270.0f)); 
     m_quadMesh->draw();
 
-    m_hdrFinalBloomBuffer->bind(); //1920x1080
+    m_hdrFinalBloomBuffer->Bind(); //1920x1080
     m_hdrBloomUpsamplePass->use();
     m_hdrBloomUpsamplePass->set("textureBig", 0);
     m_hdrColorBuffer->BindColorTexture(0,0); //1920x1080
@@ -473,10 +473,10 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
 
     // HDR tone mapping pass
     if(target)
-        target->bind();
+        target->Bind();
     else
     {
-        FrameBuffer::unbind();
+        FrameBuffer::Unbind();
         glViewport(0, 0, Application::Instance().GetWindow().GetWidth(), Application::Instance().GetWindow().GetHeight());
     }
     m_hdrToneMappingPass->use();

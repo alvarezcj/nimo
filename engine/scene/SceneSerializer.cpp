@@ -16,12 +16,12 @@ void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata
     nlohmann::ordered_json j;
     nlohmann::ordered_json jentities = nlohmann::ordered_json::array();
     j["Name"] = asset->name;
-    j["GUID"] = asset->id.str();
+    j["GUID"] = asset->id.Str();
 
     asset->m_registry.each([&](entt::entity id)
     {
         Entity e(id, asset->m_registry);
-        if(!e.GetComponent<FamilyComponent>().Parent.valid())
+        if(!e.GetComponent<FamilyComponent>().Parent.Valid())
         {
             nlohmann::ordered_json jentity = SerializeEntity(asset, e);
             jentities.push_back(jentity);
@@ -59,7 +59,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     nlohmann::ordered_json jentity;
     if(e.HasComponent<IDComponent>())
     {
-        jentity["GUID"] = e.GetComponent<IDComponent>().Id.str();
+        jentity["GUID"] = e.GetComponent<IDComponent>().Id.Str();
     }
     if(e.HasComponent<LabelComponent>())
     {
@@ -73,7 +73,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         const FamilyComponent& f = e.GetComponent<FamilyComponent>();
         nlohmann::ordered_json jfamily{
-            {"Parent", f.Parent.str()}
+            {"Parent", f.Parent.Str()}
         };
         nlohmann::ordered_json jchildren = nlohmann::ordered_json::array();
         for(auto child : f.Children)
@@ -107,7 +107,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         MeshComponent m = e.GetComponent<MeshComponent>();
         nlohmann::ordered_json jmesh{
-            {"Source", m.source ? m.source->id.str() : GUID().str()},
+            {"Source", m.source ? m.source->id.Str() : GUID().Str()},
             {"SubmeshIndex", m.submeshIndex}
         };
         jentity["Mesh"] = jmesh;
@@ -116,7 +116,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         MeshRendererComponent m = e.GetComponent<MeshRendererComponent>();
         nlohmann::ordered_json jmesh{
-            {"Material", m.material ? m.material->id.str() : GUID().str()}
+            {"Material", m.material ? m.material->id.Str() : GUID().Str()}
         };
         jentity["MeshRenderer"] = jmesh;
     }
@@ -144,7 +144,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         nlohmann::ordered_json jdl{
             {"Color",{l.Color.r,l.Color.g,l.Color.b}},
             {"Intensity",l.Intensity},
-            {"Environment", l.environment ?  l.environment->id.str() : GUID().str()}
+            {"Environment", l.environment ?  l.environment->id.Str() : GUID().Str()}
         };
         jentity["SkyLight"] = jdl;
     }
@@ -155,7 +155,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
             {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
             {"Tiling",{c.tiling.r,c.tiling.g}},
             {"Offset",{c.offset.r,c.offset.g}},
-            {"Texture",c.texture ? c.texture->id.str() : GUID().str()}
+            {"Texture",c.texture ? c.texture->id.Str() : GUID().Str()}
         };
         jentity["SpriteRenderer"] = jsr;
     }
@@ -166,7 +166,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
             {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
             {"Text",c.text},
             {"CharacterSpacing",c.characterSpacing},
-            {"Font",c.font ? c.font->id.str() : GUID().str()}
+            {"Font",c.font ? c.font->id.Str() : GUID().Str()}
         };
         jentity["TextRenderer"] = jtr;
     }
@@ -174,7 +174,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
     {
         const AudioSourceComponent& a = e.GetComponent<AudioSourceComponent>();
         nlohmann::ordered_json jaudio{
-            {"Source", a.source ? a.source->id.str() : GUID().str()},
+            {"Source", a.source ? a.source->id.Str() : GUID().Str()},
             {"Loop", a.loop},
             {"Volume", a.volume},
             {"PlayOnCreate", a.playOnCreate},
@@ -189,7 +189,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
         auto instances = nlohmann::json::array();
         for(auto& instance : l.instances)
         {
-            auto instanceJson = nlohmann::json({{"Source", instance.script->id.str()}});
+            auto instanceJson = nlohmann::json({{"Source", instance.script->id.Str()}});
             auto fields = nlohmann::json::array();
             for(auto& field : instance.fields)
             {
@@ -207,14 +207,14 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
                 case nimo::ScriptFieldType::Asset:
                     fields.push_back({
                         {"Name",field.first},
-                        {"Value",std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value ? std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.str() : GUID().str()},
+                        {"Value",std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value ? std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->value->id.Str() : GUID().Str()},
                         {"Type","Asset"},
                         {"AssetType",AssetTypeToString(std::static_pointer_cast<nimo::ScriptFieldAsset>(field.second)->type)}
                     });
                 case nimo::ScriptFieldType::Entity:
                     fields.push_back({
                         {"Name",field.first},
-                        {"Value",std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.valid() ? std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.str() : GUID().str()},
+                        {"Value",std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.Valid() ? std::static_pointer_cast<nimo::ScriptFieldEntity>(field.second)->entity.Str() : GUID().Str()},
                         {"Type","Entity"},
                     });
                     break;
@@ -232,7 +232,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
 nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shared_ptr<nimo::Scene>& scene, const nlohmann::ordered_json& source, GUID desiredId, GUID parentId)
 {
     GUID id;
-    if(desiredId.valid())
+    if(desiredId.Valid())
         id = desiredId;
     else
         id = GUID::Create();
@@ -260,10 +260,10 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         if(field.key() == "Family")
         {
             FamilyComponent& f = createdEntity.GetComponent<FamilyComponent>();
-            f.Parent = desiredId.valid() ? GUID(std::string(field.value()["Parent"])) : parentId;
+            f.Parent = desiredId.Valid() ? GUID(std::string(field.value()["Parent"])) : parentId;
             for(auto child : field.value()["Children"])
             {
-                f.Children.push_back(DeserializeEntity(scene, child, desiredId.valid() ? GUID(std::string(child["GUID"])) : GUID(), id));
+                f.Children.push_back(DeserializeEntity(scene, child, desiredId.Valid() ? GUID(std::string(child["GUID"])) : GUID(), id));
             }
         }
         if(field.key() == "Camera")

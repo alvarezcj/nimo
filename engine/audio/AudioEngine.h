@@ -7,8 +7,8 @@ class AudioEngine
 public:
 	static void Initialize();
 	static void Cleanup();
-    inline static ma_engine* GetEngine(){return engine;}
+    inline static ma_engine* GetEngine(){return m_engine;}
 private:
-    static ma_engine* engine;
+    static ma_engine* m_engine;
 };
 } // namespace nimo

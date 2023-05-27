@@ -54,7 +54,7 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
             for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(payloadPath))
             {
                 auto info = nimo::AssetManager::GetMetadata(dir_entry.path());
-                if(info.id.valid()) // Found in asset manager
+                if(info.id.Valid()) // Found in asset manager
                 {
                     toUpdate.push_back(std::make_pair(dir_entry.path().lexically_relative(payloadPath), info.id));
                 }
@@ -75,7 +75,7 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
             if(nimo::FileHandling::Move(payloadPath, path / payloadPath.filename()))
             {
                 auto info = nimo::AssetManager::GetMetadata(payloadPath);
-                if(info.id.valid()) // Found in asset manager
+                if(info.id.Valid()) // Found in asset manager
                 {
                     nimo::AssetManager::UpdatePath(info.id, path / payloadPath.filename());
                     info = nimo::AssetManager::GetMetadata(info.id);
@@ -130,7 +130,7 @@ void AssetExplorerPanel::PaintDirectory(const std::filesystem::path& path)
                     {
                         selectedPath = entry.path();
                         auto info = nimo::AssetManager::GetMetadata(entry.path());
-                        if (info.id.valid()) // Found in asset manager
+                        if (info.id.Valid()) // Found in asset manager
                         {
                             m_editor->inspectorPanel->SetViewItem(info.id);
                         }

@@ -24,11 +24,11 @@ public:
 	bool operator==(const GUID &other) const;
 	bool operator!=(const GUID &other) const;
 
-	std::string str() const;
+	std::string Str() const;
 	operator std::string() const;
 	const std::array<unsigned char, 16>& bytes() const;
 	void swap(GUID &other);
-	bool valid() const;
+	bool Valid() const;
     void invalidate();
 
 private:
@@ -43,7 +43,7 @@ namespace std
 	{
 		std::size_t operator()(nimo::GUID const &obj) const
 		{
-			return std::hash<std::string>{}(obj.str());
+			return std::hash<std::string>{}(obj.Str());
 		}
 	};
 }

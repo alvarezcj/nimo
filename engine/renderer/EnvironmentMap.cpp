@@ -211,12 +211,12 @@ nimo::EnvironmentMap::~EnvironmentMap()
     glDeleteTextures(1, &m_cubemap);
 }
 
-void nimo::EnvironmentMap::bind(unsigned int slot)
+void nimo::EnvironmentMap::Bind(unsigned int slot)
 {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
 }
-void nimo::EnvironmentMap::bindIrradiance(unsigned int slot)
+void nimo::EnvironmentMap::BindIrradiance(unsigned int slot)
 {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
