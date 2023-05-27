@@ -95,10 +95,9 @@ nimo::SceneRenderer::SceneRenderer()
     gBufferDetails.height = 1080;
     gBufferDetails.clearColorOnBind = true;
     gBufferDetails.clearDepthOnBind = true;
-    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
-    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
-    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
-    gBufferDetails.colorAttachments.push_back({GL_RGBA16F, GL_RGBA, GL_FLOAT});
+    gBufferDetails.colorAttachments.push_back({GL_RGB16F, GL_RGB, GL_FLOAT});
+    gBufferDetails.colorAttachments.push_back({GL_RGB16F, GL_RGB, GL_FLOAT});
+    gBufferDetails.colorAttachments.push_back({GL_RGB16F, GL_RGB, GL_FLOAT});
     gBufferDetails.colorAttachments.push_back({GL_RGB16F, GL_RGB, GL_FLOAT});
     m_gBuffer = std::make_shared<FrameBuffer>(gBufferDetails);
     // HDR color buffer
@@ -300,7 +299,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_shaderLightingPass->use();
     m_shaderLightingPass->set("gPosition", 0);
     m_shaderLightingPass->set("gNormal", 1);
-    m_shaderLightingPass->set("gAlbedoSpec", 2);
+    m_shaderLightingPass->set("gAlbedo", 2);
     m_shaderLightingPass->set("gARM", 3);
     m_shaderLightingPass->set("gDepth", 4);
     m_shaderLightingPass->set("InvProjection", glm::inverse(projection));
@@ -308,7 +307,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_gBuffer->BindColorTexture(1,1);
     m_gBuffer->BindColorTexture(2,2);
     m_gBuffer->BindColorTexture(3,3);
-    m_gBuffer->BindColorTexture(4,4);
+    m_gBuffer->BindDepthTexture(4);
     if(directionalLightEntities.size())
     {
         Entity directionalLight(*directionalLightEntities.begin(), m_scene->m_registry);

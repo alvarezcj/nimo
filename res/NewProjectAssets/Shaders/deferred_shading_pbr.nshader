@@ -21,7 +21,7 @@ in vec2 TexCoords;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedoSpec;
+uniform sampler2D gAlbedo;
 uniform sampler2D gARM;
 uniform sampler2D gDepth;
 uniform sampler2D directionalLightShadowMap;
@@ -151,7 +151,7 @@ vec3 ViewPositionFromDepth(vec2 texcoord, float depth)
 
 void main()
 {             
-    vec4 albedoSample = texture(gAlbedoSpec, TexCoords);
+    vec4 albedoSample = texture(gAlbedo, TexCoords);
     if(albedoSample.a == 0.0) 
         discard;
     vec3 WorldPos = texture(gPosition, TexCoords).rgb;

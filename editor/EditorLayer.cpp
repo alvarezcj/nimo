@@ -457,7 +457,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             std::vector<nimo::IMaterialProperty*> props;
             {
                 auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_diffuse1";
+                prop->name = "albedoMap";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
                 prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_diff_4k.jpg"));
                 prop->SetValue(0);
@@ -465,7 +465,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             }
             {
                 auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_normal1";
+                prop->name = "normalMap";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
                 prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_nor_dx_4k.jpg"));
                 prop->SetValue(1);
@@ -473,18 +473,10 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             }
             {
                 auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_disp1";
-                prop->type = nimo::ShaderUniformDataType::Sampler2D;
-                prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_mask_4k.jpg"));
-                prop->SetValue(2);
-                props.push_back(prop);
-            }
-            {
-                auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_arm1";
+                prop->name = "armMap";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
                 prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_arm_4k.jpg"));
-                prop->SetValue(3);
+                prop->SetValue(2);
                 props.push_back(prop);
             }
             std::shared_ptr<nimo::Material> material = std::make_shared<nimo::Material>(unlitShader, props);
@@ -496,7 +488,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             std::vector<nimo::IMaterialProperty*> props;
             {
                 auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_diffuse1";
+                prop->name = "albedoMap";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
                 prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Crate/textures/wooden_crate_01_diff_4k.jpg"));
                 prop->SetValue(0);
@@ -504,7 +496,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             }
             {
                 auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_normal1";
+                prop->name = "normalMap";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
                 prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Crate/textures/wooden_crate_01_nor_dx_4k.jpg"));
                 prop->SetValue(1);
@@ -512,18 +504,10 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             }
             {
                 auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_disp1";
-                prop->type = nimo::ShaderUniformDataType::Sampler2D;
-                prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("MarbleBust/textures/marble_bust_01_mask_4k.jpg"));
-                prop->SetValue(2);
-                props.push_back(prop);
-            }
-            {
-                auto prop = new nimo::MaterialPropertyTexture();
-                prop->name = "texture_arm1";
+                prop->name = "armMap";
                 prop->type = nimo::ShaderUniformDataType::Sampler2D;
                 prop->SetTexture(nimo::AssetManager::Get<nimo::Texture>("Crate/textures/wooden_crate_01_arm_4k.jpg"));
-                prop->SetValue(3);
+                prop->SetValue(2);
                 props.push_back(prop);
             }
             std::shared_ptr<nimo::Material> material = std::make_shared<nimo::Material>(unlitShader, props);
