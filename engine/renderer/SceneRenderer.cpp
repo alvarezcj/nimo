@@ -381,6 +381,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     // Get bright pixels in buffer
     m_hdrBrightnessBuffer->bind(); //960x520
     m_hdrBrightFilterPass->use();
+    m_hdrBrightFilterPass->set("bloomThreshold", 1.2f);
     m_hdrBrightFilterPass->set("hdrBuffer", 0);
     m_hdrColorBuffer->BindColorTexture(0,0);
     m_quadMesh->draw();
@@ -485,8 +486,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
     m_quadMesh->draw();
 
     geometry2DFrameTimer.Reset();
-    glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
-    glDisable(GL_DEPTH_TEST);  // disable depth-testing
+    // glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
+    // glDisable(GL_DEPTH_TEST);  // disable depth-testing
     glEnable(GL_BLEND); // enable blend
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_shader2d->use();
@@ -525,6 +526,12 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
             auto& glyphIt = r.font->m_glyphs.find(*c);
             if(glyphIt == r.font->m_glyphs.end()) continue;
             auto& glyph = glyphIt->second;
+            if(*c == '\n')
+            {
+                y -= (r.font->lineSpacing >> 6) * t.Scale.y;
+                x = 0.0f;
+                continue;
+            }
             float xpos = x + (float)glyph.bearing.x * t.Scale.x;
             float ypos = y - ((float)glyph.size.y - glyph.bearing.y) * t.Scale.y;
             float w = (float)glyph.size.x * t.Scale.x;
@@ -550,8 +557,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
         }
     });
 
-    glEnable(GL_DEPTH_TEST);  
-    glDepthMask(GL_TRUE);  
+    // glEnable(GL_DEPTH_TEST);  
+    // glDepthMask(GL_TRUE);  
     glDisable(GL_BLEND);  
     geometry2DFrameTimer.Stop();
     totalFrameTimer.Stop();

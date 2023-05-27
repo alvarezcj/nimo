@@ -1,6 +1,7 @@
 @VERTEX
+//Learn OpenGL example code: https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/6.pbr/2.1.1.ibl_irradiance_conversion
 #version 330 core
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 position;
 
 out vec3 WorldPos;
 
@@ -9,7 +10,7 @@ uniform mat4 view;
 
 void main()
 {
-    WorldPos = aPos;  
+    WorldPos = position;  
     gl_Position =  projection * view * vec4(WorldPos, 1.0);
 }
 @VERTEXEND@FRAGMENT

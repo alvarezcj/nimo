@@ -1,9 +1,9 @@
 @VERTEX
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoords;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 uv;
 
-out vec2 oTexCoords;
+out vec2 TexCoords;
 
 uniform mat4 transform;
 uniform mat4 view;
@@ -11,14 +11,14 @@ uniform mat4 projection;
 
 void main()
 {
-   gl_Position = projection * transform * vec4(aPos, 1.0);
-   oTexCoords = aTexCoords;
+   gl_Position = projection * transform * vec4(position, 1.0);
+   TexCoords = uv;
 }
 @VERTEXEND
 
 @FRAGMENT
 #version 330 core
-in vec2 oTexCoords;
+in vec2 TexCoords;
 out vec4 FragColor;
 
 uniform sampler2D mainTexture;
@@ -28,7 +28,7 @@ uniform vec4 color;
 
 void main()
 {
-   vec2 tiledCoords = vec2(oTexCoords.x * tiling.x + offset.x, oTexCoords.y * tiling.y + offset.y);
+   vec2 tiledCoords = vec2(TexCoords.x * tiling.x + offset.x, TexCoords.y * tiling.y + offset.y);
    FragColor = texture(mainTexture, tiledCoords) * color; 
 }
 @FRAGMENTEND

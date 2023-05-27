@@ -1,7 +1,7 @@
 @VERTEX
 #version 330 core
 layout (location = 0) in vec4 vertex;
-out vec2 oTexCoords;
+out vec2 TexCoords;
 
 uniform mat4 projection;
 uniform mat4 transform;
@@ -9,20 +9,20 @@ uniform mat4 transform;
 void main()
 {
    gl_Position = projection * transform * vec4(vertex.xy, 0.0, 1.0);
-   oTexCoords = vertex.zw;
+   TexCoords = vertex.zw;
 }
 @VERTEXEND
 
 @FRAGMENT
 #version 330 core
-in vec2 oTexCoords;
+in vec2 TexCoords;
 out vec4 FragColor;
 
-uniform sampler2D text;
+uniform sampler2D glyph;
 uniform vec4 color;
 
 void main()
 {
-   FragColor = vec4(color.rgb, color.a * texture(text, oTexCoords).r);
+   FragColor = vec4(color.rgb, color.a * texture(glyph, TexCoords).r);
 }
 @FRAGMENTEND
