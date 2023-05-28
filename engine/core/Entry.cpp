@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     nimo::Log::Initialize();
     nimo::Input::Initialize();
 	nimo::AudioEngine::Initialize();
-	auto app = CreateApplication();
+	auto app = CreateApplication(argc, argv);
 	if(app == nullptr) 
 	{
 		NIMO_CRITICAL("Client application not created!");

@@ -21,7 +21,7 @@ public:
     EditorLayer* editorLayer;
 };
 
-nimo::Application* CreateApplication()
+nimo::Application* CreateApplication(int argc, char** argv)
 {
     nimo::ApplicationDescription appDesc;
     appDesc.title = "Nimo Editor";

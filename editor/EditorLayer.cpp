@@ -308,7 +308,7 @@ void EditorLayer::OnAttach()
 
                     // start the program up
                     CreateProcessA((LPCSTR)p.string().c_str(),   // the path
-                        NULL,        // Command line
+                        (LPSTR)((p.string()).c_str()),        // Command line
                         NULL,           // Process handle not inheritable
                         NULL,           // Thread handle not inheritable
                         FALSE,          // Set handle inheritance to FALSE
