@@ -29,12 +29,12 @@ namespace nimo {
 		static void SetCursorMode(CursorMode mode);
 		static CursorMode GetCursorMode();
     private:
-		static Input* instance;
-        std::vector<MouseButton> pressedMouseButtons;
-        std::vector<MouseButton> releasedMouseButtons;
-        std::vector<KeyCode> pressedKeys;
-        std::vector<KeyCode> releasedKeys;
-		std::pair<double, double> mouseScroll = {0.0f, 0.0f};
+		static Input* m_instance;
+        std::vector<MouseButton> m_pressedMouseButtons;
+        std::vector<MouseButton> m_releasedMouseButtons;
+        std::vector<KeyCode> m_pressedKeys;
+        std::vector<KeyCode> m_releasedKeys;
+		std::pair<double, double> m_mouseScroll = {0.0f, 0.0f};
 		void OnMouseButtonPressed(const MouseButtonPressedEvent& e);
 		void OnMouseButtonReleased(const MouseButtonReleasedEvent& e);
 		void OnMouseScroll(const MouseScrollEvent& e);

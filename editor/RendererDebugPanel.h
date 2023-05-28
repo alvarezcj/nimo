@@ -19,17 +19,17 @@ private:
         {
             frameTimes.erase(frameTimes.begin());
         }
-        frameTimes.push_back(renderer->totalFrameTimer.ElapsedMillis());
+        frameTimes.push_back(renderer->m_totalFrameTimer.ElapsedMillis());
         ImGui::Spacing();
         ImGui::PlotLines("Frame Times", frameTimes.data(), frameTimes.size(),0,"Frame times",0.0f, 35.0f, ImVec2(ImGui::GetContentRegionAvailWidth(),ImGui::GetContentRegionAvailWidth()/3.0f));
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
-        ImGui::Text("Last frame time: %.3f ms", renderer->totalFrameTimer.ElapsedMillis());
-        ImGui::TextDisabled("Geometry 3D: %.3f ms", renderer->geometryFrameTimer.ElapsedMillis());
-        ImGui::TextDisabled("Lighting: %.3f ms", renderer->lightingFrameTimer.ElapsedMillis());
-        ImGui::TextDisabled("Bloom: %.3f ms", renderer->bloomFrameTimer.ElapsedMillis());
-        ImGui::TextDisabled("Geometry 2D: %.3f ms", renderer->geometry2DFrameTimer.ElapsedMillis());
+        ImGui::Text("Last frame time: %.3f ms", renderer->m_totalFrameTimer.ElapsedMillis());
+        ImGui::TextDisabled("Geometry 3D: %.3f ms", renderer->m_geometryFrameTimer.ElapsedMillis());
+        ImGui::TextDisabled("Lighting: %.3f ms", renderer->m_lightingFrameTimer.ElapsedMillis());
+        ImGui::TextDisabled("Bloom: %.3f ms", renderer->m_bloomFrameTimer.ElapsedMillis());
+        ImGui::TextDisabled("Geometry 2D: %.3f ms", renderer->m_geometry2DFrameTimer.ElapsedMillis());
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();

@@ -37,6 +37,6 @@ namespace nimo{
 		void SetTitle(const std::string& title);
 
     private:
-        struct impl; std::unique_ptr<impl> pimpl;
+        struct impl; std::unique_ptr<impl> m_pimpl;
     };
 }

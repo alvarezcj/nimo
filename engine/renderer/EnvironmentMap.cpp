@@ -143,8 +143,8 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path, unsigned int rende
     auto equirectangularToCubemapShader = AssetManager::Get<Shader>("Shaders/equirectangular_to_cubemap.nshader");
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     equirectangularToCubemapShader->use();
-    equirectangularToCubemapShader->set("equirectangularMap", 0);
-    equirectangularToCubemapShader->set("projection", captureProjection);
+    equirectangularToCubemapShader->Set("equirectangularMap", 0);
+    equirectangularToCubemapShader->Set("projection", captureProjection);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
@@ -152,7 +152,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path, unsigned int rende
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        equirectangularToCubemapShader->set("view", captureViews[i]);
+        equirectangularToCubemapShader->Set("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_cubemap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -182,8 +182,8 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path, unsigned int rende
     // -----------------------------------------------------------------------------
     auto irradianceShader = AssetManager::Get<Shader>("Shaders/irradiance_convolution.nshader");
     irradianceShader->use();
-    irradianceShader->set("environmentMap", 0);
-    irradianceShader->set("projection", captureProjection);
+    irradianceShader->Set("environmentMap", 0);
+    irradianceShader->Set("projection", captureProjection);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
 
@@ -192,7 +192,7 @@ nimo::EnvironmentMap::EnvironmentMap(const std::string& path, unsigned int rende
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        irradianceShader->set("view", captureViews[i]);
+        irradianceShader->Set("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

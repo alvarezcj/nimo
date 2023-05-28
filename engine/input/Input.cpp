@@ -4,38 +4,38 @@
 #include "core/Application.h"
 #include "events/EventManager.h"
 
-nimo::Input* nimo::Input::instance = nullptr;
+nimo::Input* nimo::Input::m_instance = nullptr;
 
 void nimo::Input::Initialize()
 {
-    if(!instance)
-        instance = new Input();
-    instance->pressedMouseButtons.reserve(3);
-    instance->releasedMouseButtons.reserve(3);
-    instance->pressedKeys.reserve(10);
-    instance->releasedKeys.reserve(10);
-    EventManager::Subscribe(instance, &OnKeyPressed);
-    EventManager::Subscribe(instance, &OnKeyReleased);
-    EventManager::Subscribe(instance, &OnMouseButtonPressed);
-    EventManager::Subscribe(instance, &OnMouseButtonReleased);
-    EventManager::Subscribe(instance, &OnMouseScroll);
+    if(!m_instance)
+        m_instance = new Input();
+    m_instance->m_pressedMouseButtons.reserve(3);
+    m_instance->m_releasedMouseButtons.reserve(3);
+    m_instance->m_pressedKeys.reserve(10);
+    m_instance->m_releasedKeys.reserve(10);
+    EventManager::Subscribe(m_instance, &OnKeyPressed);
+    EventManager::Subscribe(m_instance, &OnKeyReleased);
+    EventManager::Subscribe(m_instance, &OnMouseButtonPressed);
+    EventManager::Subscribe(m_instance, &OnMouseButtonReleased);
+    EventManager::Subscribe(m_instance, &OnMouseScroll);
 }
 void nimo::Input::Cleanup()
 {
-    EventManager::Unsubscribe(instance, &OnKeyPressed);
-    EventManager::Unsubscribe(instance, &OnKeyReleased);
-    EventManager::Unsubscribe(instance, &OnMouseButtonPressed);
-    EventManager::Unsubscribe(instance, &OnMouseButtonReleased);
-    EventManager::Unsubscribe(instance, &OnMouseScroll);
-    delete instance;
+    EventManager::Unsubscribe(m_instance, &OnKeyPressed);
+    EventManager::Unsubscribe(m_instance, &OnKeyReleased);
+    EventManager::Unsubscribe(m_instance, &OnMouseButtonPressed);
+    EventManager::Unsubscribe(m_instance, &OnMouseButtonReleased);
+    EventManager::Unsubscribe(m_instance, &OnMouseScroll);
+    delete m_instance;
 }
 void nimo::Input::Update()
 {
-    instance->pressedMouseButtons.clear();
-    instance->releasedMouseButtons.clear();
-    instance->pressedKeys.clear();
-    instance->releasedKeys.clear();
-    instance->mouseScroll = {0.0, 0.0};
+    m_instance->m_pressedMouseButtons.clear();
+    m_instance->m_releasedMouseButtons.clear();
+    m_instance->m_pressedKeys.clear();
+    m_instance->m_releasedKeys.clear();
+    m_instance->m_mouseScroll = {0.0, 0.0};
 }
 bool nimo::Input::GetMouseButton(MouseButton button)
 {
@@ -45,11 +45,11 @@ bool nimo::Input::GetMouseButton(MouseButton button)
 }
 bool nimo::Input::GetMouseButtonPressed(MouseButton button)
 {
-    return std::find(instance->pressedMouseButtons.begin(), instance->pressedMouseButtons.end(), button) != instance->pressedMouseButtons.end();
+    return std::find(m_instance->m_pressedMouseButtons.begin(), m_instance->m_pressedMouseButtons.end(), button) != m_instance->m_pressedMouseButtons.end();
 }
 bool nimo::Input::GetMouseButtonReleased(MouseButton button)
 {
-    return std::find(instance->releasedMouseButtons.begin(), instance->releasedMouseButtons.end(), button) != instance->releasedMouseButtons.end();
+    return std::find(m_instance->m_releasedMouseButtons.begin(), m_instance->m_releasedMouseButtons.end(), button) != m_instance->m_releasedMouseButtons.end();
 }
 float nimo::Input::GetMouseX()
 {
@@ -69,7 +69,7 @@ std::pair<float, float> nimo::Input::GetMousePosition()
 }
 std::pair<double, double> nimo::Input::GetMouseScroll()
 {
-    return instance->mouseScroll;
+    return m_instance->m_mouseScroll;
 }
 bool nimo::Input::GetKey(KeyCode keycode)
 {
@@ -79,11 +79,11 @@ bool nimo::Input::GetKey(KeyCode keycode)
 }
 bool nimo::Input::GetKeyPressed(KeyCode k)
 {
-    return std::find(instance->pressedKeys.begin(), instance->pressedKeys.end(), k) != instance->pressedKeys.end();
+    return std::find(m_instance->m_pressedKeys.begin(), m_instance->m_pressedKeys.end(), k) != m_instance->m_pressedKeys.end();
 }
 bool nimo::Input::GetKeyReleased(KeyCode k)
 {
-    return std::find(instance->releasedKeys.begin(), instance->releasedKeys.end(), k) != instance->releasedKeys.end();
+    return std::find(m_instance->m_releasedKeys.begin(), m_instance->m_releasedKeys.end(), k) != m_instance->m_releasedKeys.end();
 }
 void nimo::Input::SetCursorMode(CursorMode mode)
 {
@@ -98,21 +98,21 @@ nimo::CursorMode nimo::Input::GetCursorMode()
 
 void nimo::Input::OnMouseButtonPressed(const MouseButtonPressedEvent& e)
 {
-    pressedMouseButtons.push_back((MouseButton)e.button);
+    m_pressedMouseButtons.push_back((MouseButton)e.button);
 }
 void nimo::Input::OnMouseButtonReleased(const MouseButtonReleasedEvent& e)
 {
-    releasedMouseButtons.push_back((MouseButton)e.button);
+    m_releasedMouseButtons.push_back((MouseButton)e.button);
 }
 void nimo::Input::OnMouseScroll(const MouseScrollEvent& e)
 {
-    mouseScroll = {e.xOffset, e.yOffset};
+    m_mouseScroll = {e.xOffset, e.yOffset};
 }
 void nimo::Input::OnKeyPressed(const KeyPressedEvent& e)
 {
-    pressedKeys.push_back((KeyCode)e.key);
+    m_pressedKeys.push_back((KeyCode)e.key);
 }
 void nimo::Input::OnKeyReleased(const KeyReleasedEvent& e)
 {
-    releasedKeys.push_back((KeyCode)e.key);
+    m_releasedKeys.push_back((KeyCode)e.key);
 }

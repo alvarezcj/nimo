@@ -24,15 +24,15 @@ namespace nimo
         Project(const ProjectSettings& settings);
         ~Project();
         static void SetActiveProject(std::shared_ptr<Project> p);
-        inline static std::shared_ptr<Project> GetActiveProject(){ return activeProject;}
-        inline ProjectSettings& GetSettings(){return settings;}
+        inline static std::shared_ptr<Project> GetActiveProject(){ return m_activeProject;}
+        inline ProjectSettings& GetSettings(){return m_settings;}
         inline static const std::filesystem::path GetAssetsFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().assetDirectory;}
         inline static const std::filesystem::path GetLogsFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().logsDirectory;}
         inline static const std::filesystem::path GetModulesFolderPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().modulesDirectory;}
         inline static const std::filesystem::path GetAssetIndexPath(){return GetActiveProject()->GetSettings().projectDirectory/GetActiveProject()->GetSettings().assetIndexPath;}
     private:
-        ProjectSettings settings;
-        inline static std::shared_ptr<Project> activeProject;
+        ProjectSettings m_settings;
+        inline static std::shared_ptr<Project> m_activeProject;
 
         friend class ProjectSerializer;
     };

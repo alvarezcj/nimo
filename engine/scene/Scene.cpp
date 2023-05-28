@@ -9,37 +9,13 @@
 // std::vector<glm::vec3> lightPositions;
 // std::vector<glm::vec3> lightColors;
 nimo::Scene::Scene(const std::string& name)
-    : name(name)
+    : m_name(name)
 {
     NIMO_DEBUG("nimo::Scene::Scene({})", name);
-    // FrameBuffer::Details gBufferDetails;
-    // gBufferDetails.width = 1920;
-    // gBufferDetails.height = 1080;
-    // gBufferDetails.clearColorOnBind = true;
-    // gBufferDetails.clearDepthOnBind = true;
-    // gBufferDetails.colorAttachments.push_back({GL_RGBA32F, GL_RGBA, GL_FLOAT});
-    // gBufferDetails.colorAttachments.push_back({GL_RGBA32F, GL_RGBA, GL_FLOAT});
-    // gBufferDetails.colorAttachments.push_back({GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE});
-    // gBuffer = std::make_shared<FrameBuffer>(gBufferDetails);
-
-    // srand(13);
-    // for (unsigned int i = 0; i < NR_LIGHTS; i++)
-    // {
-    //     // calculate slightly random offsets
-    //     float xPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
-    //     float yPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 4.0);
-    //     float zPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
-    //     lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
-    //     // also calculate random color
-    //     float rColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-    //     float gColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-    //     float bColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-    //     lightColors.push_back(glm::vec3(rColor, gColor, bColor));
-    // }
 }
 nimo::Scene::~Scene()
 {
-    NIMO_DEBUG("nimo::Scene::~Scene({})", name);
+    NIMO_DEBUG("nimo::Scene::~Scene({})", m_name);
     ForEachEntity([](Entity entity)
     {
         if(entity.HasComponent<ScriptComponent>())
@@ -101,11 +77,11 @@ void nimo::Scene::LateUpdate()
             ScriptManager::OnLateUpdate(instance);
         }
     });
-    for(auto e : requestedEntitiesToDestroy)
+    for(auto e : m_requestedEntitiesToDestroy)
     {
         DestroyEntity(e);
     }
-    requestedEntitiesToDestroy.clear();
+    m_requestedEntitiesToDestroy.clear();
 }
 nimo::Entity nimo::Scene::CreateEntity(const std::string& name)
 {
@@ -127,10 +103,10 @@ nimo::Entity nimo::Scene::CreateEntityWithID(GUID desiredId)
     auto id = m_registry.create();
     auto e = Entity(id, m_registry);
     e.AddComponent<IDComponent>().Id = desiredId;
-    if(name == "")
+    if(m_name == "")
         e.AddComponent<LabelComponent>().Label = e.GetComponent<IDComponent>().Id.Str();
     else
-        e.AddComponent<LabelComponent>().Label = name;
+        e.AddComponent<LabelComponent>().Label = m_name;
     e.AddComponent<FamilyComponent>();
     e.AddComponent<TransformComponent>();
     e.AddComponent<ActiveComponent>();
@@ -214,6 +190,6 @@ glm::mat4 nimo::Scene::GetWorldSpaceTransformMatrix(Entity entity)
 }
 void nimo::Scene::RequestEntityDestruction(Entity entity)
 {
-    requestedEntitiesToDestroy.push_back(entity);
+    m_requestedEntitiesToDestroy.push_back(entity);
 }
 

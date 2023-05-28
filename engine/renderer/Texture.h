@@ -37,7 +37,7 @@ public:
     inline unsigned int Height(){return m_height;}
 
 private:
-    std::string path;
+    std::string m_path;
     unsigned int m_id;
     unsigned int m_width;
     unsigned int m_height;

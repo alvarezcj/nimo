@@ -34,7 +34,7 @@ nimo::VertexBuffer::~VertexBuffer()
     glDeleteBuffers(1, &m_id);
 }
 
-void nimo::VertexBuffer::applyLayout()
+void nimo::VertexBuffer::ApplyLayout()
 {
     uint32_t stride = 0;
 
@@ -52,18 +52,18 @@ void nimo::VertexBuffer::applyLayout()
     }
 }
 
-void nimo::VertexBuffer::setData(const void* data, unsigned int size)
+void nimo::VertexBuffer::SetData(const void* data, unsigned int size)
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_id);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
 
-void nimo::VertexBuffer::bind()
+void nimo::VertexBuffer::Bind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_id);
 }
 
-void nimo::VertexBuffer::unbind()
+void nimo::VertexBuffer::Unbind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

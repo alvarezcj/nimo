@@ -51,7 +51,7 @@ nimo::Texture::Texture(unsigned int width, unsigned int height, void* data, unsi
 }
 
 nimo::Texture::Texture(const std::string& path, bool flip, const TextureSpecification& spec)
-    : path(path)
+    : m_path(path)
 {
     NIMO_DEBUG("nimo::Texture::Texture({})", path);
     int width, height, channels;
@@ -145,7 +145,7 @@ nimo::Texture::Texture(const std::string& path, bool flip, const TextureSpecific
 
 nimo::Texture::~Texture()
 {
-    NIMO_DEBUG("nimo::Texture::~Texture({}) - Id: {}", path, m_id);
+    NIMO_DEBUG("nimo::Texture::~Texture({}) - Id: {}", m_path, m_id);
     glDeleteTextures(1, &m_id);
 }
 

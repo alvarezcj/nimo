@@ -295,7 +295,7 @@ void nimo::ScriptManager::Cleanup()
 nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script> source, const GUID& owner, std::shared_ptr<Scene> scene)
 {
     ScriptInstance res;
-    if(luaL_dofile(L, source->filepath.c_str()) == LUA_OK)
+    if(luaL_dofile(L, source->m_filepath.c_str()) == LUA_OK)
     {
         ScriptUtils::PrintLuaStack(L);
         if(lua_istable(L, -1))
@@ -409,7 +409,7 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
             res.owner = owner;
             res.stackReference = luaL_ref(L, LUA_REGISTRYINDEX);
             res.script = source;
-            NIMO_INFO("Registering script instance for {} with reference {}", source->filepath, res.stackReference);
+            NIMO_INFO("Registering script instance for {} with reference {}", source->m_filepath, res.stackReference);
         }
     }
     ScriptUtils::PrintLuaStack(L);
@@ -419,7 +419,7 @@ nimo::ScriptInstance nimo::ScriptManager::CreateInstance(std::shared_ptr<Script>
 void nimo::ScriptManager::DestroyInstance(const ScriptInstance& instance)
 {
     OnDestroy(instance);
-    NIMO_INFO("Unregistering script instance for {} with reference {}", instance.script->filepath, instance.stackReference);
+    NIMO_INFO("Unregistering script instance for {} with reference {}", instance.script->m_filepath, instance.stackReference);
     luaL_unref(L, LUA_REGISTRYINDEX, instance.stackReference);
     EventManager::Publish(ScriptInstanceCreatedEvent(instance.owner, instance.script));
 }

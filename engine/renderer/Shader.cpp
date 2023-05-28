@@ -70,7 +70,7 @@ bool nimo::Shader::Compile(const std::string& vertexCode, const std::string& fra
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    ID = tempID;
+    m_ID = tempID;
 
     GLint count;
 
@@ -81,21 +81,21 @@ bool nimo::Shader::Compile(const std::string& vertexCode, const std::string& fra
     GLchar name[bufSize]; // variable name in GLSL
     GLsizei length; // name length
 
-    glGetProgramiv(ID, GL_ACTIVE_ATTRIBUTES, &count);
+    glGetProgramiv(m_ID, GL_ACTIVE_ATTRIBUTES, &count);
     NIMO_DEBUG("Active Attributes: {}", count);
 
     for (int i = 0; i < count; i++)
     {
-        glGetActiveAttrib(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+        glGetActiveAttrib(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
         NIMO_DEBUG("Attribute #{} Type: 0x{:0x} Name: {}", i, type, name);
     }
 
-    glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
     NIMO_DEBUG("Active Uniforms: {}", count);
     m_uniforms.clear();
     for (int i = 0; i < count; i++)
     {
-        glGetActiveUniform(ID, (GLuint)i, bufSize, &length, &size, &type, name);
+        glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
         NIMO_DEBUG("Uniform #{} Type: 0x{:0x} Name: {} Size: {}", i, type, name, size);
         switch (type)
         {
@@ -157,60 +157,60 @@ bool nimo::Shader::Compile(const std::string& vertexCode, const std::string& fra
 nimo::Shader::~Shader()
 {
     NIMO_DEBUG("nimo::Shader::~Shader");
-    glDeleteProgram(ID);
+    glDeleteProgram(m_ID);
 }
 void nimo::Shader::use()
 {
     if(m_usable)
-        glUseProgram(ID);
+        glUseProgram(m_ID);
 }
-void nimo::Shader::set(const std::string &name, bool value) const
+void nimo::Shader::Set(const std::string &name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(m_ID, name.c_str()), (int)value);
 }
-void nimo::Shader::set(const std::string &name, int value) const
+void nimo::Shader::Set(const std::string &name, int value) const
 {
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), value); 
+    glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value); 
 }
-void nimo::Shader::set(const std::string &name, float value) const
+void nimo::Shader::Set(const std::string &name, float value) const
 {
-    glUniform1f(glGetUniformLocation(ID, name.c_str()), value); 
+    glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value); 
 }
-void nimo::Shader::set(const std::string &name, const glm::vec2 &value) const
+void nimo::Shader::Set(const std::string &name, const glm::vec2 &value) const
 {
-    glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]); 
+    glUniform2fv(glGetUniformLocation(m_ID, name.c_str()), 1, &value[0]); 
 }
-void nimo::Shader::set(const std::string &name, float x, float y) const
+void nimo::Shader::Set(const std::string &name, float x, float y) const
 {
-    glUniform2f(glGetUniformLocation(ID, name.c_str()), x, y);
+    glUniform2f(glGetUniformLocation(m_ID, name.c_str()), x, y);
 }
-void nimo::Shader::set(const std::string &name, const glm::vec3 &value) const
+void nimo::Shader::Set(const std::string &name, const glm::vec3 &value) const
 {
-    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]); 
+    glUniform3fv(glGetUniformLocation(m_ID, name.c_str()), 1, &value[0]); 
 }
-void nimo::Shader::set(const std::string &name, float x, float y, float z) const
+void nimo::Shader::Set(const std::string &name, float x, float y, float z) const
 {
-    glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z); 
+    glUniform3f(glGetUniformLocation(m_ID, name.c_str()), x, y, z); 
 }
-void nimo::Shader::set(const std::string &name, const glm::vec4 &value) const
+void nimo::Shader::Set(const std::string &name, const glm::vec4 &value) const
 {
-    glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]); 
+    glUniform4fv(glGetUniformLocation(m_ID, name.c_str()), 1, &value[0]); 
 }
-void nimo::Shader::set(const std::string &name, float x, float y, float z, float w) const
+void nimo::Shader::Set(const std::string &name, float x, float y, float z, float w) const
 {
-    glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w); 
+    glUniform4f(glGetUniformLocation(m_ID, name.c_str()), x, y, z, w); 
 }
-void nimo::Shader::set(const std::string &name, const glm::mat2 &mat) const
+void nimo::Shader::Set(const std::string &name, const glm::mat2 &mat) const
 {
-    glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    glUniformMatrix2fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
-void nimo::Shader::set(const std::string &name, const glm::mat3 &mat) const
+void nimo::Shader::Set(const std::string &name, const glm::mat3 &mat) const
 {
-    glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    glUniformMatrix3fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
-void nimo::Shader::set(const std::string &name, const glm::mat4 &mat) const
+void nimo::Shader::Set(const std::string &name, const glm::mat4 &mat) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 bool nimo::Shader::CheckCompileErrors(GLuint shader, const std::string& type)
 {

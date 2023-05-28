@@ -72,10 +72,10 @@ public:
     enum class Usage{ None = 0, Static = 1, Dynamic = 2};
     VertexBuffer(const Layout& layout, const void* data, unsigned int size, bool dynamic = false);
     ~VertexBuffer();
-    void applyLayout();
-    void setData(const void* data, unsigned int size);
-    void bind();
-    void unbind();
+    void ApplyLayout();
+    void SetData(const void* data, unsigned int size);
+    void Bind();
+    void Unbind();
 
 private:
     unsigned int m_id;

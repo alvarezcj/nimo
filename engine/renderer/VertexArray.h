@@ -6,8 +6,8 @@ class VertexArray
 public:
     VertexArray();
     ~VertexArray();
-    void bind();
-    void unbind();
+    void Bind();
+    void Unbind();
 
 private:
     unsigned int m_id;

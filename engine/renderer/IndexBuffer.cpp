@@ -15,17 +15,17 @@ nimo::IndexBuffer::~IndexBuffer()
     glDeleteBuffers(1, &m_id);
 }
 
-void nimo::IndexBuffer::bind()
+void nimo::IndexBuffer::Bind()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
 }
 
-void nimo::IndexBuffer::unbind()
+void nimo::IndexBuffer::Unbind()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-unsigned int nimo::IndexBuffer::count()
+unsigned int nimo::IndexBuffer::Count()
 {
     return m_count;
 }

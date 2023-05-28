@@ -18,6 +18,6 @@ public:
     void SetData(std::shared_ptr<nimo::Scene> where, Entity e);
 
     static AssetType StaticType(){return AssetType::Prefab;}
-    nlohmann::json source;
+    nlohmann::json m_source;
 };
 }

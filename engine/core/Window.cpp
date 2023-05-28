@@ -19,9 +19,9 @@ struct nimo::Window::impl{
 };
 
 nimo::Window::Window(const WindowDescription& description)
-    : pimpl(new impl())
+    : m_pimpl(new impl())
 {
-    pimpl->description = description;
+    m_pimpl->description = description;
     if (!glfwInit())
     {
         NIMO_CRITICAL("Failed to initalize glfw3");
@@ -42,39 +42,39 @@ nimo::Window::Window(const WindowDescription& description)
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-        pimpl->handle = glfwCreateWindow(mode->width, mode->height, description.title.c_str(), primaryMonitor, nullptr);
+        m_pimpl->handle = glfwCreateWindow(mode->width, mode->height, description.title.c_str(), primaryMonitor, nullptr);
     }
     else
     {
-        pimpl->handle = glfwCreateWindow(description.width, description.height, description.title.c_str(), NULL, NULL);
+        m_pimpl->handle = glfwCreateWindow(description.width, description.height, description.title.c_str(), NULL, NULL);
     }
-    if (!pimpl->handle)
+    if (!m_pimpl->handle)
     {
         NIMO_CRITICAL("Window or OpenGL context creation failed");
         glfwTerminate();
     }
-    glfwMakeContextCurrent(pimpl->handle);
-    glfwMakeContextCurrent(pimpl->handle);
-    glfwSetWindowUserPointer(pimpl->handle, reinterpret_cast<void*>(this));
+    glfwMakeContextCurrent(m_pimpl->handle);
+    glfwMakeContextCurrent(m_pimpl->handle);
+    glfwSetWindowUserPointer(m_pimpl->handle, reinterpret_cast<void*>(this));
     
-    glfwSetWindowSizeCallback(pimpl->handle, [](GLFWwindow* window, int width, int height)
+    glfwSetWindowSizeCallback(m_pimpl->handle, [](GLFWwindow* window, int width, int height)
     {
         auto data = ((Window*)glfwGetWindowUserPointer(window));
-        data->pimpl->width = width;
-        data->pimpl->height = height;
+        data->m_pimpl->width = width;
+        data->m_pimpl->height = height;
         EventManager::Publish(WindowResizeEvent(width,height));
     });
-    glfwSetWindowCloseCallback(pimpl->handle, [](GLFWwindow* window)
+    glfwSetWindowCloseCallback(m_pimpl->handle, [](GLFWwindow* window)
     {
         auto data = ((Window*)glfwGetWindowUserPointer(window));
         EventManager::Publish(WindowCloseEvent());
     });
-    glfwSetWindowIconifyCallback(pimpl->handle, [](GLFWwindow* window, int iconified)
+    glfwSetWindowIconifyCallback(m_pimpl->handle, [](GLFWwindow* window, int iconified)
     {
         EventManager::Publish(WindowMinimizedEvent());
     });
 
-    glfwSetKeyCallback(pimpl->handle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+    glfwSetKeyCallback(m_pimpl->handle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         switch (action)
         {
@@ -102,7 +102,7 @@ nimo::Window::Window(const WindowDescription& description)
     //         NIMO_DEBUG("glfwSetCharCallback");
     //     });
 
-    glfwSetMouseButtonCallback(pimpl->handle, [](GLFWwindow* window, int button, int action, int mods)
+    glfwSetMouseButtonCallback(m_pimpl->handle, [](GLFWwindow* window, int button, int action, int mods)
     {
         switch (action)
         {
@@ -119,12 +119,12 @@ nimo::Window::Window(const WindowDescription& description)
         }
     });
 
-    glfwSetScrollCallback(pimpl->handle, [](GLFWwindow* window, double xOffset, double yOffset)
+    glfwSetScrollCallback(m_pimpl->handle, [](GLFWwindow* window, double xOffset, double yOffset)
     {
         auto data = ((Window*)glfwGetWindowUserPointer(window));
         EventManager::Publish(MouseScrollEvent(xOffset, yOffset));
     });
-    glfwSetCursorPosCallback(pimpl->handle, [](GLFWwindow* window, double x, double y)
+    glfwSetCursorPosCallback(m_pimpl->handle, [](GLFWwindow* window, double x, double y)
     {
         auto data = ((Window*)glfwGetWindowUserPointer(window));
         EventManager::Publish(MousePositionEvent(x, y));
@@ -137,11 +137,11 @@ nimo::Window::Window(const WindowDescription& description)
     // Update window size to actual size
     {
         int width, height;
-        glfwGetWindowSize(pimpl->handle, &width, &height);
-        pimpl->width = width;
-        pimpl->height = height;
+        glfwGetWindowSize(m_pimpl->handle, &width, &height);
+        m_pimpl->width = width;
+        m_pimpl->height = height;
     }
-    VSync(pimpl->description.vsync);
+    VSync(m_pimpl->description.vsync);
 
     // // Set icon
     // {
@@ -166,7 +166,7 @@ nimo::Window::Window(const WindowDescription& description)
     //ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(pimpl->handle, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_pimpl->handle, true);
     ImGui_ImplOpenGL3_Init("#version 130");
 
 
@@ -179,12 +179,12 @@ nimo::Window::~Window()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    glfwDestroyWindow(pimpl->handle);
+    glfwDestroyWindow(m_pimpl->handle);
 }
 
 bool nimo::Window::ShouldClose() 
 {
-    return glfwWindowShouldClose(pimpl->handle);
+    return glfwWindowShouldClose(m_pimpl->handle);
 }
 void nimo::Window::ProcessEvents() 
 {
@@ -192,56 +192,56 @@ void nimo::Window::ProcessEvents()
 }
 void nimo::Window::SwapBuffers() 
 {
-    glfwSwapBuffers(pimpl->handle);
+    glfwSwapBuffers(m_pimpl->handle);
 }
 
 void* nimo::Window::GetNativeHandle() const
 {
-    return pimpl->handle;
+    return m_pimpl->handle;
 }
 
 void nimo::Window::VSync(bool enabled)
 {
     glfwSwapInterval(enabled);
-    pimpl->description.vsync;
+    m_pimpl->description.vsync;
 }
 bool nimo::Window::VSync() const
 {
-    return pimpl->description.vsync;
+    return m_pimpl->description.vsync;
 }
 void nimo::Window::SetResizable(bool resizable) const
 {
-    glfwSetWindowAttrib(pimpl->handle, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+    glfwSetWindowAttrib(m_pimpl->handle, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
 }
 void nimo::Window::Maximize()
 {
-    glfwMaximizeWindow(pimpl->handle);
+    glfwMaximizeWindow(m_pimpl->handle);
 }
 void nimo::Window::Restore()
 {
-    glfwRestoreWindow(pimpl->handle);
+    glfwRestoreWindow(m_pimpl->handle);
 }
 void nimo::Window::CenterWindow()
 {
     const GLFWvidmode* videmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    int x = (videmode->width / 2) - (pimpl->width / 2);
-    int y = (videmode->height / 2) - (pimpl->height / 2);
-    glfwSetWindowPos(pimpl->handle, x, y);
+    int x = (videmode->width / 2) - (m_pimpl->width / 2);
+    int y = (videmode->height / 2) - (m_pimpl->height / 2);
+    glfwSetWindowPos(m_pimpl->handle, x, y);
 }
 const std::string& nimo::Window::GetTitle() const
 {
-    return pimpl->title;
+    return m_pimpl->title;
 }
 void nimo::Window::SetTitle(const std::string& title)
 {
-    pimpl->title = title;
-    glfwSetWindowTitle(pimpl->handle, pimpl->title.c_str());
+    m_pimpl->title = title;
+    glfwSetWindowTitle(m_pimpl->handle, m_pimpl->title.c_str());
 }
 unsigned int nimo::Window::GetWidth() const
 {
-    return pimpl->width;
+    return m_pimpl->width;
 }
 unsigned int nimo::Window::GetHeight() const
 {
-    return pimpl->height;
+    return m_pimpl->height;
 }

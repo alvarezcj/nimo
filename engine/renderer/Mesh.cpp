@@ -99,7 +99,7 @@ nimo::Mesh::Mesh(const std::string& file, bool mergeMeshesByMaterial)
                     submesh->m_indices.push_back(face.mIndices[k]);
             }
             submesh->Submit();
-            submeshes.push_back(submesh);
+            m_submeshes.push_back(submesh);
         }
         // std::cout << "\t NumTextures: " << scene->mNumTextures << std::endl;
         // std::cout << "\t NumMaterials: " << scene->mNumMaterials << std::endl;
@@ -137,7 +137,7 @@ nimo::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned
 {
     NIMO_DEBUG("nimo::Mesh::Mesh");
     auto submesh = std::make_shared<Submesh>();
-    submeshes.push_back(submesh);
+    m_submeshes.push_back(submesh);
     submesh->m_vertices = vertices;
     submesh->m_indices = indices;
     submesh->Submit();
@@ -148,7 +148,7 @@ nimo::Mesh::~Mesh()
 }
 void nimo::Mesh::draw(unsigned int i)
 {
-    (i < submeshes.size()) ? submeshes[i]->Draw() : submeshes[0]->Draw();
+    (i < m_submeshes.size()) ? m_submeshes[i]->Draw() : m_submeshes[0]->Draw();
 }
 
 nimo::Submesh::Submesh()
@@ -176,13 +176,13 @@ void nimo::Submesh::Submit()
         m_vertices.data(), sizeof(Vertex) * m_vertices.size()
     );
     m_ibo = new IndexBuffer(m_indices.data(), m_indices.size());
-    m_vao->bind();
-    m_ibo->bind();
-    m_vbo->bind();
-    m_vbo->applyLayout();
+    m_vao->Bind();
+    m_ibo->Bind();
+    m_vbo->Bind();
+    m_vbo->ApplyLayout();
 }
 void nimo::Submesh::Draw()
 {
-    m_vao->bind();
-    glDrawElements(GL_TRIANGLES, m_ibo->count(), GL_UNSIGNED_INT, 0);
+    m_vao->Bind();
+    glDrawElements(GL_TRIANGLES, m_ibo->Count(), GL_UNSIGNED_INT, 0);
 }

@@ -15,7 +15,7 @@ void nimo::AssetSerializer<nimo::Scene>::Serialize(const AssetMetadata& metadata
 {
     nlohmann::ordered_json j;
     nlohmann::ordered_json jentities = nlohmann::ordered_json::array();
-    j["Name"] = asset->name;
+    j["Name"] = asset->m_name;
     j["GUID"] = asset->id.Str();
 
     asset->m_registry.each([&](entt::entity id)

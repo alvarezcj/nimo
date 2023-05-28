@@ -159,7 +159,7 @@ void nimo::AssetSerializer<nimo::Prefab>::Serialize(const AssetMetadata& metadat
     if(nimo::Project::GetActiveProject())
         p = nimo::Project::GetActiveProject()->GetAssetsFolderPath();
     std::ofstream ofs(p/metadata.filepath);
-    ofs << asset->source.dump(4);
+    ofs << asset->m_source.dump(4);
 }
 std::shared_ptr<nimo::Prefab> nimo::AssetSerializer<nimo::Prefab>::Deserialize(const nimo::AssetMetadata& metadata)
 {

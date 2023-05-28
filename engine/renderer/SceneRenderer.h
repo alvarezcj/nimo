@@ -14,11 +14,11 @@ public:
     void SetScene(std::shared_ptr<Scene> scene);
     void Render(std::shared_ptr<FrameBuffer> target = {});
 public:
-    Timer totalFrameTimer;
-    Timer bloomFrameTimer;
-    Timer geometryFrameTimer;
-    Timer geometry2DFrameTimer;
-    Timer lightingFrameTimer;
+    Timer m_totalFrameTimer;
+    Timer m_bloomFrameTimer;
+    Timer m_geometryFrameTimer;
+    Timer m_geometry2DFrameTimer;
+    Timer m_lightingFrameTimer;
     std::shared_ptr<Scene> m_scene;
     std::shared_ptr<FrameBuffer> m_directionalLightDepthBuffer;
     std::shared_ptr<FrameBuffer> m_gBuffer;

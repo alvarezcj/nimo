@@ -5,8 +5,8 @@
 #include "events/EventManager.h"
 #include "events/SceneManagerEvents.h"
 
-std::shared_ptr<nimo::Scene> nimo::SceneManager::activeScene = {};
-std::vector<std::string> nimo::SceneManager::loadSceneRequests = {};
+std::shared_ptr<nimo::Scene> nimo::SceneManager::m_activeScene = {};
+std::vector<std::string> nimo::SceneManager::m_loadSceneRequests = {};
 
 std::shared_ptr<nimo::Scene> nimo::SceneManager::CreateScene(const std::string& name)
 {

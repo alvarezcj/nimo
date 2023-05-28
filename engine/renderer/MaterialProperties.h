@@ -16,7 +16,7 @@ namespace nimo
     class MaterialProperty : public IMaterialProperty{
     public:
         void Setup(Shader* shader) override {
-            shader->set(name, value);
+            shader->Set(name, value);
         }
         void* GetDataPtr() override {
             return (void*)&value;
@@ -32,7 +32,7 @@ namespace nimo
         MaterialPropertyTexture() {type = ShaderUniformDataType::Sampler2D;}
         void Setup(Shader* shader) override {
             if (t) {
-                shader->set(name, value);
+                shader->Set(name, value);
                 t->bind(value);
             }
         }

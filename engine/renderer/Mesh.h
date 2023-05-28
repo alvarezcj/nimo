@@ -39,7 +39,7 @@ namespace nimo{
         AssetType Type() const { return AssetType::Mesh; }
         static AssetType StaticType(){return AssetType::Mesh;}
         void draw(unsigned int i = 0);
-        std::vector<std::shared_ptr<Submesh>> submeshes;
+        std::vector<std::shared_ptr<Submesh>> m_submeshes;
     private:
     };
 };

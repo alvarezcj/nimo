@@ -13,12 +13,12 @@ nimo::VertexArray::~VertexArray()
     glDeleteVertexArrays(1, &m_id);
 }
 
-void nimo::VertexArray::bind()
+void nimo::VertexArray::Bind()
 {
     glBindVertexArray(m_id);
 }
 
-void nimo::VertexArray::unbind()
+void nimo::VertexArray::Unbind()
 {
     glBindVertexArray(0);
 }

@@ -6,7 +6,7 @@
 #include "events/ProjectEvents.h"
 
 nimo::Project::Project(const ProjectSettings& settings)
-    : settings(settings)
+    : m_settings(settings)
 {
 
 }
@@ -15,13 +15,13 @@ nimo::Project::~Project()
 }
 void nimo::Project::SetActiveProject(std::shared_ptr<Project> p) 
 { 
-    if(activeProject){
+    if(m_activeProject){
         SceneManager::SetActiveScene({});
         AssetManager::Cleanup();
         ScriptManager::Cleanup();
     }
-    activeProject = p;
-    if(activeProject){
+    m_activeProject = p;
+    if(m_activeProject){
         ScriptManager::Initialize();
         AssetManager::Initialize();
     }

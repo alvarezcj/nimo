@@ -19,7 +19,7 @@ namespace nimo
 	    template<typename... Args>
         static void Print(Level level, Args&&... args);
     private:
-        static std::shared_ptr<spdlog::logger> engineLogger;
+        static std::shared_ptr<spdlog::logger> m_engineLogger;
     };
 } // namespace nimo
 
@@ -36,24 +36,24 @@ namespace nimo
 template<typename... Args>
 void nimo::Log::Print(Level level, Args&&... args)
 {
-    if (!engineLogger) return;
+    if (!m_engineLogger) return;
     auto msg = fmt::format(std::forward<Args>(args)...);
     switch (level)
     {
     case Level::Debug:
-        engineLogger->trace(msg);
+        m_engineLogger->trace(msg);
         break;
     case Level::Info:
-        engineLogger->info(msg);
+        m_engineLogger->info(msg);
         break;
     case Level::Warn:
-        engineLogger->warn(msg);
+        m_engineLogger->warn(msg);
         break;
     case Level::Error:
-        engineLogger->error(msg);
+        m_engineLogger->error(msg);
         break;
     case Level::Critical:
-        engineLogger->critical(msg);
+        m_engineLogger->critical(msg);
         break;
     }
     EventManager::Publish(LogEvent(level, msg));
