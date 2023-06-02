@@ -462,7 +462,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const Came
     Renderer::DrawFullScreenQuad();
 
     m_geometry2DFrameTimer.Reset();
-    // glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
+    glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
     // glDisable(GL_DEPTH_TEST);  // disable depth-testing
     glEnable(GL_BLEND); // enable blend
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -546,7 +546,7 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const Came
     });
 
     // glEnable(GL_DEPTH_TEST);  
-    // glDepthMask(GL_TRUE);  
+    glDepthMask(GL_TRUE);  
     glDisable(GL_BLEND);  
     m_geometry2DFrameTimer.Stop();
     m_totalFrameTimer.Stop();

@@ -24,7 +24,7 @@ void RuntimeLayer::OnUpdate(float deltaTime)
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
     {
         renderer->SetScene(scene);
-        renderer->Render();
+        renderer->Render({}, scene->GetMainCamera(), scene->GetMainCameraTransform());
     }
     nimo::Renderer::EndFrame();
 }
