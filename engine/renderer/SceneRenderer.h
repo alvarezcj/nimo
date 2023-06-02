@@ -46,12 +46,8 @@ public:
     std::shared_ptr<Shader> m_shader2d;
     std::shared_ptr<Shader> m_shaderText;
     std::shared_ptr<Shader> m_shaderDepth;
-    std::shared_ptr<Mesh> m_quadMesh;
     std::shared_ptr<Texture> m_white;
     std::shared_ptr<Texture> m_black;
-    VertexArray* m_vao = nullptr;
-    VertexBuffer* m_vbo = nullptr;
-    IndexBuffer* m_ibo = nullptr;
     VertexArray* m_vaoText = nullptr;
     VertexBuffer* m_vboText = nullptr;
     IndexBuffer* m_iboText = nullptr;

@@ -23,7 +23,6 @@ namespace nimo{
         Submesh();
         ~Submesh();
         void Submit();
-        void Draw();
         VertexArray* m_vao = nullptr;
         VertexBuffer* m_vbo = nullptr;
         IndexBuffer* m_ibo = nullptr;
@@ -38,8 +37,9 @@ namespace nimo{
         ~Mesh();
         AssetType Type() const { return AssetType::Mesh; }
         static AssetType StaticType(){return AssetType::Mesh;}
-        void draw(unsigned int i = 0);
-        std::vector<std::shared_ptr<Submesh>> m_submeshes;
+        std::shared_ptr<Submesh> GetSubmesh(unsigned int id);
+        const std::vector<std::shared_ptr<Submesh>>& GetSubmeshes(){ return m_submeshes;}
     private:
+        std::vector<std::shared_ptr<Submesh>> m_submeshes;
     };
 };

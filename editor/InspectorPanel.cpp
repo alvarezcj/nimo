@@ -149,10 +149,10 @@ void InspectorPanel::OnRender()
                 std::shared_ptr<nimo::Mesh> meshAsset = nimo::AssetManager::Get<nimo::Mesh>(metadata.id);
                 auto settings = std::static_pointer_cast<nimo::AssetSettings<nimo::Mesh>>(metadata.serializerSettings);
                 ImGui::TextDisabled("Information");
-                ImGui::Text("Submeshes: %d", meshAsset->m_submeshes.size());
+                ImGui::Text("Submeshes: %d", meshAsset->GetSubmeshes().size());
                 ImGui::Spacing();
                 ImGui::Separator();
-                for(auto submesh : meshAsset->m_submeshes)
+                for(auto submesh : meshAsset->GetSubmeshes())
                 {
                     ImGui::Text(submesh->m_name.c_str());
                     ImGui::TextDisabled("\tVertices: %d", submesh->m_vertices.size());
@@ -515,7 +515,7 @@ void InspectorPanel::OnRender()
                         ImGui::EndDragDropTarget();
                     }
                     if (mesh)
-                        ImGui::SliderInt(("Submesh##Asset##Mesh##"+entityIdString).c_str(), (int*)&ent.GetComponent<nimo::MeshComponent>().submeshIndex, 0, mesh->m_submeshes.size() -1, "%d", ImGuiSliderFlags_AlwaysClamp);
+                        ImGui::SliderInt(("Submesh##Asset##Mesh##"+entityIdString).c_str(), (int*)&ent.GetComponent<nimo::MeshComponent>().submeshIndex, 0, mesh->GetSubmeshes().size() -1, "%d", ImGuiSliderFlags_AlwaysClamp);
                 }
             }
             ImGui::Spacing();

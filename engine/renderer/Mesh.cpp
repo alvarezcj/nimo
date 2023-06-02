@@ -146,10 +146,14 @@ nimo::Mesh::~Mesh()
 {
     NIMO_DEBUG("nimo::Mesh::~Mesh");
 }
-void nimo::Mesh::draw(unsigned int i)
+
+std::shared_ptr<nimo::Submesh> nimo::Mesh::GetSubmesh(unsigned int id)
 {
-    (i < m_submeshes.size()) ? m_submeshes[i]->Draw() : m_submeshes[0]->Draw();
+    if(id >= m_submeshes.size())
+        return m_submeshes[0];
+    return  m_submeshes[id];
 }
+
 
 nimo::Submesh::Submesh()
 {
@@ -180,9 +184,4 @@ void nimo::Submesh::Submit()
     m_ibo->Bind();
     m_vbo->Bind();
     m_vbo->ApplyLayout();
-}
-void nimo::Submesh::Draw()
-{
-    m_vao->Bind();
-    glDrawElements(GL_TRIANGLES, m_ibo->Count(), GL_UNSIGNED_INT, 0);
 }

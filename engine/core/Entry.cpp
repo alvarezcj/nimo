@@ -5,6 +5,7 @@
 #include "scene/SceneManager.h"
 #include "audio/AudioEngine.h"
 #include "input/Input.h"
+#include "renderer/Renderer.h"
 
 int main(int argc, char** argv)
 {
@@ -12,6 +13,7 @@ int main(int argc, char** argv)
     nimo::Input::Initialize();
 	nimo::AudioEngine::Initialize();
 	auto app = CreateApplication(argc, argv);
+	nimo::Renderer::Initialize();
 	if(app == nullptr) 
 	{
 		NIMO_CRITICAL("Client application not created!");

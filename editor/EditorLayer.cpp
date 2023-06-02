@@ -411,9 +411,7 @@ void EditorLayer::OnAttach()
         }
         nimo::Renderer::EndFrame();
 
-        nimo::Renderer::BeginFrame();        
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        nimo::Renderer::EndFrame();
     }
 
 

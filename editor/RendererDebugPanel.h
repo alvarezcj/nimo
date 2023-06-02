@@ -25,6 +25,9 @@ private:
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
+        ImGui::Text("Render stats");
+        ImGui::TextDisabled("Draw calls: %d", nimo::Renderer::stats.totalDrawCalls);
+        ImGui::TextDisabled("Triangle count: %d", nimo::Renderer::stats.totalTriangles);
         ImGui::Text("Last frame time: %.3f ms", renderer->m_totalFrameTimer.ElapsedMillis());
         ImGui::TextDisabled("Geometry 3D: %.3f ms", renderer->m_geometryFrameTimer.ElapsedMillis());
         ImGui::TextDisabled("Lighting: %.3f ms", renderer->m_lightingFrameTimer.ElapsedMillis());
