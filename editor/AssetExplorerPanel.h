@@ -37,7 +37,7 @@ struct AssetExplorerPanel : public EditorPanel
     }
     void PaintDirectory(const std::filesystem::path& path);
 private:
-    void OnRender();
+    void OnRender(float deltaTime);
     EditorLayer* m_editor;
     std::shared_ptr<nimo::Texture> folderIcon;
     std::shared_ptr<nimo::Texture> fileIcon;

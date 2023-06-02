@@ -381,35 +381,27 @@ void EditorLayer::OnAttach()
         }
         
         ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-        gameViewPanel->Render();
-        ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-        sceneViewPanel->Render();
+        sceneViewPanel->Render(deltaTime);
 
         ImGui::SetNextWindowSize(ImVec2(600, 100), ImGuiCond_FirstUseEver);
-        logPanel->Render();
+        logPanel->Render(deltaTime);
 
         ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
-        sceneContentsPanel->Render();
+        sceneContentsPanel->Render(deltaTime);
 
         ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
-        inspectorPanel->Render();
+        inspectorPanel->Render(deltaTime);
 
         ImGui::SetNextWindowSize(ImVec2(1000, 200), ImGuiCond_FirstUseEver);
-        assetExplorerPanel->Render();
+        assetExplorerPanel->Render(deltaTime);
+
+        ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+        gameViewPanel->Render(deltaTime);
 
         ImGui::SetNextWindowSize(ImVec2(400, 800), ImGuiCond_FirstUseEver);
-        rendererDebugPanel->Render();
+        rendererDebugPanel->Render(deltaTime);
 
         ImGui::Render();
-
-        nimo::Renderer::BeginFrame(fb);
-        for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
-        {
-            renderer->SetScene(scene);
-            renderer->Render(fb);
-            // scene->Update();
-        }
-        nimo::Renderer::EndFrame();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }

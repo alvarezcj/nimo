@@ -10,7 +10,7 @@
 #include "shellapi.h"
 
 const static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_FramePadding;
-void AssetExplorerPanel::OnRender()
+void AssetExplorerPanel::OnRender(float deltaTime)
 {
     if(nimo::Project::GetActiveProject())
     {

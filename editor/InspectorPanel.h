@@ -12,7 +12,7 @@ struct InspectorPanel : public EditorPanel
     void SetViewItem(nimo::GUID id);
     void ResetViewItem() {selectedItem = nimo::GUID();}
 private:
-    void OnRender();
+    void OnRender(float deltaTime);
     EditorLayer* m_editor;
     nimo::GUID selectedItem;
 };

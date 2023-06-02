@@ -11,7 +11,7 @@ struct SceneContentsPanel : public EditorPanel
     void PaintEntity(const std::shared_ptr<nimo::Scene>& scene, nimo::Entity& ent);
 
 private:
-    void OnRender();
+    void OnRender(float deltaTime);
     EditorLayer* m_editor;
     nimo::GUID selectedEntity;
 };

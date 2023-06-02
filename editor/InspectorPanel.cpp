@@ -10,7 +10,7 @@ void InspectorPanel::SetViewItem(nimo::GUID id)
 {
     selectedItem=id;
 }
-void InspectorPanel::OnRender()
+void InspectorPanel::OnRender(float deltaTime)
 {
     if(!selectedItem.Valid()) return;
     auto& metadata = nimo::AssetManager::GetMetadata(selectedItem);

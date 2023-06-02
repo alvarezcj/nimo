@@ -12,7 +12,7 @@ public:
     SceneRenderer();
     ~SceneRenderer();
     void SetScene(std::shared_ptr<Scene> scene);
-    void Render(std::shared_ptr<FrameBuffer> target = {});
+    void Render(std::shared_ptr<FrameBuffer> target = {}, const CameraComponent& cameraSettings = {}, const TransformComponent& cameraTransform = {});
 public:
     Timer m_totalFrameTimer;
     Timer m_bloomFrameTimer;

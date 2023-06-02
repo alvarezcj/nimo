@@ -2,10 +2,10 @@
 
 #include "imgui.h"
 
-void EditorPanel::Render(){
+void EditorPanel::Render(float deltaTime){
     if(open){
         ImGui::Begin(m_name.c_str(), &open, ImGuiWindowFlags_NoCollapse);
-        OnRender();
+        OnRender(deltaTime);
         ImGui::End();
     }
 }

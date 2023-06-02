@@ -2,8 +2,16 @@
 #include "imgui.h"
 #include "EditorLayer.h"
 
-void GameViewPanel::OnRender()
+void GameViewPanel::OnRender(float deltaTime)
 {
+    if(!m_editor->renderer) return;
+    nimo::Renderer::BeginFrame(m_editor->fb);
+    for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())
+    {
+        m_editor->renderer->SetScene(scene);
+        m_editor->renderer->Render(m_editor->fb, scene->GetMainCamera(), scene->GetMainCameraTransform());
+    }
+    nimo::Renderer::EndFrame();
     // Using a Child allow to fill all the space of the window.
     // It also alows customization
     ImGui::BeginChild("GameRender");

@@ -28,7 +28,7 @@ private:
     bool debug = true;
     bool info = true;
     bool warning = true;
-    void OnRender(){
+    void OnRender(float deltaTime){
         if(ImGui::Button("Clear"))
         {
             logBuffer.clear();

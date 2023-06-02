@@ -28,6 +28,8 @@ namespace nimo{
         Entity GetEntity(GUID id) {return {m_entities[id], m_registry};}
         glm::mat4 GetWorldSpaceTransformMatrix(Entity entity);
         void RequestEntityDestruction(Entity entity);
+        CameraComponent GetMainCamera();
+        TransformComponent GetMainCameraTransform();
     private:
         friend class SceneRenderer;
         std::string m_name; 

@@ -217,12 +217,11 @@ void nimo::SceneRenderer::SetScene(std::shared_ptr<Scene> scene)
 {
     m_scene = scene;
 }
-void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target)
+void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const CameraComponent& cameraSettings, const TransformComponent& cameraTransform)
 {
     m_totalFrameTimer.Reset();
-    Entity camera(*m_scene->m_registry.view<CameraComponent>().begin(), m_scene->m_registry);
-    auto camTransform = camera.GetComponent<TransformComponent>();
-    auto cam = camera.GetComponent<CameraComponent>();
+    auto camTransform = cameraTransform;
+    auto cam = cameraSettings;
     glm::mat4 projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)Application::Instance().GetWindow().GetWidth() , (float)Application::Instance().GetWindow().GetHeight(), cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
     glm::mat4 projectionOrtho = glm::ortho(
         -(float)Application::Instance().GetWindow().GetWidth() * 0.5f,

@@ -155,7 +155,7 @@ void SceneContentsPanel::PaintEntity(const std::shared_ptr<nimo::Scene>& scene, 
     }
 }
 
-void SceneContentsPanel::OnRender()
+void SceneContentsPanel::OnRender(float deltaTime)
 {
     ImRect windowRect = { ImGui::GetWindowContentRegionMin(), ImGui::GetWindowContentRegionMax() };
     for(auto scene : nimo::AssetManager::GetAllLoaded<nimo::Scene>())

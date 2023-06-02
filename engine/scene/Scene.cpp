@@ -193,3 +193,14 @@ void nimo::Scene::RequestEntityDestruction(Entity entity)
     m_requestedEntitiesToDestroy.push_back(entity);
 }
 
+nimo::CameraComponent nimo::Scene::GetMainCamera()
+{
+    Entity camera(*m_registry.view<CameraComponent>().begin(), m_registry);
+    return camera.GetComponent<CameraComponent>();
+}
+nimo::TransformComponent nimo::Scene::GetMainCameraTransform()
+{
+    Entity camera(*m_registry.view<CameraComponent>().begin(), m_registry);
+    return camera.GetComponent<TransformComponent>();
+}
+

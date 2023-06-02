@@ -13,7 +13,7 @@ struct RendererDebugPanel : public EditorPanel
 private:
     std::vector<float> frameTimes;
     std::shared_ptr<nimo::SceneRenderer> renderer;
-    void OnRender(){
+    void OnRender(float deltaTime){
         if(!renderer) return;
         if(frameTimes.size() > 1499)
         {
