@@ -639,6 +639,7 @@ void InspectorPanel::OnRender(float deltaTime)
                     ImGui::ColorEdit4(("Color##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SpriteRendererComponent>().Color, ImGuiColorEditFlags_Float);
                     ImGui::DragFloat2(("Tiling##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SpriteRendererComponent>().tiling, 0.02f);
                     ImGui::DragFloat2(("Offset##Point Light##" + entityIdString).c_str(), (float*)&ent.GetComponent<nimo::SpriteRendererComponent>().offset, 0.02f);
+                    ImGui::SliderInt(("Layer##Point Light##" + entityIdString).c_str(), &ent.GetComponent<nimo::SpriteRendererComponent>().layer, 0, 9, "%d", ImGuiSliderFlags_AlwaysClamp);
                 }
             }
             ImGui::Spacing();

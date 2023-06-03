@@ -462,30 +462,44 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const Came
     Renderer::DrawFullScreenQuad();
 
     m_geometry2DFrameTimer.Reset();
-    glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
-    // glDisable(GL_DEPTH_TEST);  // disable depth-testing
+    // glDepthMask(GL_FALSE);  // disable writes to Z-Buffer
+    glDisable(GL_DEPTH_TEST);  // disable depth-testing
     glEnable(GL_BLEND); // enable blend
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_shader2d->use();
     m_shader2d->Set("view", viewMatrix);
     m_shader2d->Set("projection", projectionOrtho);
     m_shader2d->Set("mainTexture", 0);
-    m_scene->m_registry.view<ActiveComponent, IDComponent, SpriteRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, SpriteRendererComponent& r) {
-        if(!active.active) return;
-        m_shader2d->Set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
-        if(!r.texture)
-        {
-            m_white->bind(0);
-        }
-        else
-        {
-            r.texture->bind(0);
-        }
-        m_shader2d->Set("color", r.Color);
-        m_shader2d->Set("tiling", r.tiling);
-        m_shader2d->Set("offset", r.offset);
-        Renderer::DrawQuad();
-    });
+    auto draw2DLayer = [&](int layer)
+    {
+        m_scene->m_registry.view<ActiveComponent, IDComponent, SpriteRendererComponent>().each([&](ActiveComponent& active, IDComponent& id, SpriteRendererComponent& r) {
+            if(!active.active) return;
+            if(r.layer != layer) return;
+            m_shader2d->Set("transform", m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)));
+            if(!r.texture)
+            {
+                m_white->bind(0);
+            }
+            else
+            {
+                r.texture->bind(0);
+            }
+            m_shader2d->Set("color", r.Color);
+            m_shader2d->Set("tiling", r.tiling);
+            m_shader2d->Set("offset", r.offset);
+            Renderer::DrawQuad();
+        });
+    };
+    draw2DLayer(0);
+    draw2DLayer(1);
+    draw2DLayer(2);
+    draw2DLayer(3);
+    draw2DLayer(4);
+    draw2DLayer(5);
+    draw2DLayer(6);
+    draw2DLayer(7);
+    draw2DLayer(8);
+    draw2DLayer(9);
     m_shaderText->use();
     m_shaderText->Set("projection", projectionOrtho);
     m_shaderText->Set("text", 0);
@@ -545,8 +559,8 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const Came
         }
     });
 
-    // glEnable(GL_DEPTH_TEST);  
-    glDepthMask(GL_TRUE);  
+    glEnable(GL_DEPTH_TEST);  
+    // glDepthMask(GL_TRUE);  
     glDisable(GL_BLEND);  
     m_geometry2DFrameTimer.Stop();
     m_totalFrameTimer.Stop();

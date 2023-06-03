@@ -155,6 +155,7 @@ struct SpriteRendererComponent{
     std::shared_ptr<Texture> texture;
     glm::vec2 tiling = {1.0f, 1.0f};
     glm::vec2 offset = {0.0f, 0.0f};
+    int layer = 0;
 };
 struct TextRendererComponent{
     glm::vec4 Color{1.0f, 1.0f, 1.0f, 1.0f};

@@ -155,6 +155,7 @@ nlohmann::ordered_json nimo::AssetSerializer<nimo::Scene>::SerializeEntity(const
             {"Color",{c.Color.r,c.Color.g,c.Color.b,c.Color.a}},
             {"Tiling",{c.tiling.r,c.tiling.g}},
             {"Offset",{c.offset.r,c.offset.g}},
+            {"Layer",c.layer},
             {"Texture",c.texture ? c.texture->id.Str() : GUID().Str()}
         };
         jentity["SpriteRenderer"] = jsr;
@@ -316,7 +317,8 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             c.Color = glm::vec4((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2], (float)field.value()["Color"][3]);
             c.tiling = glm::vec2((float)field.value()["Tiling"][0], (float)field.value()["Tiling"][1]);
             c.offset = glm::vec2((float)field.value()["Offset"][0], (float)field.value()["Offset"][1]);
-            c.texture = AssetManager::Get<Texture>(AssetId((std::string)field.value()["Texture"]));
+            c.layer = (int)field.value()["Layer"];
+            c.texture = AssetId((std::string)field.value()["Texture"]).Valid() ? AssetManager::Get<Texture>(AssetId((std::string)field.value()["Texture"])) : std::shared_ptr<Texture>();
         }
         if(field.key() == "TextRenderer")
         {
