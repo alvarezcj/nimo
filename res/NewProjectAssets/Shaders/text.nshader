@@ -11,7 +11,7 @@ uniform mat4 transform;
 void main()
 {
    gl_Position = projection * transform * vec4(position, 1.0);
-   TexCoords = vec2(-uv.x, uv.y);
+   TexCoords = vec2(uv.x, -uv.y);
 }
 @VERTEXEND
 

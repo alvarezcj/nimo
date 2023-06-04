@@ -312,9 +312,9 @@ void EditorLayer::OnAttach()
                         NULL,           // Process handle not inheritable
                         NULL,           // Thread handle not inheritable
                         FALSE,          // Set handle inheritance to FALSE
-                        CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,              // No creation flags
+                        CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,              // Creation flags
                         NULL,           // Use parent's environment block
-                        p.parent_path().string().c_str(),           // Use parent's starting directory 
+                        p.parent_path().string().c_str(),           // Starting directory 
                         &si,            // Pointer to STARTUPINFO structure
                         &pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
                         );
@@ -595,7 +595,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             {
                 nimo::Entity e = createdScene->CreateEntity("Instructions 1");
                 e.GetComponent<nimo::TransformComponent>().Translation = {-900.0f, -430.0f, 0.0f};
-                e.GetComponent<nimo::TransformComponent>().Scale = {0.7f, -0.7f, 0.7f};
+                e.GetComponent<nimo::TransformComponent>().Scale = {0.7f, 0.7f, 0.7f};
                 auto& text = e.AddComponent<nimo::TextRendererComponent>();
                 text.font = nimo::AssetManager::Get<nimo::Font>("Fonts/canterbury/Canterbury.ttf");
                 text.text = "Right click to look around";
@@ -603,7 +603,7 @@ void EditorLayer::CreateNewProject(const std::filesystem::path& folder, const st
             {
                 nimo::Entity e = createdScene->CreateEntity("Instructions 2");
                 e.GetComponent<nimo::TransformComponent>().Translation = {-900.0f, -500.0f, 0.0f};
-                e.GetComponent<nimo::TransformComponent>().Scale = {0.7f, -0.7f, 0.7f};
+                e.GetComponent<nimo::TransformComponent>().Scale = {0.7f, 0.7f, 0.7f};
                 auto& text = e.AddComponent<nimo::TextRendererComponent>();
                 text.font = nimo::AssetManager::Get<nimo::Font>("Fonts/canterbury/Canterbury.ttf");
                 text.text = "WASD to move";
