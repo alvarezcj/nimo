@@ -40,11 +40,41 @@ nimo::Texture::Texture(unsigned int width, unsigned int height, void* data, unsi
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
     glTextureStorage2D(m_id, 1, m_internalFormat, m_width, m_height);
+    if(spec.generateMipmaps)
+        glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    switch (spec.filtering)
+    {
+    case TextureFiltering::Average :
+        glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        break;
+    case TextureFiltering::Nearest :
+        glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        break;
+    
+    default:
+        break;
+    }
+    switch (spec.wrapping)
+    {
+    case TextureWrapping::Repeat:
+        glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        break;
+    case TextureWrapping::RepeatMirrored:
+        glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+        break;
+    case TextureWrapping::Clamp:
+        glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        break;
+    
+    default:
+        break;
+    }
     
     glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);

@@ -17,8 +17,12 @@ nimo::Font::Font(const std::string& file, unsigned int pixelSize)
         NIMO_ERROR("Error loading font file: {}", file );
     }
 
+    NIMO_INFO("Font face {} with {} charmaps", file, face->num_charmaps);
     FT_Set_Pixel_Sizes(face, 0, pixelSize);
-    for(unsigned char c = 0; c < 128; c++)
+    TextureSpecification spec;
+    spec.filtering = TextureFiltering::Nearest;
+    spec.wrapping = TextureWrapping::RepeatMirrored;
+    for(unsigned char c = 0; c < 255; c++)
     {
         error = FT_Load_Char( face, c, FT_LOAD_RENDER);
         if ( error )
@@ -28,7 +32,7 @@ nimo::Font::Font(const std::string& file, unsigned int pixelSize)
         }
 
         m_glyphs[c] = {
-            std::make_unique<Texture>(face->glyph->bitmap.width,face->glyph->bitmap.rows, face->glyph->bitmap.buffer, 1),
+            std::make_unique<Texture>(face->glyph->bitmap.width,face->glyph->bitmap.rows, face->glyph->bitmap.buffer, 1, spec),
             glm::ivec2(face->glyph->bitmap.width,face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left,face->glyph->bitmap_top),
             glm::ivec2(face->glyph->advance.x, face->glyph->advance.y)

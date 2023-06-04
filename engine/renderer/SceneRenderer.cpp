@@ -530,14 +530,14 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const Came
                 x = 0.0f;
                 continue;
             }
-            float xpos = x + (float)glyph.bearing.x * 0.5f;
-            float ypos = y + (glyph.bearing.y) * 0.5f;
+            float xpos = x + ((float)glyph.bearing.x + (float)glyph.size.x * 0.5f)* t.Scale.x;
+            float ypos = y + ((float)glyph.bearing.y) * 0.5f * t.Scale.y - ((float)glyph.size.y - (float)glyph.bearing.y) * 0.5f * t.Scale.y;
             float w = (float)glyph.size.x * t.Scale.x;
             float h = (float)glyph.size.y * t.Scale.y;
             // model = glm::translate(model, glm::vec3(xpos , ypos, .0f));
 
             TransformComponent t2;
-            t2.Translation = translation + glm::vec3(x, ypos, 0.0f);
+            t2.Translation = translation + glm::vec3(xpos, ypos, 0.0f);
             t2.Scale = scale * glm::vec3((float)glyph.size.x, (float)glyph.size.y, 1.0f);
             m_shaderText->Set("transform", t2.GetTransform());
             glyph.texture->bind(0);
