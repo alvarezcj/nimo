@@ -220,14 +220,18 @@ void nimo::SceneRenderer::SetScene(std::shared_ptr<Scene> scene)
 void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const CameraComponent& cameraSettings, const TransformComponent& cameraTransform)
 {
     m_totalFrameTimer.Reset();
+    glViewport(0, 0, target ? target->GetDetails().width : Application::Instance().GetWindow().GetWidth(), target ? target->GetDetails().height : Application::Instance().GetWindow().GetHeight());
     auto camTransform = cameraTransform;
     auto cam = cameraSettings;
-    glm::mat4 projection = glm::perspectiveFov(glm::radians(cam.FOV), (float)Application::Instance().GetWindow().GetWidth() , (float)Application::Instance().GetWindow().GetHeight(), cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
+    glm::mat4 projection = glm::perspectiveFov(glm::radians(cam.FOV),
+                                            target ? (float)target->GetDetails().width : (float)Application::Instance().GetWindow().GetWidth(),
+                                            target ? (float)target->GetDetails().height : (float)Application::Instance().GetWindow().GetHeight(),
+                                            cam.ClippingPlanes.Near, cam.ClippingPlanes.Far);
     glm::mat4 projectionOrtho = glm::ortho(
-        -(float)Application::Instance().GetWindow().GetWidth() * 0.5f,
-        (float)Application::Instance().GetWindow().GetWidth() * 0.5f,
-        -(float)Application::Instance().GetWindow().GetHeight() * 0.5f, 
-        (float)Application::Instance().GetWindow().GetHeight() * 0.5f, 
+        -(target ? (float)target->GetDetails().width : (float)Application::Instance().GetWindow().GetWidth()) * 0.5f,
+        (target ? (float)target->GetDetails().width : (float)Application::Instance().GetWindow().GetWidth()) * 0.5f,
+        -(target ? (float)target->GetDetails().height : (float)Application::Instance().GetWindow().GetHeight()) * 0.5f, 
+        (target ? (float)target->GetDetails().height : (float)Application::Instance().GetWindow().GetHeight()) * 0.5f, 
         -0.1f, cam.ClippingPlanes.Far);
     glm::mat4 viewMatrix = camTransform.GetView();
     auto viewPosition = glm::vec3(camTransform.Translation.x, camTransform.Translation.y, camTransform.Translation.z);
