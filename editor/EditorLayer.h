@@ -36,17 +36,17 @@ class EditorLayer : public nimo::Layer
 {
 public:
     EditorLayer(): newNameModal("New Name"){
-        assetIcons[nimo::AssetType::None] = std::make_shared<nimo::Texture>("icon_file.png");
-        assetIcons[nimo::AssetType::Texture] = std::make_shared<nimo::Texture>("icon_camera.png");
-        assetIcons[nimo::AssetType::Mesh] = std::make_shared<nimo::Texture>("icon_cube.png");
-        assetIcons[nimo::AssetType::Shader] = std::make_shared<nimo::Texture>("icon_polaroid.png");
-        assetIcons[nimo::AssetType::Material] = std::make_shared<nimo::Texture>("icon_paintroll.png");
-        assetIcons[nimo::AssetType::Scene] = std::make_shared<nimo::Texture>("icon_castle.png");
-        assetIcons[nimo::AssetType::EnvironmentMap] = std::make_shared<nimo::Texture>("icon_picture.png");
-        assetIcons[nimo::AssetType::Script] = std::make_shared<nimo::Texture>("icon_gears.png");
-        assetIcons[nimo::AssetType::Prefab] = std::make_shared<nimo::Texture>("icon_box.png");
-        assetIcons[nimo::AssetType::Audio] = std::make_shared<nimo::Texture>("icon_audio_wave.png");
-        assetIcons[nimo::AssetType::Font] = std::make_shared<nimo::Texture>("icon_signature.png");
+        assetIcons[nimo::AssetType::None] = std::make_shared<nimo::Texture>("icons/icon_file.png");
+        assetIcons[nimo::AssetType::Texture] = std::make_shared<nimo::Texture>("icons/icon_camera.png");
+        assetIcons[nimo::AssetType::Mesh] = std::make_shared<nimo::Texture>("icons/icon_cube.png");
+        assetIcons[nimo::AssetType::Shader] = std::make_shared<nimo::Texture>("icons/icon_polaroid.png");
+        assetIcons[nimo::AssetType::Material] = std::make_shared<nimo::Texture>("icons/icon_paintroll.png");
+        assetIcons[nimo::AssetType::Scene] = std::make_shared<nimo::Texture>("icons/icon_castle.png");
+        assetIcons[nimo::AssetType::EnvironmentMap] = std::make_shared<nimo::Texture>("icons/icon_picture.png");
+        assetIcons[nimo::AssetType::Script] = std::make_shared<nimo::Texture>("icons/icon_gears.png");
+        assetIcons[nimo::AssetType::Prefab] = std::make_shared<nimo::Texture>("icons/icon_box.png");
+        assetIcons[nimo::AssetType::Audio] = std::make_shared<nimo::Texture>("icons/icon_audio_wave.png");
+        assetIcons[nimo::AssetType::Font] = std::make_shared<nimo::Texture>("icons/icon_signature.png");
     }
     ~EditorLayer()
     {

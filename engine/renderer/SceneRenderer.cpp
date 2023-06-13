@@ -302,10 +302,16 @@ void nimo::SceneRenderer::Render(std::shared_ptr<FrameBuffer> target, const Came
         m_shaderLightingPass->Set("directionalLightIntensity", directionalLight.GetComponent<DirectionalLightComponent>().Intensity);
     }
     int currentLights = 0;
-    m_scene->m_registry.view<ActiveComponent, PointLightComponent, TransformComponent>().each([&](ActiveComponent active,PointLightComponent& light, TransformComponent& lightTransform)
+    m_scene->m_registry.view<IDComponent, ActiveComponent, PointLightComponent, TransformComponent>().each([&](IDComponent id, ActiveComponent active,PointLightComponent& light, TransformComponent& lightTransform)
     {
         if(!active.active) return;
-        m_shaderLightingPass->Set("lights[" + std::to_string(currentLights) + "].Position", lightTransform.Translation);
+        glm::vec3 scale;
+        glm::quat rotation;
+        glm::vec3 translation;
+        glm::vec3 skew;
+        glm::vec4 perspective;
+        glm::decompose(m_scene->GetWorldSpaceTransformMatrix(m_scene->GetEntity(id.Id)), scale, rotation, translation, skew, perspective);
+        m_shaderLightingPass->Set("lights[" + std::to_string(currentLights) + "].Position", translation);
         m_shaderLightingPass->Set("lights[" + std::to_string(currentLights) + "].Color", light.Color);
         m_shaderLightingPass->Set("lights[" + std::to_string(currentLights) + "].Intensity", light.Intensity);
         static const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)

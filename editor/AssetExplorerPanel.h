@@ -11,25 +11,25 @@ struct AssetExplorerPanel : public EditorPanel
     AssetExplorerPanel(EditorLayer* editor) 
         : m_editor(editor)
         , EditorPanel("Asset Explorer")
-        , folderIcon(std::make_shared<nimo::Texture>("icon_folder.png"))
-        , fileIcon(std::make_shared<nimo::Texture>("icon_file.png"))
+        , folderIcon(std::make_shared<nimo::Texture>("icons/icon_folder.png"))
+        , fileIcon(std::make_shared<nimo::Texture>("icons/icon_file.png"))
     {
-        AssetExplorerPanel::mapExtensionIcon[".nshader"] = std::make_shared<nimo::Texture>("icon_polaroid.png");
-        AssetExplorerPanel::mapExtensionIcon[".nmat"] = std::make_shared<nimo::Texture>("icon_paintroll.png");
-        AssetExplorerPanel::mapExtensionIcon[".nscene"] = std::make_shared<nimo::Texture>("icon_castle.png");
-        AssetExplorerPanel::mapExtensionIcon[".txt"] = std::make_shared<nimo::Texture>("icon_file_alt.png");
-        AssetExplorerPanel::mapExtensionIcon[".png"] = std::make_shared<nimo::Texture>("icon_camera.png");
-        AssetExplorerPanel::mapExtensionIcon[".jpg"] = std::make_shared<nimo::Texture>("icon_camera.png");
-        AssetExplorerPanel::mapExtensionIcon[".obj"] = std::make_shared<nimo::Texture>("icon_cube.png");
-        AssetExplorerPanel::mapExtensionIcon[".fbx"] = std::make_shared<nimo::Texture>("icon_cube.png");
-        AssetExplorerPanel::mapExtensionIcon[".gltf"] = std::make_shared<nimo::Texture>("icon_cube.png");
-        AssetExplorerPanel::mapExtensionIcon[".nprefab"] = std::make_shared<nimo::Texture>("icon_box.png");
-        AssetExplorerPanel::mapExtensionIcon[".ogg"] = std::make_shared<nimo::Texture>("icon_audio_wave.png");
-        AssetExplorerPanel::mapExtensionIcon[".mp3"] = std::make_shared<nimo::Texture>("icon_audio_wave.png");
-        AssetExplorerPanel::mapExtensionIcon[".wav"] = std::make_shared<nimo::Texture>("icon_audio_wave.png");
-        AssetExplorerPanel::mapExtensionIcon[".lua"] = std::make_shared<nimo::Texture>("icon_gears.png");
-        AssetExplorerPanel::mapExtensionIcon[".ttf"] = std::make_shared<nimo::Texture>("icon_signature.png");
-        AssetExplorerPanel::mapExtensionIcon[".hdr"] = std::make_shared<nimo::Texture>("icon_picture.png");
+        AssetExplorerPanel::mapExtensionIcon[".nshader"] = std::make_shared<nimo::Texture>("icons/icon_polaroid.png");
+        AssetExplorerPanel::mapExtensionIcon[".nmat"] = std::make_shared<nimo::Texture>("icons/icon_paintroll.png");
+        AssetExplorerPanel::mapExtensionIcon[".nscene"] = std::make_shared<nimo::Texture>("icons/icon_castle.png");
+        AssetExplorerPanel::mapExtensionIcon[".txt"] = std::make_shared<nimo::Texture>("icons/icon_file_alt.png");
+        AssetExplorerPanel::mapExtensionIcon[".png"] = std::make_shared<nimo::Texture>("icons/icon_camera.png");
+        AssetExplorerPanel::mapExtensionIcon[".jpg"] = std::make_shared<nimo::Texture>("icons/icon_camera.png");
+        AssetExplorerPanel::mapExtensionIcon[".obj"] = std::make_shared<nimo::Texture>("icons/icon_cube.png");
+        AssetExplorerPanel::mapExtensionIcon[".fbx"] = std::make_shared<nimo::Texture>("icons/icon_cube.png");
+        AssetExplorerPanel::mapExtensionIcon[".gltf"] = std::make_shared<nimo::Texture>("icons/icon_cube.png");
+        AssetExplorerPanel::mapExtensionIcon[".nprefab"] = std::make_shared<nimo::Texture>("icons/icon_box.png");
+        AssetExplorerPanel::mapExtensionIcon[".ogg"] = std::make_shared<nimo::Texture>("icons/icon_audio_wave.png");
+        AssetExplorerPanel::mapExtensionIcon[".mp3"] = std::make_shared<nimo::Texture>("icons/icon_audio_wave.png");
+        AssetExplorerPanel::mapExtensionIcon[".wav"] = std::make_shared<nimo::Texture>("icons/icon_audio_wave.png");
+        AssetExplorerPanel::mapExtensionIcon[".lua"] = std::make_shared<nimo::Texture>("icons/icon_gears.png");
+        AssetExplorerPanel::mapExtensionIcon[".ttf"] = std::make_shared<nimo::Texture>("icons/icon_signature.png");
+        AssetExplorerPanel::mapExtensionIcon[".hdr"] = std::make_shared<nimo::Texture>("icons/icon_picture.png");
     }
     ~AssetExplorerPanel()
     {

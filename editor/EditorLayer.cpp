@@ -20,7 +20,7 @@ void EditorLayer::OnAttach()
 {
     d.width = 1920;
     d.height = 1080;
-    entityIcon = std::make_shared<nimo::Texture>("icon_dimension.png");
+    entityIcon = std::make_shared<nimo::Texture>("icons/icon_dimension.png");
     d.colorAttachments.push_back({GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE});
     fb = std::make_shared<nimo::FrameBuffer>(d);
     logPanel = new LogPanel();
