@@ -23,19 +23,35 @@ void SceneViewPanel::OnRender(float deltaTime)
     ImGui::Image((ImTextureID)(uint64_t)fb->GetColorAttachmentId(0), wsize, ImVec2(0, 1), ImVec2(1, 0));
     if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::W))
     {
-        t.Translation.z -= deltaTime * 3.0f;
+        t.Translation += deltaTime * 3.0f * t.GetFront();
     }
     if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::A))
     {
-        t.Translation.x -= deltaTime * 3.0f;
+        t.Translation -= deltaTime * 3.0f * t.GetRight();
     }
     if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::S))
     {
-        t.Translation.z += deltaTime * 3.0f;
+        t.Translation -= deltaTime * 3.0f * t.GetFront();
     }
     if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::D))
     {
-        t.Translation.x += deltaTime * 3.0f;
+        t.Translation += deltaTime * 3.0f * t.GetRight();
+    }
+    if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::Space))
+    {
+        t.Translation.y += deltaTime * 3.0f;
+    }
+    if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::LeftControl))
+    {
+        t.Translation.y -= deltaTime * 3.0f;
+    }
+    if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::Q))
+    {
+        t.Rotation.y -= deltaTime * 50.0f;
+    }
+    if(ImGui::IsWindowFocused() && nimo::Input::GetKey(nimo::KeyCode::E))
+    {
+        t.Rotation.y += deltaTime * 50.0f;
     }
     ImGui::EndChild();
 }

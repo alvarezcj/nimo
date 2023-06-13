@@ -81,7 +81,7 @@ struct TransformComponent
     }
     glm::vec3 GetFront() const 
     {
-        return normalize(glm::vec3(glm::inverse(GetTransform())[2]));
+        return -normalize(glm::vec3(glm::inverse(GetTransform())[2]));
     }
     glm::vec3 GetUp() const 
     {
