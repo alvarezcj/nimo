@@ -284,13 +284,13 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
         if(field.key() == "Mesh")
         {
             MeshComponent& c = createdEntity.AddComponent<MeshComponent>();
-            c.source = AssetManager::Get<Mesh>(AssetId((std::string)field.value()["Source"]));
+            c.source = AssetId((std::string)field.value()["Source"]).Valid() ? AssetManager::Get<Mesh>(AssetId((std::string)field.value()["Source"])) : std::shared_ptr<Mesh>();
             c.submeshIndex = field.value()["SubmeshIndex"];
         }
         if(field.key() == "MeshRenderer")
         {
             MeshRendererComponent& c = createdEntity.AddComponent<MeshRendererComponent>();
-            c.material = AssetManager::Get<Material>(AssetId((std::string)field.value()["Material"]));
+            c.material = AssetId((std::string)field.value()["Material"]).Valid() ? AssetManager::Get<Material>(AssetId((std::string)field.value()["Material"])) : std::shared_ptr<Material>();
         }
         if(field.key() == "PointLight")
         {
@@ -309,7 +309,7 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             SkyLightComponent& l = createdEntity.AddComponent<SkyLightComponent>();
             l.Color = glm::vec3((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2]);
             l.Intensity = (float)field.value()["Intensity"];
-            l.environment = AssetManager::Get<EnvironmentMap>(AssetId((std::string)field.value()["Environment"]));
+            l.environment = AssetId((std::string)field.value()["Environment"]).Valid() ? AssetManager::Get<EnvironmentMap>(AssetId((std::string)field.value()["Environment"])) : std::shared_ptr<EnvironmentMap>();
         }
         if(field.key() == "SpriteRenderer")
         {
@@ -326,12 +326,12 @@ nimo::GUID nimo::AssetSerializer<nimo::Scene>::DeserializeEntity(const std::shar
             c.Color = glm::vec4((float)field.value()["Color"][0], (float)field.value()["Color"][1], (float)field.value()["Color"][2], (float)field.value()["Color"][3]);
             c.text = field.value()["Text"];
             c.characterSpacing = (float)field.value()["CharacterSpacing"];
-            c.font = AssetManager::Get<Font>(AssetId((std::string)field.value()["Font"]));
+            c.font = AssetId((std::string)field.value()["Font"]).Valid() ? AssetManager::Get<Font>(AssetId((std::string)field.value()["Font"])) : std::shared_ptr<Font>();
         }
         if(field.key() == "AudioSource")
         {
             AudioSourceComponent& a = createdEntity.AddComponent<AudioSourceComponent>();
-            a.source = AssetManager::Get<AudioSource>(AssetId((std::string)field.value()["Source"]));
+            a.source = AssetId((std::string)field.value()["Source"]).Valid() ? AssetManager::Get<AudioSource>(AssetId((std::string)field.value()["Source"])) : std::shared_ptr<AudioSource>();
             a.loop = (bool)field.value()["Loop"];
             a.volume = (float)field.value()["Volume"];
             a.playOnCreate = (bool)field.value()["PlayOnCreate"];

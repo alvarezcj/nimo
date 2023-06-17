@@ -196,19 +196,21 @@ void EditorLayer::OnAttach()
                             
                         if ( result == NFD_OKAY ) {
                             std::filesystem::path scenePath(outPath);
-                            size_t lastdot = scenePath.filename().string().find_last_of(".");
-                            std::string sceneName;
-                            if (lastdot == std::string::npos)
-                                sceneName = scenePath.filename().string();
-                            else
-                                sceneName = scenePath.filename().string().substr(0, lastdot);
+                            // size_t lastdot = scenePath.filename().string().find_last_of(".");
+                            // std::string sceneName;
+                            // if (lastdot == std::string::npos)
+                            //     sceneName = scenePath.filename().string();
+                            // else
+                            //     sceneName = scenePath.filename().string().substr(0, lastdot);
                             
-                            std::shared_ptr<nimo::Scene> scene = std::make_shared<nimo::Scene>();
-                            scene->SetName(sceneName);
-                            if(!scene->id.Valid())
-                            {
-                                scene->id = nimo::GUID::Create();
-                            }
+                            // std::shared_ptr<nimo::Scene> scene = std::make_shared<nimo::Scene>();
+                            // scene->SetName(sceneName);
+                            // if(!scene->id.Valid())
+                            // {
+                            //     scene->id = nimo::GUID::Create();
+                            // }
+                            nimo::SceneManager::LoadScene(nimo::AssetManager::GetMetadata(scenePath.string()).id);
+                            lastModifiedScene = nimo::AssetManager::GetMetadata(scenePath.string()).id;
                             free(outPath);
                         }
                     }
